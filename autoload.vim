@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: July 15, 2010
+" Last Change: July 16, 2010
 " URL: http://peterodding.com/code/vim/session/
 
 " FIXME Integration with my full screen plug-in :-)
@@ -85,7 +85,7 @@ function! session#save_state(commands) " {{{2
   call session#save_qflist(a:commands)
 
   " Save open tab pages & windows.
-  call extend(a:commands, ['', 'set invsplitbelow'])
+  call add(a:commands, '')
   let tabpagenr_save = tabpagenr()
   let split_cmd = 'split'
   try
@@ -160,7 +160,7 @@ function! session#save_state(commands) " {{{2
   finally
     execute 'tabnext' tabpagenr_save
   endtry
-  call extend(a:commands, ['', 'set invsplitbelow'])
+  call add(a:commands, '')
   " Show/hide/redraw the tab line after restoring the tab pages.
   call add(a:commands, 'let &stal = ' . &stal)
   " call extend(a:commands, split(xolox#swapchoice#restore('PluginSessionSwapExistsHack'), "\n"))
