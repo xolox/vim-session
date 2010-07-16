@@ -93,52 +93,64 @@ function! session#save_state(commands) " {{{2
       execute 'tabnext' tabpagenr
       let winnr_save = winnr()
       try
+        let restore_nerd_tree = 0
         for winnr in range(1, winnr('$'))
           call add(a:commands, '')
           execute winnr . 'wincmd w'
           if has('quickfix') && &bt == 'quickfix'
             call add(a:commands, 'cwindow')
           else
-            let bufname_absolute = expand('%:p')
-            let bufname_friendly = expand('%:p:~')
-            if winnr > 1
-              let cmd = 'rightbelow ' . split_cmd
+            if &bt != '' && &ft == 'nerdtree'
+              " Don't create a split window for the NERD tree because the
+              " plug-in will create its own split window from :NERDtree.
+              let restore_nerd_tree = 1
             else
-              let cmd = tabpagenr > 1 ? 'tabnew' : 'edit'
-            endif
-            let split_cmd = winwidth(winnr) == &columns ? 'split' : 'vsplit'
-            if bufname('%') =~ '^\w\+://' || filereadable(bufname_absolute)
-              call add(a:commands, 'silent ' . cmd . ' ' . fnameescape(bufname_friendly))
-            else
-              call add(a:commands, cmd == 'edit' ? 'enew' : cmd)
-              if bufname_absolute != ''
-                call add(a:commands, 'file ' . fnameescape(bufname_friendly))
+              let bufname_absolute = expand('%:p')
+              let bufname_friendly = expand('%:p:~')
+              if winnr > 1 && !restore_nerd_tree
+                let cmd = 'rightbelow ' . split_cmd
+              elseif tabpagenr > 1 && winnr == 1
+                let cmd = 'tabnew'
+              else
+                let cmd = 'edit'
               endif
-            endif
-            if haslocaldir()
-              call add(a:commands, 'lcd ' . fnameescape(getcwd()))
-            endif
-            if &ft == 'netrw' && isdirectory(bufname_absolute)
-              call add(a:commands, 'doautocmd BufAdd ' . fnameescape(bufname_absolute))
-            else
-              for option_name in ['filetype', 'buftype']
-                let option_value = eval('&' . option_name)
-                if option_value != ''
-                  call add(a:commands, 'if &' . option_name . ' != ' . string(option_value))
-                  call add(a:commands, "\tsetlocal " . option_name . '=' . option_value)
-                  call add(a:commands, 'endif')
+              let split_cmd = winwidth(winnr) == &columns ? 'split' : 'vsplit'
+              if bufname('%') =~ '^\w\+://' || filereadable(bufname_absolute)
+                call add(a:commands, 'silent ' . cmd . ' ' . fnameescape(bufname_friendly))
+              else
+                call add(a:commands, cmd == 'edit' ? 'enew' : cmd)
+                if bufname_absolute != ''
+                  call add(a:commands, 'file ' . fnameescape(bufname_friendly))
                 endif
-              endfor
-              for option_name in ['wrap', 'foldenable']
-                let option_value = eval('&' . option_name)
-                call add(a:commands, 'setlocal ' . (option_value ? '' : 'no') . option_name)
-              endfor
-              if &previewwindow
-                call add(a:commands, 'setlocal previewwindow')
+              endif
+              if haslocaldir()
+                call add(a:commands, 'lcd ' . fnameescape(getcwd()))
+              endif
+              if &ft == 'netrw' && isdirectory(bufname_absolute)
+                call add(a:commands, 'doautocmd BufAdd ' . fnameescape(bufname_absolute))
+              else
+                for option_name in ['filetype', 'buftype']
+                  let option_value = eval('&' . option_name)
+                  if option_value != ''
+                    call add(a:commands, 'if &' . option_name . ' != ' . string(option_value))
+                    call add(a:commands, "\tsetlocal " . option_name . '=' . option_value)
+                    call add(a:commands, 'endif')
+                  endif
+                endfor
+                for option_name in ['wrap', 'foldenable']
+                  let option_value = eval('&' . option_name)
+                  call add(a:commands, 'setlocal ' . (option_value ? '' : 'no') . option_name)
+                endfor
+                if &previewwindow
+                  call add(a:commands, 'setlocal previewwindow')
+                endif
               endif
             endif
           endif
         endfor
+        if restore_nerd_tree
+          call add(a:commands, 'NERDTree')
+        endif
         call add(a:commands, winrestcmd())
         " Restore the topline and cursor position in each window *after*
         " creating the windows in the tab page (it doesn't work before that).
