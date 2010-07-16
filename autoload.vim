@@ -3,8 +3,6 @@
 " Last Change: July 16, 2010
 " URL: http://peterodding.com/code/vim/session/
 
-" FIXME Integration with my full screen plug-in :-)
-
 " Public API for session persistence. {{{1
 
 " All of the functions in this fold take a single list argument in which the
@@ -378,6 +376,7 @@ function! session#save_cmd(name, bang) abort " {{{2
       let msg = "session.vim: Failed to save %s session to %s!"
       call xolox#warning(msg, string(name), friendly_path)
     else
+      " TODO Lock session?
       let msg = "session.vim: Saved %s session to %s."
       call xolox#message(msg, string(name), friendly_path)
       let v:this_session = path
