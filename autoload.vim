@@ -376,10 +376,10 @@ function! session#save_cmd(name, bang) abort " {{{2
       let msg = "session.vim: Failed to save %s session to %s!"
       call xolox#warning(msg, string(name), friendly_path)
     else
-      " TODO Lock session?
       let msg = "session.vim: Saved %s session to %s."
       call xolox#message(msg, string(name), friendly_path)
       let v:this_session = path
+      call s:lock_session(path)
       unlet! s:session_is_dirty
     endif
   endif
@@ -524,8 +524,8 @@ function! s:session_is_locked(session_path, ...)
     let lines = readfile(lock_file)
     if lines[0] !=? v:servername
       if a:0 >= 1
-        let msg = "session.vim: The session %s is locked by another Vim instance with the server name %s! You can use the %s! command to ignore locks."
-        call xolox#warning(msg, fnamemodify(a:session_path, ':~'), string(lines[0]), a:1)
+        let msg = "session.vim: The %s session is locked by another Vim instance named %s! Use :%s! to override."
+        call xolox#warning(msg, string(fnamemodify(a:session_path, ':t:r')), string(lines[0]), a:1)
       endif
       return 1
     endif

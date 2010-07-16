@@ -2,7 +2,7 @@
 
 The [session.vim](http://github.com/xolox/vim-session/blob/master/session.vim) plug-in improves upon [Vim](http://www.vim.org/)'s built-in [:mksession][mksession] command by enabling you to easily and (if you want) automatically persist and restore your Vim editing sessions. It works by generating a [Vim script](http://vimdoc.sourceforge.net/htmldoc/usr_41.html#script) that restores your current settings and the arrangement of tab pages and/or split windows and the files they contain.
 
-To persist your current editing session you can execute the `:SaveSession` command. If you don't provide a name for the session 'default' is used. You're free to use whatever characters you like in session names. When you want to restore your session simply execute `:OpenSession`. Again the name 'default' is used if you don't provide one. When you try to quit Vim without saving your session you'll be prompted whether you want to save it before quitting Vim:
+To persist your current editing session you can execute the `:SaveSession` command. If you don't provide a name for the session 'default' is used. You're free to use whatever characters you like in session names. When you want to restore your session simply execute `:OpenSession`. Again the name 'default' is used if you don't provide one. When a session is active, has been changed and you quit Vim you'll be prompted whether you want to save the open session before quitting Vim:
 
 ![Screenshot of auto-save prompt](http://peterodding.com/code/vim/session/autosave.png)
 
@@ -26,11 +26,15 @@ Unzip the most recent [ZIP archive](http://peterodding.com/code/vim/downloads/se
 
 ### The `:SaveSession` command
 
-This command saves your current editing session just like Vim's built-in [:mksession][mksession] command does. The difference is that you don't pass a full pathname as argument but just a name, any name really. Press `<Tab>` to get completion of existing session names. If you don't provide an argument the name `default` is used, unless an existing session is open in which case the name of that session will be used. As mentioned earlier your session script will be saved in the directory pointed to by `g:session_directory`.
+This command saves your current editing session just like Vim's built-in [:mksession][mksession] command does. The difference is that you don't pass a full pathname as argument but just a name, any name really. Press `<Tab>` to get completion of existing session names. If you don't provide an argument the name 'default' is used, unless an existing session is open in which case the name of that session will be used.
+
+If the session you're trying to save is already active in another Vim instance you'll get a warning and nothing happens. You can use use a bang (!) as in `:SaveSession! ...` to ignore the warning and save the session anyway.
+
+As mentioned earlier your session script will be saved in the directory pointed to by `g:session_directory`.
 
 ### The `:OpenSession` command
 
-This command is basically [:source][source] in disguise, but it supports tab completion of session names and it executes `:CloseSession` before opening the session. When you don't provide a session name and only a single session exists that session is opened, otherwise the plug-in will ask you to select one from a list:
+This command is basically [:source][source] in disguise, but it supports tab completion of session names and it executes `:CloseSession` before opening the session. When you don't provide a session name and only a single session exists then that session is opened, otherwise the plug-in will ask you to select one from a list:
 
     Please select the session to restore:
     
@@ -40,13 +44,21 @@ This command is basically [:source][source] in disguise, but it supports tab com
     
     Type number and <Enter> or click with mouse (empty cancels):
 
-Note that when you use a bang (!) right after the command name existing tab pages and windows are closed, discarding any changes in the files you were editing!
+If the session you're trying to open is already active in another Vim instance you'll get a warning and nothing happens. You can use use a bang (!) as in `:OpenSession! ...` to ignore the warning and open the session anyway.
+
+Note also that when you use a bang (!) right after the command name existing tab pages and windows are closed, discarding any changes in the files you were editing!
 
 ### The `:CloseSession` command
 
-This command closes all but the current tab page and window and then edits a new, empty buffer. If a session is loaded when you execute this command the plug-in will first ask you whether you want to save the session.
+This command closes all but the current tab page and window and then edits a new, empty buffer. If a session is loaded when you execute this command the plug-in will first ask you whether you want to save that session.
 
 Note that when you use a bang (!) right after the command name existing tab pages and windows are closed, discarding any changes in the files you were editing!
+
+### The `:DeleteSession` command
+
+Using this command you can delete any of the sessions created by this plug-in. If the session you are trying to delete is currently active in another Vim instance you'll get a warning and nothing happens. You can use use a bang (!) as in `:DeleteSession! ...` to ignore the warning and delete the session anyway.
+
+Note that this command only deletes the session script, it leaves your open tab pages and windows exactly as they were.
 
 ## Options
 
@@ -58,11 +70,9 @@ This option controls the location of your session scripts. Its default value is 
 
 By default this option is set to false (0). This means that when you start Vim without opening any files and the `default` session script exists, the `session.vim` plug-in will ask whether you want to restore your default session. When you set this option to true (1) and you start Vim without opening any files the default session will be restored without a prompt.
 
-Note that right after the default session is restored, the session script is deleted from the sessions directory. This is to make sure that when you open a second instance of Vim it won't ask you to restore the default session there as well.
-
 ### The `g:session_autosave` option
 
-By default this option is set to false (0). When you've opened the default session and you quit Vim, the `session.vim` plug-in will ask whether you want to save the default session.
+By default this option is set to false (0). When you've opened a session and you quit Vim, the `session.vim` plug-in will ask whether you want to save the changes to your session. Set this option to true (1) to always automatically save open sessions when you quit Vim.
 
 ### The `g:loaded_session` option
 
