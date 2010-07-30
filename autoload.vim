@@ -77,6 +77,7 @@ function! session#save_state(commands) " {{{2
   " call session#save_options(a:commands)
 
   call session#save_cwd(a:commands)
+  call session#save_buffers(a:commands)
   " call extend(a:commands, split(xolox#swapchoice#change('PluginSessionSwapExistsHack', 'e'), "\n"))
   " call add(a:commands, '')
   call session#save_args(a:commands)
@@ -207,9 +208,26 @@ function! session#save_options(commands) " {{{2
 endfunction
 
 function! session#save_cwd(commands) " {{{2
-  if !&autochdir
+  if !&autochdir && &sessionoptions =~ '\<curdir\>'
     let directory = fnamemodify(getcwd(), ':p')
     call add(a:commands, 'cd ' . fnameescape(directory))
+  endif
+endfunction
+
+function! session#save_buffers(commands) " {{{2
+  if &sessionoptions =~ '\<buffers\>'
+    for bufnr in range(1, bufnr('$'))
+      if bufexists(bufnr)
+        let bufname = bufname(bufnr)
+        if bufname != ''
+          let pathname = fnamemodify(bufname, ':p:~')
+          call add(a:commands, 'badd ' . fnameescape(pathname))
+        endif
+      endif
+    endfor
+    if exists('pathname')
+      call add(a:commands, '')
+    endif
   endif
 endfunction
 
