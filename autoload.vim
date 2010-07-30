@@ -385,11 +385,11 @@ function! session#save_cmd(name, bang) abort " {{{2
     let lines = ['" ' . friendly_path . ': Vim session script.']
     call add(lines, '" Created by session.vim on ' . strftime('%d %B %Y at %H:%M:%S.'))
     call extend(lines, ['" Open this file in Vim and run :source % to restore your session.'])
-    call extend(lines, ['', 'let v:this_session = ' . string(path), ''])
+    call extend(lines, ['', 'let g:SessionLoad = 1', 'let v:this_session = ' . string(path), ''])
     call session#save_config(lines)
     call session#save_state(lines)
     call session#save_fullscreen(lines)
-    call extend(lines, ['', 'doautoall SessionLoadPost', '', '" vim: ro nowrap smc=128'])
+    call extend(lines, ['', 'doautoall SessionLoadPost', 'unlet g:SessionLoad', '', '" vim: ro nowrap smc=128'])
     if writefile(lines, path) != 0
       let msg = "session.vim: Failed to save %s session to %s!"
       call xolox#warning(msg, string(name), friendly_path)
