@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: July 16, 2010
+" Last Change: July 30, 2010
 " URL: http://peterodding.com/code/vim/session/
 " Version: 1.2.1
 
@@ -47,7 +47,7 @@ unlet s:directory
 " Define automatic commands for automatic session management.
 augroup PluginSession
   autocmd!
-  au VimEnter * call session#auto_load()
+  au VimEnter * nested call session#auto_load()
   au VimLeavePre * call session#auto_save()
   au VimLeavePre * call session#auto_unlock()
   au TabEnter,WinEnter * call session#auto_dirty_check()
