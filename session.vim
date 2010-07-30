@@ -58,6 +58,7 @@ command! -bar -bang -nargs=? -complete=customlist,session#complete_names OpenSes
 command! -bar -bang -nargs=? -complete=customlist,session#complete_names SaveSession call session#save_cmd(<q-args>, <q-bang>)
 command! -bar -bang -nargs=? -complete=customlist,session#complete_names DeleteSession call session#delete_cmd(<q-args>, <q-bang>)
 command! -bar -bang CloseSession call session#close_cmd(<q-bang>, 0)
+command! -bar -bang RestartVim call session#restart_cmd(<q-bang>)
 
 " Don't reload the plug-in once it has loaded successfully.
 let g:loaded_session = 1
