@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: July 30, 2010
+" Last Change: August 19, 2010
 " URL: http://peterodding.com/code/vim/session/
 
 " Public API for session persistence. {{{1
@@ -122,7 +122,7 @@ function! session#save_state(commands) " {{{2
                   call add(a:commands, 'file ' . fnameescape(bufname_friendly))
                 endif
               endif
-              if haslocaldir()
+              if exists('*haslocaldir') && haslocaldir()
                 call add(a:commands, 'lcd ' . fnameescape(getcwd()))
               endif
               if &ft == 'netrw' && isdirectory(bufname_absolute)
@@ -461,6 +461,7 @@ function! session#restart_cmd(bang) abort " {{{2
   let progname = shellescape(fnameescape(v:progname))
   let servername = shellescape(fnameescape(name))
   let command = progname . ' --servername ' . servername
+  let command .= ' -c ' . shellescape('OpenSession ' . fnameescape(name))
   if has('win32') || has('win64')
     execute '!start' command
   else
