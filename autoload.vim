@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: August 19, 2010
+" Last Change: August 21, 2010
 " URL: http://peterodding.com/code/vim/session/
 
 " Public API for session persistence. {{{1
@@ -78,8 +78,6 @@ function! session#save_state(commands) " {{{2
 
   call session#save_cwd(a:commands)
   call session#save_buffers(a:commands)
-  " call extend(a:commands, split(xolox#swapchoice#change('PluginSessionSwapExistsHack', 'e'), "\n"))
-  " call add(a:commands, '')
   call session#save_args(a:commands)
   call session#save_qflist(a:commands)
 
@@ -172,9 +170,9 @@ function! session#save_state(commands) " {{{2
     execute 'tabnext' tabpagenr_save
   endtry
   call add(a:commands, '')
-  " Show/hide/redraw the tab line after restoring the tab pages.
-  call add(a:commands, 'let &stal = ' . &stal)
-  " call extend(a:commands, split(xolox#swapchoice#restore('PluginSessionSwapExistsHack'), "\n"))
+
+  " Show/hide/redraw tab line after restoring (potentially several) tab pages.
+  call add(a:commands, 'let &stal = ' . &stal . ' | redraw')
 
 endfunction
 
