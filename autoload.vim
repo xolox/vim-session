@@ -413,6 +413,7 @@ function! session#delete_cmd(name, bang) " {{{2
         let msg = "session.vim: Failed to delete %s session at %s!"
         call xolox#warning(msg, string(name), fnamemodify(path, ':~'))
       else
+        call s:unlock_session(path)
         let msg = "session.vim: Deleted %s session at %s."
         call xolox#message(msg, string(name), fnamemodify(path, ':~'))
       endif
