@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: August 21, 2010
+" Last Change: August 23, 2010
 " URL: http://peterodding.com/code/vim/session/
 
 " Public API for session persistence. {{{1
@@ -29,19 +29,19 @@ function! session#save_config(commands) " {{{2
 
   " Save the state of syntax highlighting and file type detection.
   let features = []
-  call add(features, ['syntax_on', 'syntax'])
-  call add(features, ['did_load_filetypes', 'filetype'])
-  call add(features, ['did_load_ftplugin', 'filetype plugin'])
-  call add(features, ['did_indent_on', 'filetype indent'])
+  call add(features, ['g:syntax_on', 'syntax'])
+  call add(features, ['g:did_load_filetypes', 'filetype'])
+  call add(features, ['g:did_load_ftplugin', 'filetype plugin'])
+  call add(features, ['g:did_indent_on', 'filetype indent'])
   for [global, command] in features
-    call add(a:commands, 'if exists(' . string(global) . ') != ' . exists('g:' . global))
-    call add(a:commands, "\t" . command . ' ' . (exists('g:' . global) ? 'on' : 'off'))
+    call add(a:commands, 'if exists(' . string(global) . ') != ' . exists(global))
+    call add(a:commands, "\t" . command . ' ' . (exists(global) ? 'on' : 'off'))
     call extend(a:commands, ['endif', ''])
   endfor
 
   " Save the loaded color scheme.
   if exists('g:colors_name') && type(g:colors_name) == type('') && g:colors_name != ''
-    call add(a:commands, "if !exists('colors_name') || colors_name != " . string(g:colors_name))
+    call add(a:commands, "if !exists('g:colors_name') || g:colors_name != " . string(g:colors_name))
     call add(a:commands, "\tcolorscheme " . fnameescape(g:colors_name))
     call extend(a:commands, ['endif', ''])
   endif
