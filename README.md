@@ -60,6 +60,10 @@ Using this command you can delete any of the sessions created by this plug-in. I
 
 Note that this command only deletes the session script, it leaves your open tab pages and windows exactly as they were.
 
+### The `:ViewSession` command
+
+Execute this command to view the Vim script generated for a session. This command is useful when you need to review the generated Vim script repeatedly, for example while debugging or modifying the `session.vim` plug-in.
+
 ## Options
 
 ### The `g:session_directory` option

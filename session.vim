@@ -1,8 +1,8 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: August 21, 2010
+" Last Change: August 29, 2010
 " URL: http://peterodding.com/code/vim/session/
-" Version: 1.2.4
+" Version: 1.2.5
 
 " Support for automatic update using the GLVS plug-in.
 " GetLatestVimScripts: 3150 1 :AutoInstall: session.zip
@@ -55,6 +55,7 @@ augroup END
 
 " Define commands that enable users to manage multiple named sessions.
 command! -bar -bang -nargs=? -complete=customlist,session#complete_names OpenSession call session#open_cmd(<q-args>, <q-bang>)
+command! -bar -nargs=? -complete=customlist,session#complete_names ViewSession call session#view_cmd(<q-args>)
 command! -bar -bang -nargs=? -complete=customlist,session#complete_names SaveSession call session#save_cmd(<q-args>, <q-bang>)
 command! -bar -bang -nargs=? -complete=customlist,session#complete_names DeleteSession call session#delete_cmd(<q-args>, <q-bang>)
 command! -bar -bang CloseSession call session#close_cmd(<q-bang>, 0)

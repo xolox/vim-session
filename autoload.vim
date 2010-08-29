@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: August 23, 2010
+" Last Change: August 29, 2010
 " URL: http://peterodding.com/code/vim/session/
 
 " Public API for session persistence. {{{1
@@ -371,6 +371,20 @@ function! session#open_cmd(name, bang) abort " {{{2
       execute 'source' fnameescape(path)
       unlet! s:session_is_dirty
       call xolox#message("session.vim: Opened %s session from %s.", string(name), fnamemodify(path, ':~'))
+    endif
+  endif
+endfunction
+
+function! session#view_cmd(name) abort " {{{2
+  let name = s:select_name(s:get_name(a:name, 0), 'view')
+  if name != ''
+    let path = session#get_path(name)
+    if !filereadable(path)
+      let msg = "session.vim: The %s session at %s doesn't exist!"
+      call xolox#warning(msg, string(name), fnamemodify(path, ':~'))
+    else
+      execute 'tab drop' fnameescape(path)
+      call xolox#message("session.vim: Viewing session script %s.", fnamemodify(path, ':~'))
     endif
   endif
 endfunction
