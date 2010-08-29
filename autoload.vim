@@ -275,7 +275,7 @@ function! session#auto_load() " {{{2
       endfor
     endif
     " Check whether the default session should be loaded.
-    let path = session#get_path('default')
+    let path = session#name_to_path('default')
     if filereadable(path) && !s:session_is_locked(path)
       let msg = "Do you want to restore your default editing session?"
       if s:prompt(msg, 'g:session_autoload')
@@ -359,9 +359,9 @@ endfunction
 " Commands that enable users to manage multiple sessions. {{{1
 
 function! session#open_cmd(name, bang) abort " {{{2
-  let name = s:select_name(a:name, 'restore')
+  let name = s:select_name(s:unescape(a:name), 'restore')
   if name != ''
-    let path = session#get_path(name)
+    let path = session#name_to_path(name)
     if !filereadable(path)
       let msg = "session.vim: The %s session at %s doesn't exist!"
       call xolox#warning(msg, string(name), fnamemodify(path, ':~'))
@@ -376,9 +376,9 @@ function! session#open_cmd(name, bang) abort " {{{2
 endfunction
 
 function! session#view_cmd(name) abort " {{{2
-  let name = s:select_name(s:get_name(a:name, 0), 'view')
+  let name = s:select_name(s:get_name(s:unescape(a:name), 0), 'view')
   if name != ''
-    let path = session#get_path(name)
+    let path = session#name_to_path(name)
     if !filereadable(path)
       let msg = "session.vim: The %s session at %s doesn't exist!"
       call xolox#warning(msg, string(name), fnamemodify(path, ':~'))
@@ -390,8 +390,8 @@ function! session#view_cmd(name) abort " {{{2
 endfunction
 
 function! session#save_cmd(name, bang) abort " {{{2
-  let name = s:get_name(a:name, 1)
-  let path = session#get_path(name)
+  let name = s:get_name(s:unescape(a:name), 1)
+  let path = session#name_to_path(name)
   let friendly_path = fnamemodify(path, ':~')
   if a:bang == '!' || !s:session_is_locked(path, 'SaveSession')
     let lines = ['" ' . friendly_path . ': Vim session script.']
@@ -416,9 +416,9 @@ function! session#save_cmd(name, bang) abort " {{{2
 endfunction
 
 function! session#delete_cmd(name, bang) " {{{2
-  let name = s:select_name(a:name, 'delete')
+  let name = s:select_name(s:unescape(a:name), 'delete')
   if name != ''
-    let path = session#get_path(name)
+    let path = session#name_to_path(name)
     if !filereadable(path)
       let msg = "session.vim: The %s session at %s doesn't exist!"
       call xolox#warning(msg, string(name), fnamemodify(path, ':~'))
@@ -442,7 +442,7 @@ function! session#close_cmd(bang, silent) abort " {{{2
     if s:prompt(msg, 'g:session_autosave')
       SaveSession
     endif
-    call s:unlock_session(session#get_path(name))
+    call s:unlock_session(session#name_to_path(name))
   endif
   if tabpagenr('$') > 1
     execute 'tabonly' . a:bang
@@ -494,7 +494,7 @@ endfunction
 
 function! s:select_name(name, action) " {{{2
   if a:name != ''
-    return s:unescape(a:name)
+    return a:name
   endif
   let sessions = sort(session#get_names())
   if empty(sessions)
@@ -519,16 +519,20 @@ function! s:get_name(name, use_default) " {{{2
   if name == '' && v:this_session != ''
     let this_session_dir = fnamemodify(v:this_session, ':p:h')
     if xolox#path#equals(this_session_dir, g:session_directory)
-      let name = fnamemodify(v:this_session, ':t:r')
+      let name = session#path_to_name(v:this_session)
     endif
   endif
   return name != '' ? name : a:use_default ? 'default' : ''
 endfunction
 
-function! session#get_path(name) " {{{2
+function! session#name_to_path(name) " {{{2
   let directory = xolox#path#absolute(g:session_directory)
   let filename = xolox#path#encode(a:name) . '.vim'
   return xolox#path#merge(directory, filename)
+endfunction
+
+function! session#path_to_name(path) " {{{2
+  return xolox#path#decode(fnamemodify(a:path, ':t:r'))
 endfunction
 
 function! session#get_names() " {{{2
