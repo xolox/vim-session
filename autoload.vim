@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: August 29, 2010
+" Last Change: August 30, 2010
 " URL: http://peterodding.com/code/vim/session/
 
 " Public API for session persistence. {{{1
@@ -55,6 +55,8 @@ function! session#save_fullscreen(commands) " {{{2
       call add(a:commands, "if has('gui_running')")
       call add(a:commands, "\ttry")
       call add(a:commands, "\t\tcall xolox#shell#fullscreen()")
+      " XXX Without this hack Vim on GTK doesn't restore &lines and &columns.
+      call add(a:commands, "\t\tcall feedkeys(\":set lines=" . &lines . " columns=" . &columns . "\\<CR>\")")
       call add(a:commands, "\tcatch " . '/^Vim\%((\a\+)\)\=:E117/')
       call add(a:commands, "\t\t\" Ignore missing full-screen plug-in.")
       call add(a:commands, "\tendtry")
