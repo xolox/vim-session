@@ -476,13 +476,13 @@ function! session#restart_cmd(bang) abort " {{{2
   let progname = shellescape(fnameescape(v:progname))
   let servername = shellescape(fnameescape(name))
   let command = progname . ' --servername ' . servername
-  let command .= ' -c ' . shellescape('OpenSession ' . fnameescape(name))
+  let command .= ' -c ' . shellescape('OpenSession\! ' . fnameescape(name))
   if has('win32') || has('win64')
     execute '!start' command
   else
     let term = shellescape(fnameescape($TERM))
     let encoding = "--cmd ':set enc=" . escape(&enc, '\ ') . "'"
-    execute '! TERM=' . term command encoding '&'
+    silent execute '! TERM=' . term command encoding '&'
   endif
   execute 'CloseSession' . a:bang
   quitall
