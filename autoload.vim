@@ -5,245 +5,63 @@
 
 " Public API for session persistence. {{{1
 
-" All of the functions in this fold take a single list argument in which the
-" Vim script lines are stored that should be executed to restore the (relevant
-" part of the) current Vim editing session.
+" The functions in this fold take a single list argument in which the Vim
+" script lines are stored that should be executed to restore the (relevant
+" parts of the) current Vim editing session. The only exception to this is
+" session#save_session() which expects the target filename as 2nd argument:
 
-function! session#save_config(commands) " {{{2
+function! session#save_session(commands, filename) " {{{2
+  call add(a:commands, '" ' . a:filename . ': Vim session script.')
+  call add(a:commands, '" Created by session.vim on ' . strftime('%d %B %Y at %H:%M:%S.'))
+  call add(a:commands, '" Open this file in Vim and run :source % to restore your session.')
+  call add(a:commands, '')
+  call add(a:commands, 'set guioptions=' . escape(&go, ' "\'))
+  call add(a:commands, 'set guifont=' . escape(&gfn, ' "\'))
+  call session#save_features(a:commands)
+  call session#save_colors(a:commands)
+  call session#save_qflist(a:commands)
+  call session#save_state(a:commands)
+  call session#save_fullscreen(a:commands)
+  call add(a:commands, '')
+  call add(a:commands, '" vim: ft=vim ro nowrap smc=128')
+endfunction
 
-  " Save the Vim configuration including the GUI font and options, the
-  " position and size of the Vim window, whether syntax highlighting, file
-  " type detection, file type plug-ins and indentation plug-ins are enabled
-  " and which color scheme is loaded. The result is a list of Vim commands
-  " that restore the Vim configuration when they're executed.
-
-  " Save the GUI font & options and the window position and size?
-  if has('gui_running')
-    call add(a:commands, "if has('gui_running')")
-    call add(a:commands, "\tset guifont=" . escape(&gfn, ' "\'))
-    call add(a:commands, "\tset guioptions=" . escape(&go, ' "\'))
-    call add(a:commands, "\tset lines=" . &lines . ' columns=' . &columns)
-    call add(a:commands, "\twinpos " . getwinposx() . ' ' . getwinposy())
-    call extend(a:commands, ['endif', ''])
-  endif
-
-  " Save the state of syntax highlighting and file type detection.
-  let features = []
-  call add(features, ['g:syntax_on', 'syntax'])
-  call add(features, ['g:did_load_filetypes', 'filetype'])
-  call add(features, ['g:did_load_ftplugin', 'filetype plugin'])
-  call add(features, ['g:did_indent_on', 'filetype indent'])
-  for [global, command] in features
-    call add(a:commands, 'if exists(' . string(global) . ') != ' . exists(global))
-    call add(a:commands, "\t" . command . ' ' . (exists(global) ? 'on' : 'off'))
-    call extend(a:commands, ['endif', ''])
+function! session#save_features(commands) " {{{2
+  let template = "if exists('%s') != %i | %s %s | endif"
+  for [global, command] in [
+          \ ['g:syntax_on', 'syntax'],
+          \ ['g:did_load_filetypes', 'filetype'],
+          \ ['g:did_load_ftplugin', 'filetype plugin'],
+          \ ['g:did_indent_on', 'filetype indent']]
+    let active = exists(global)
+    let toggle = active ? 'on' : 'off'
+    call add(a:commands, printf(template, global, active, command, toggle))
   endfor
+endfunction
 
-  " Save the loaded color scheme.
+function! session#save_colors(commands) " {{{2
   if exists('g:colors_name') && type(g:colors_name) == type('') && g:colors_name != ''
-    call add(a:commands, "if !exists('g:colors_name') || g:colors_name != " . string(g:colors_name))
-    call add(a:commands, "\tcolorscheme " . fnameescape(g:colors_name))
-    call extend(a:commands, ['endif', ''])
+    let template = "if !exists('g:colors_name') || g:colors_name != %s | colorscheme %s | endif"
+    call add(a:commands, printf(template, string(g:colors_name), fnameescape(g:colors_name)))
   endif
-
 endfunction
 
 function! session#save_fullscreen(commands) " {{{2
   try
     if xolox#shell#is_fullscreen()
-      call add(a:commands, "")
       call add(a:commands, "if has('gui_running')")
-      call add(a:commands, "\ttry")
-      call add(a:commands, "\t\tcall xolox#shell#fullscreen()")
+      call add(a:commands, "  try")
+      call add(a:commands, "    call xolox#shell#fullscreen()")
       " XXX Without this hack Vim on GTK doesn't restore &lines and &columns.
-      call add(a:commands, "\t\tcall feedkeys(\":set lines=" . &lines . " columns=" . &columns . "\\<CR>\")")
-      call add(a:commands, "\tcatch " . '/^Vim\%((\a\+)\)\=:E117/')
-      call add(a:commands, "\t\t\" Ignore missing full-screen plug-in.")
-      call add(a:commands, "\tendtry")
+      call add(a:commands, "    call feedkeys(\":set lines=" . &lines . " columns=" . &columns . "\\<CR>\")")
+      call add(a:commands, "  catch " . '/^Vim\%((\a\+)\)\=:E117/')
+      call add(a:commands, "    \" Ignore missing full-screen plug-in.")
+      call add(a:commands, "  endtry")
       call add(a:commands, "endif")
     endif
   catch /^Vim\%((\a\+)\)\=:E117/
     " Ignore missing full-screen functionality.
   endtry
-endfunction
-
-function! session#save_state(commands) " {{{2
-
-  " Persist the open tab pages and windows and related state like the working
-  " directory, argument list, quick-fix list and the file and buffer type of
-  " each visible buffer.
-
-  " It seemed like a cool idea to persist global variables and Vim options but
-  " this causes all sorts of trouble so I guess it isn't worth it...
-  " call session#save_globals(a:commands)
-  " call session#save_options(a:commands)
-
-  call session#save_cwd(a:commands)
-  call session#save_buffers(a:commands)
-  call session#save_args(a:commands)
-  call session#save_qflist(a:commands)
-
-  " Save open tab pages & windows.
-  call add(a:commands, '')
-  let tabpagenr_save = tabpagenr()
-  let split_cmd = 'split'
-  try
-    for tabpagenr in range(1, tabpagenr('$'))
-      execute 'tabnext' tabpagenr
-      let winnr_save = winnr()
-      try
-        let restore_nerd_tree = 0
-        for winnr in range(1, winnr('$'))
-          call add(a:commands, '')
-          execute winnr . 'wincmd w'
-          if has('quickfix') && &bt == 'quickfix'
-            call add(a:commands, 'cwindow')
-          else
-            if &bt != '' && &ft == 'nerdtree'
-              " Don't create a split window for the NERD tree because the
-              " plug-in will create its own split window from :NERDtree.
-              let restore_nerd_tree = 1
-            else
-              let bufname_absolute = expand('%:p')
-              let bufname_friendly = expand('%:p:~')
-              if winnr > 1 && !restore_nerd_tree
-                let cmd = 'rightbelow ' . split_cmd
-              elseif tabpagenr > 1 && winnr == 1
-                let cmd = 'tabnew'
-              else
-                let cmd = 'edit'
-              endif
-              let split_cmd = winwidth(winnr) == &columns ? 'split' : 'vsplit'
-              if bufname('%') =~ '^\w\+://' || filereadable(bufname_absolute)
-                call add(a:commands, 'silent ' . cmd . ' ' . fnameescape(bufname_friendly))
-              else
-                call add(a:commands, cmd == 'edit' ? 'enew' : cmd)
-                if bufname_absolute != ''
-                  call add(a:commands, 'file ' . fnameescape(bufname_friendly))
-                endif
-              endif
-              if exists('*haslocaldir') && haslocaldir()
-                call add(a:commands, 'lcd ' . fnameescape(getcwd()))
-              endif
-              if &ft == 'netrw' && isdirectory(bufname_absolute)
-                call add(a:commands, 'doautocmd BufAdd ' . fnameescape(bufname_absolute))
-              else
-                for option_name in ['filetype', 'buftype']
-                  let option_value = eval('&' . option_name)
-                  if option_value != ''
-                    call add(a:commands, 'if &' . option_name . ' != ' . string(option_value))
-                    call add(a:commands, "\tsetlocal " . option_name . '=' . option_value)
-                    call add(a:commands, 'endif')
-                  endif
-                endfor
-                for option_name in ['wrap', 'foldenable']
-                  let option_value = eval('&' . option_name)
-                  call add(a:commands, 'setlocal ' . (option_value ? '' : 'no') . option_name)
-                endfor
-                if &previewwindow
-                  call add(a:commands, 'setlocal previewwindow')
-                endif
-              endif
-            endif
-          endif
-        endfor
-        if restore_nerd_tree
-          call add(a:commands, 'NERDTree')
-        endif
-        call add(a:commands, winrestcmd())
-        " Restore the topline and cursor position in each window *after*
-        " creating the windows in the tab page (it doesn't work before that).
-        for winnr in range(1, winnr('$'))
-          execute winnr . 'wincmd w'
-          call add(a:commands, winnr . 'wincmd w')
-          call add(a:commands, 'call winrestview(' . string(winsaveview()) . ')')
-        endfor
-        if winnr != winnr_save
-          call add(a:commands, winnr_save . 'wincmd w')
-        endif
-      finally
-        execute winnr_save . 'wincmd w'
-      endtry
-    endfor
-    if tabpagenr() != tabpagenr_save
-      call add(a:commands, 'tabnext ' . tabpagenr_save)
-    endif
-  finally
-    execute 'tabnext' tabpagenr_save
-  endtry
-  call add(a:commands, '')
-
-  " Show/hide/redraw tab line after restoring (potentially several) tab pages.
-  call add(a:commands, 'let &stal = ' . &stal . ' | redraw')
-
-endfunction
-
-function! session#save_globals(commands) " {{{2
-  let format = 'let g:%s = %s'
-  for [global, value] in items(g:)
-    let string = string(value)
-    if string !~ '\n'
-      call add(a:commands, printf(format, global, string))
-    endif
-    unlet value
-  endfor
-endfunction
-
-function! session#save_options(commands) " {{{2
-  redir => listing
-  silent set all
-  redir END
-  let options = {}
-  for name in split(listing, '\W\+')
-    let name = substitute(name, '^no', '', '')
-    let name = substitute(name, '=.*$', '', '')
-    if exists('&' . name)
-      let options[name] = 1
-    endif
-  endfor
-  for name in sort(keys(options))
-    let value = string(eval('&' . name))
-    call add(a:commands, printf('let &%s = %s', name, value))
-  endfor
-endfunction
-
-function! session#save_cwd(commands) " {{{2
-  if !&autochdir && &sessionoptions =~ '\<curdir\>'
-    let directory = fnamemodify(getcwd(), ':p')
-    call add(a:commands, 'cd ' . fnameescape(directory))
-  endif
-endfunction
-
-function! session#save_buffers(commands) " {{{2
-  if &sessionoptions =~ '\<buffers\>'
-    for bufnr in range(1, bufnr('$'))
-      if bufexists(bufnr)
-        let bufname = bufname(bufnr)
-        if bufname != ''
-          let pathname = fnamemodify(bufname, ':p:~')
-          call add(a:commands, 'badd ' . fnameescape(pathname))
-        endif
-      endif
-    endfor
-    if exists('pathname')
-      call add(a:commands, '')
-    endif
-  endif
-endfunction
-
-function! session#save_args(commands) " {{{2
-  if has('listcmds')
-    if argc() > 0
-      " Restore argument list.
-      let args = map(argv(), 'fnameescape(v:val)')
-      call add(a:commands, 'silent args ' . join(args))
-    else
-      " Clear argument list.
-      call add(a:commands, "if argc() > 0")
-      call add(a:commands, "\targdelete *")
-      call add(a:commands, "endif")
-    endif
-  endif
 endfunction
 
 function! session#save_qflist(commands) " {{{2
@@ -259,6 +77,77 @@ function! session#save_qflist(commands) " {{{2
       call add(qf_list, qf_entry)
     endfor
     call add(a:commands, 'call setqflist(' . string(qf_list) . ')')
+  endif
+endfunction
+
+function! session#save_state(commands) " {{{2
+  let tempfile = tempname()
+  let ssop_save = &sessionoptions
+  try
+    " The default value of &sessionoptions includes "options" which causes
+    " :mksession to include all Vim options and mappings in generated session
+    " scripts. This can significantly increase the size of session scripts
+    " which makes them slower to generate and evaluate. It can also be a bit
+    " buggy, e.g. it breaks Ctrl-S when :runtime mswin.vim has been used. The
+    " value of &sessionoptions is changed temporarily to avoid these issues.
+    set ssop-=options ssop+=resize
+    execute 'mksession' fnameescape(tempfile)
+    let lines = readfile(tempfile)
+    if lines[-1] == '" vim: set ft=vim :'
+      call remove(lines, -1)
+    endif
+    call session#save_special_windows(lines)
+    call extend(a:commands, lines)
+    return 1
+  finally
+    let &sessionoptions = ssop_save
+    call delete(tempfile)
+  endtry
+endfunction
+
+" Integration between :mksession, :NERDTree and :Project. {{{3
+
+function! session#save_special_windows(session)
+  if exists(':NERDTree') == 2 && match(a:session, '\<NERD_tree_\d\+$') >= 0
+          \ || exists(':Project') == 2 && exists('g:proj_running')
+    let tabpage = tabpagenr()
+    let window = winnr()
+    try
+      if &sessionoptions =~ '\<tabpages\>'
+        tabdo windo call s:check_special_window(a:session)
+      else
+        windo call s:check_special_window(a:session)
+      endif
+    finally
+      execute 'tabnext' tabpage
+      execute window . 'wincmd w'
+      if &sessionoptions =~ '\<tabpages\>'
+        call add(a:session, 'tabnext ' . tabpage)
+      endif
+      call add(a:session, window . 'wincmd w')
+    endtry
+  endif
+endfunction
+
+function! s:check_special_window(session)
+  if exists('b:NERDTreeRoot')
+    let command = 'NERDTree'
+    let argument = b:NERDTreeRoot.path.str()
+  elseif exists('g:proj_running') && g:proj_running == bufnr('%')
+    let command = 'Project'
+    let argument = expand('%:p')
+  endif
+  if exists('command')
+    if &sessionoptions =~ '\<tabpages\>'
+      call add(a:session, 'tabnext ' . tabpagenr())
+    endif
+    call add(a:session, winnr() . 'wincmd w')
+    call add(a:session, 'bwipeout')
+    let argument = fnamemodify(argument, ':~')
+    if &sessionoptions =~ '\<slash\>'
+      let argument = substitute(argument, '\', '/', 'g')
+    endif
+    call add(a:session, command . ' ' . fnameescape(argument))
   endif
 endfunction
 
@@ -313,11 +202,10 @@ endfunction
 
 function! session#auto_dirty_check() " {{{2
   " This function is called each time a WinEnter event fires to detect when
-  " the user has significantly changed the current tab page, which enables the
-  " plug-in to not bother you with the auto-save dialog when you haven't
-  " changed your session.
+  " the current tab page is changed in some way. This enables the plug-in to
+  " not bother with the auto-save dialog when the session hasn't changed.
   if v:this_session == ''
-    " Don't bother checking the layout when no session is loaded.
+    " Don't waste CPU time when no session is loaded.
     return
   elseif !exists('s:cached_layouts')
     let s:cached_layouts = {}
@@ -326,19 +214,14 @@ function! session#auto_dirty_check() " {{{2
     let last_tabpage = tabpagenr('$')
     call filter(s:cached_layouts, 'v:key <= last_tabpage')
   endif
-  let keys = []
+  let tabpagenr = tabpagenr()
+  let keys = ['tabpage:' . tabpagenr]
   let buflist = tabpagebuflist()
   for winnr in range(1, winnr('$'))
     " Create a string that describes the state of the window {winnr}.
-    let attrs = []
-    call add(attrs, 'width:' . winwidth(winnr))
-    call add(attrs, 'height:' . winheight(winnr))
-    call add(attrs, 'buffer:' . buflist[winnr - 1])
-    call add(attrs, 'wrap:' . getwinvar(winnr, '&wrap'))
-    call add(attrs, 'type:' . string(getwinvar(winnr, '&ft')))
-    call add(keys, join(attrs, ','))
+    call add(keys, printf('width:%i,height:%i,buffer:%i',
+          \ winwidth(winnr), winheight(winnr), buflist[winnr - 1]))
   endfor
-  let tabpagenr = tabpagenr()
   let layout = join(keys, "\n")
   let cached_layout = get(s:cached_layouts, tabpagenr, '')
   if cached_layout != '' && cached_layout != layout
@@ -396,14 +279,13 @@ function! session#save_cmd(name, bang) abort " {{{2
   let path = session#name_to_path(name)
   let friendly_path = fnamemodify(path, ':~')
   if a:bang == '!' || !s:session_is_locked(path, 'SaveSession')
-    let lines = ['" ' . friendly_path . ': Vim session script.']
-    call add(lines, '" Created by session.vim on ' . strftime('%d %B %Y at %H:%M:%S.'))
-    call extend(lines, ['" Open this file in Vim and run :source % to restore your session.'])
-    call extend(lines, ['', 'let g:SessionLoad = 1', 'let v:this_session = ' . string(path), ''])
-    call session#save_config(lines)
-    call session#save_state(lines)
-    call session#save_fullscreen(lines)
-    call extend(lines, ['', 'doautoall SessionLoadPost', 'unlet g:SessionLoad', '', '" vim: ro nowrap smc=128'])
+    let lines = []
+    call session#save_session(lines, friendly_path)
+    let is_dos = has('dos16') || has('dos32')
+    let is_windows = has('win32') || has('win64')
+    if (is_dos || is_windows) && &ssop !~ '\<unix\>'
+      call map(lines, 'v:val . "\r"')
+    endif
     if writefile(lines, path) != 0
       let msg = "session.vim: Failed to save %s session to %s!"
       call xolox#warning(msg, string(name), friendly_path)
