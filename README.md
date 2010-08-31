@@ -104,6 +104,10 @@ Vim's [:mksession][mksession] command isn't fully compatible with plug-ins that 
 
 If your favorite plug-in doesn't work with `session.vim` drop me a mail and I'll see what I can do. Please include a link to the plug-in in your e-mail so that I can install and test the plug-in.
 
+## Known issues
+
+Recently this plug-in switched from reimplementing [:mksession][mksession] to actually using it because this was the only way to support complex split window layouts. Only after making this change did I realize [:mksession][mksession] doesn't support [quickfix](http://vimdoc.sourceforge.net/htmldoc/quickfix.html#quickfix) and [location list](http://vimdoc.sourceforge.net/htmldoc/quickfix.html#location-list) windows and of course it turns out that bolting on support for these after the fact is going to complicate the plug-in significantly (in other words, I'm working on it but it might take a while...)
+
 ## Contact
 
 If you have questions, bug reports, suggestions, etc. the author can be contacted at <peter@peterodding.com>. The latest version is available at <http://peterodding.com/code/vim/session/> and <http://github.com/xolox/vim-session>. If you like the script please vote for it on [www.vim.org](http://www.vim.org/scripts/script.php?script_id=3150).
