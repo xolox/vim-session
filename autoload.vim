@@ -445,11 +445,12 @@ endfunction
 function! session#get_names() " {{{2
   let directory = xolox#path#absolute(g:session_directory)
   let filenames = split(glob(xolox#path#merge(directory, '*.vim')), "\n")
-  return map(filenames, 'fnameescape(xolox#path#decode(fnamemodify(v:val, ":t:r")))')
+  return map(filenames, 'session#path_to_name(v:val)')
 endfunction
 
 function! session#complete_names(arg, line, pos) " {{{2
-  return filter(session#get_names(), 'v:val =~ a:arg')
+  let names = filter(session#get_names(), 'v:val =~ a:arg')
+  return map(names, 'fnameescape(v:val)')
 endfunction
 
 " Lock file management: {{{2
