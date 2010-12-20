@@ -123,10 +123,7 @@ function! session#save_special_windows(session)
     finally
       execute 'tabnext' tabpage
       execute window . 'wincmd w'
-      if &sessionoptions =~ '\<tabpages\>'
-        call add(a:session, 'tabnext ' . tabpage)
-      endif
-      call add(a:session, window . 'wincmd w')
+      call s:jump_to_window(a:session, tabpage, window)
     endtry
   endif
 endfunction
@@ -140,10 +137,7 @@ function! s:check_special_window(session)
     let argument = expand('%:p')
   endif
   if exists('command')
-    if &sessionoptions =~ '\<tabpages\>'
-      call add(a:session, 'tabnext ' . tabpagenr())
-    endif
-    call add(a:session, winnr() . 'wincmd w')
+    call s:jump_to_window(a:session, tabpagenr(), winnr())
     call add(a:session, 'bwipeout')
     let argument = fnamemodify(argument, ':~')
     if &sessionoptions =~ '\<slash\>'
@@ -151,6 +145,13 @@ function! s:check_special_window(session)
     endif
     call add(a:session, command . ' ' . fnameescape(argument))
   endif
+endfunction
+
+function! s:jump_to_window(session, tabpage, window)
+  if &sessionoptions =~ '\<tabpages\>'
+    call add(a:session, 'tabnext ' . a:tabpage)
+  endif
+  call add(a:session, a:window . 'wincmd w')
 endfunction
 
 " Automatic commands to manage the default session. {{{1
