@@ -117,15 +117,23 @@ function! session#save_special_windows(session)
     let window = winnr()
     try
       if &sessionoptions =~ '\<tabpages\>'
-        tabdo windo call s:check_special_window(a:session)
+        tabdo call s:check_special_tabpage(a:session)
       else
-        windo call s:check_special_window(a:session)
+        call s:check_special_tabpage(a:session)
       endif
     finally
       execute 'tabnext' tabpage
       execute window . 'wincmd w'
       call s:jump_to_window(a:session, tabpage, window)
     endtry
+  endif
+endfunction
+
+function! s:check_special_tabpage(session)
+  let status = 0
+  windo let status += s:check_special_window(a:session)
+  if status > 0 && winnr('$') > 1
+    call add(a:session, winrestcmd())
   endif
 endfunction
 
@@ -150,6 +158,7 @@ function! s:check_special_window(session)
       let argument = substitute(argument, '\', '/', 'g')
     endif
     call add(a:session, command . ' ' . fnameescape(argument))
+    return 1
   endif
 endfunction
 
