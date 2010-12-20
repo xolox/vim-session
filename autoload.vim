@@ -253,7 +253,7 @@ function! s:prompt(msg, var) " {{{2
     return 1
   else
     let format = "%s Note that you can permanently disable this dialog by adding the following line to your %s script:\n\n\t:let %s = 1"
-    let vimrc = has('win32') || has('win64') ? '~\_vimrc' : '~/.vimrc'
+    let vimrc = xolox#is_windows() ? '~\_vimrc' : '~/.vimrc'
     let prompt = printf(format, a:msg, vimrc, a:var)
     return confirm(prompt, "&Yes\n&No", 1, 'Question') == 1
   endif
@@ -299,9 +299,7 @@ function! session#save_cmd(name, bang) abort " {{{2
   if a:bang == '!' || !s:session_is_locked(path, 'SaveSession')
     let lines = []
     call session#save_session(lines, friendly_path)
-    let is_dos = has('dos16') || has('dos32')
-    let is_windows = has('win32') || has('win64')
-    if (is_dos || is_windows) && &ssop !~ '\<unix\>'
+    if xolox#is_windows() && &ssop !~ '\<unix\>'
       call map(lines, 'v:val . "\r"')
     endif
     if writefile(lines, path) != 0

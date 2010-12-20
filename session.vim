@@ -24,7 +24,7 @@ endif
 
 " The default directory where session scripts are stored.
 if !exists('g:session_directory')
-  if has('win32') || has('win64')
+  if xolox#is_windows()
     let g:session_directory = '~\vimfiles\sessions'
   else
     let g:session_directory = '~/.vim/sessions'
