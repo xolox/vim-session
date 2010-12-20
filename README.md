@@ -1,6 +1,6 @@
 # Extended session management for Vim
 
-The [session.vim](http://github.com/xolox/vim-session/blob/master/session.vim) plug-in improves upon [Vim](http://www.vim.org/)'s built-in [:mksession][mksession] command by enabling you to easily and (if you want) automatically persist and restore your Vim editing sessions. It works by generating a [Vim script](http://vimdoc.sourceforge.net/htmldoc/usr_41.html#script) that restores your current settings and the arrangement of tab pages and/or split windows and the files they contain.
+The `session.vim` plug-in improves upon [Vim](http://www.vim.org/)'s built-in [:mksession][mksession] command by enabling you to easily and (if you want) automatically persist and restore your Vim editing sessions. It works by generating a [Vim script](http://vimdoc.sourceforge.net/htmldoc/usr_41.html#script) that restores your current settings and the arrangement of tab pages and/or split windows and the files they contain.
 
 To persist your current editing session you can execute the `:SaveSession` command. If you don't provide a name for the session 'default' is used. You're free to use whatever characters you like in session names. When you want to restore your session simply execute `:OpenSession`. Again the name 'default' is used if you don't provide one. When a session is active, has been changed and you quit Vim you'll be prompted whether you want to save the open session before quitting Vim:
 
@@ -47,6 +47,12 @@ This command is basically [:source][source] in disguise, but it supports tab com
 If the session you're trying to open is already active in another Vim instance you'll get a warning and nothing happens. You can use use a bang (!) as in `:OpenSession! ...` to ignore the warning and open the session anyway.
 
 Note also that when you use a bang (!) right after the command name existing tab pages and windows are closed, discarding any changes in the files you were editing!
+
+### The `:RestartVim` command
+
+This command saves your current editing session, restarts Vim and restores your editing session. This can come in handy when you're debugging Vim scripts which can't be easily/safely [reloaded using a more lightweight approach](http://peterodding.com/code/vim/reload/). It should work fine on Windows and UNIX alike but because of technical limitations it only works in graphical Vim.
+
+Any commands following the `:RestartVim` command are intercepted and executed after Vim is restarted and your session has been restored. This makes it easy to perform manual tests which involve restarting Vim, e.g. `:RestartVim | edit /path/to/file | call MyTest()`.
 
 ### The `:CloseSession` command
 
@@ -110,7 +116,7 @@ Recently this plug-in switched from reimplementing [:mksession][mksession] to ac
 
 ## Contact
 
-If you have questions, bug reports, suggestions, etc. the author can be contacted at <peter@peterodding.com>. The latest version is available at <http://peterodding.com/code/vim/session/> and <http://github.com/xolox/vim-session>. If you like the script please vote for it on [www.vim.org](http://www.vim.org/scripts/script.php?script_id=3150).
+If you have questions, bug reports, suggestions, etc. the author can be contacted at <peter@peterodding.com>. The latest version is available at <http://peterodding.com/code/vim/session/> and <http://github.com/xolox/vim-session>. If you like the script please vote for it on [Vim Online](http://www.vim.org/scripts/script.php?script_id=3150).
 
 ## License
 

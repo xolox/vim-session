@@ -353,23 +353,30 @@ function! session#close_cmd(bang, silent) abort " {{{2
   return 1
 endfunction
 
-function! session#restart_cmd(bang) abort " {{{2
-  let name = s:get_name('', 0)
-  if name == '' | let name = 'restart' | endif
-  execute 'SaveSession' . a:bang fnameescape(name)
-  let progname = shellescape(fnameescape(v:progname))
-  let servername = shellescape(fnameescape(name))
-  let command = progname . ' --servername ' . servername
-  let command .= ' -c ' . shellescape('OpenSession\! ' . fnameescape(name))
-  if has('win32') || has('win64')
-    execute '!start' command
+function! session#restart_cmd(bang, args) abort " {{{2
+  if !has('gui_running')
+    let msg = "%s: The :RestartVim command only works in graphical Vim!"
+    call xolox#warning(msg, s:script)
   else
-    let term = shellescape(fnameescape($TERM))
-    let encoding = "--cmd ':set enc=" . escape(&enc, '\ ') . "'"
-    silent execute '! TERM=' . term command encoding '&'
+    let name = s:get_name('', 0)
+    if name == '' | let name = 'restart' | endif
+    execute 'SaveSession' . a:bang fnameescape(name)
+    let progname = shellescape(fnameescape(v:progname))
+    let command = progname . ' -c ' . shellescape('OpenSession\! ' . fnameescape(name))
+    let args = matchstr(a:args, '^\s*|\s*\zs.\+$')
+    if !empty(args)
+      let command .= ' -c ' . shellescape(args)
+    endif
+    if has('win32') || has('win64')
+      execute '!start' command
+    else
+      let term = shellescape(fnameescape($TERM))
+      let encoding = "--cmd ':set enc=" . escape(&enc, '\ ') . "'"
+      silent execute '! TERM=' . term command encoding '&'
+    endif
+    execute 'CloseSession' . a:bang
+    quitall
   endif
-  execute 'CloseSession' . a:bang
-  quitall
 endfunction
 
 " Miscellaneous functions. {{{1
