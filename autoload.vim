@@ -272,6 +272,7 @@ endfunction
 function! session#open_cmd(name, bang) abort " {{{2
   let name = s:select_name(s:unescape(a:name), 'restore')
   if name != ''
+    let starttime = xolox#timer#start()
     let path = session#name_to_path(name)
     if !filereadable(path)
       let msg = "%s: The %s session at %s doesn't exist!"
@@ -281,6 +282,7 @@ function! session#open_cmd(name, bang) abort " {{{2
       call s:lock_session(path)
       execute 'source' fnameescape(path)
       unlet! s:session_is_dirty
+      call xolox#timer#stop("%s: Opened %s session in %s.", s:script, string(name), starttime)
       call xolox#message("%s: Opened %s session from %s.", s:script, string(name), fnamemodify(path, ':~'))
     endif
   endif
@@ -301,6 +303,7 @@ function! session#view_cmd(name) abort " {{{2
 endfunction
 
 function! session#save_cmd(name, bang) abort " {{{2
+  let starttime = xolox#timer#start()
   let name = s:get_name(s:unescape(a:name), 1)
   let path = session#name_to_path(name)
   let friendly_path = fnamemodify(path, ':~')
@@ -314,6 +317,7 @@ function! session#save_cmd(name, bang) abort " {{{2
       let msg = "%s: Failed to save %s session to %s!"
       call xolox#warning(msg, s:script, string(name), friendly_path)
     else
+      call xolox#timer#stop("%s: Saved %s session in %s.", s:script, string(name), starttime)
       let msg = "%s: Saved %s session to %s."
       call xolox#message(msg, s:script, string(name), friendly_path)
       let v:this_session = path
