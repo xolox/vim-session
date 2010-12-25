@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: December 20, 2010
+" Last Change: December 25, 2010
 " URL: http://peterodding.com/code/vim/session/
 
 let s:script = expand('<sfile>:p:~')
@@ -113,6 +113,7 @@ function! session#save_special_windows(session)
   if exists('g:loaded_nerd_tree') && match(a:session, '\<NERD_tree_\d\+$') >= 0
           \ || exists(':Project') == 2 && exists('g:proj_running')
           \ || exists('g:loaded_netrw') && match(a:session, '^file sftp://')
+          \ || !empty(getqflist())
     let tabpage = tabpagenr()
     let window = winnr()
     try
@@ -147,17 +148,24 @@ function! s:check_special_window(session)
   elseif &filetype == 'netrw'
     let command = 'edit'
     let argument = bufname('%')
+  elseif &buftype == 'quickfix'
+    let command = 'cwindow'
+    let argument = ''
   endif
   if exists('command')
     call s:jump_to_window(a:session, tabpagenr(), winnr())
     if command != 'edit'
       call add(a:session, 'bwipeout')
     endif
-    let argument = fnamemodify(argument, ':~')
-    if &sessionoptions =~ '\<slash\>'
-      let argument = substitute(argument, '\', '/', 'g')
+    if argument == ''
+      call add(a:session, command)
+    else
+      let argument = fnamemodify(argument, ':~')
+      if &sessionoptions =~ '\<slash\>'
+        let argument = substitute(argument, '\', '/', 'g')
+      endif
+      call add(a:session, command . ' ' . fnameescape(argument))
     endif
-    call add(a:session, command . ' ' . fnameescape(argument))
     return 1
   endif
 endfunction
