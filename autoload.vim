@@ -110,24 +110,19 @@ endfunction
 " Integration between :mksession, :NERDTree and :Project. {{{3
 
 function! session#save_special_windows(session)
-  if exists('g:loaded_nerd_tree') && match(a:session, '\<NERD_tree_\d\+$') >= 0
-          \ || exists(':Project') == 2 && exists('g:proj_running')
-          \ || exists('g:loaded_netrw') && match(a:session, '^file sftp://')
-          \ || !empty(getqflist())
-    let tabpage = tabpagenr()
-    let window = winnr()
-    try
-      if &sessionoptions =~ '\<tabpages\>'
-        tabdo call s:check_special_tabpage(a:session)
-      else
-        call s:check_special_tabpage(a:session)
-      endif
-    finally
-      execute 'tabnext' tabpage
-      execute window . 'wincmd w'
-      call s:jump_to_window(a:session, tabpage, window)
-    endtry
-  endif
+  let tabpage = tabpagenr()
+  let window = winnr()
+  try
+    if &sessionoptions =~ '\<tabpages\>'
+      tabdo call s:check_special_tabpage(a:session)
+    else
+      call s:check_special_tabpage(a:session)
+    endif
+  finally
+    execute 'tabnext' tabpage
+    execute window . 'wincmd w'
+    call s:jump_to_window(a:session, tabpage, window)
+  endtry
 endfunction
 
 function! s:check_special_tabpage(session)
