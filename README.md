@@ -28,7 +28,7 @@ Unzip the most recent [ZIP archive](http://peterodding.com/code/vim/downloads/se
 
 This command saves your current editing session just like Vim's built-in [:mksession][mksession] command does. The difference is that you don't pass a full pathname as argument but just a name, any name really. Press `<Tab>` to get completion of existing session names. If you don't provide an argument the name 'default' is used, unless an existing session is open in which case the name of that session will be used.
 
-If the session you're trying to save is already active in another Vim instance you'll get a warning and nothing happens. You can use use a bang (!) as in `:SaveSession! ...` to ignore the warning and save the session anyway.
+If the session you're trying to save is already active in another Vim instance you'll get a warning and nothing happens. You can use a bang (!) as in `:SaveSession! ...` to ignore the warning and save the session anyway.
 
 As mentioned earlier your session script will be saved in the directory pointed to by `g:session_directory`.
 
@@ -44,7 +44,7 @@ This command is basically [:source][source] in disguise, but it supports tab com
     
     Type number and <Enter> or click with mouse (empty cancels):
 
-If the session you're trying to open is already active in another Vim instance you'll get a warning and nothing happens. You can use use a bang (!) as in `:OpenSession! ...` to ignore the warning and open the session anyway.
+If the session you're trying to open is already active in another Vim instance you'll get a warning and nothing happens. You can use a bang (!) as in `:OpenSession! ...` to ignore the warning and open the session anyway.
 
 Note also that when you use a bang (!) right after the command name existing tab pages and windows are closed, discarding any changes in the files you were editing!
 
@@ -62,7 +62,7 @@ Note that when you use a bang (!) right after the command name existing tab page
 
 ### The `:DeleteSession` command
 
-Using this command you can delete any of the sessions created by this plug-in. If the session you are trying to delete is currently active in another Vim instance you'll get a warning and nothing happens. You can use use a bang (!) as in `:DeleteSession! ...` to ignore the warning and delete the session anyway.
+Using this command you can delete any of the sessions created by this plug-in. If the session you are trying to delete is currently active in another Vim instance you'll get a warning and nothing happens. You can use a bang (!) as in `:DeleteSession! ...` to ignore the warning and delete the session anyway.
 
 Note that this command only deletes the session script, it leaves your open tab pages and windows exactly as they were.
 
