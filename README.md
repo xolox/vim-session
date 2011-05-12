@@ -20,7 +20,7 @@ The session scripts created by this plug-in are stored in the directory `~/.vim/
 
 ## Installation
 
-Unzip the most recent [ZIP archive](http://peterodding.com/code/vim/downloads/session) file inside your Vim profile directory (usually this is `~/.vim` on UNIX and `%USERPROFILE%\vimfiles` on Windows), restart Vim and execute the command `:helptags ~/.vim/doc` (use `:helptags ~\vimfiles\doc` instead on Windows). After you restart Vim the following commands will be available to you:
+Unzip the most recent [ZIP archive](http://peterodding.com/code/vim/downloads/session.zip) file inside your Vim profile directory (usually this is `~/.vim` on UNIX and `%USERPROFILE%\vimfiles` on Windows), restart Vim and execute the command `:helptags ~/.vim/doc` (use `:helptags ~\vimfiles\doc` instead on Windows). After you restart Vim the following commands will be available to you:
 
 ## Commands
 
