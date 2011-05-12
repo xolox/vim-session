@@ -274,7 +274,9 @@ function! xolox#session#open_cmd(name, bang) abort " {{{2
       let msg = "%s: The %s session at %s doesn't exist!"
       call xolox#misc#msg#warn(msg, s:script, string(name), fnamemodify(path, ':~'))
     elseif a:bang == '!' || !s:session_is_locked(path, 'OpenSession')
+      let oldcwd = getcwd()
       call xolox#session#close_cmd(a:bang, 1)
+      let s:oldcwd = oldcwd
       call s:lock_session(path)
       execute 'source' fnameescape(path)
       unlet! s:session_is_dirty
@@ -359,6 +361,10 @@ function! xolox#session#close_cmd(bang, silent) abort " {{{2
   endif
   execute 'enew' . a:bang
   unlet! s:session_is_dirty
+  if exists('s:oldcwd')
+    execute 'cd' fnameescape(s:oldcwd)
+    unlet s:oldcwd
+  endif
   if v:this_session == ''
     if !a:silent
       let msg = "%s: Closed session."
