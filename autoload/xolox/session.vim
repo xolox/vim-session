@@ -353,18 +353,29 @@ function! xolox#session#close_cmd(bang, silent) abort " {{{2
     endif
     call s:unlock_session(xolox#session#name_to_path(name))
   endif
+  " Close al but the current tab page.
   if tabpagenr('$') > 1
     execute 'tabonly' . a:bang
   endif
+  " Close all but the current window.
   if winnr('$') > 1
     execute 'only' . a:bang
   endif
+  " Start editing a new, empty buffer.
   execute 'enew' . a:bang
-  unlet! s:session_is_dirty
+  " Close all but the current buffer.
+  let bufnr_keep = bufnr('%')
+  for bufnr in range(1, bufnr('$'))
+    if buflisted(bufnr) && bufnr != bufnr_keep
+      execute 'silent bdelete' bufnr
+    endif
+  endfor
+  " Restore working directory from before :OpenSession.
   if exists('s:oldcwd')
     execute 'cd' fnameescape(s:oldcwd)
     unlet s:oldcwd
   endif
+  unlet! s:session_is_dirty
   if v:this_session == ''
     if !a:silent
       let msg = "%s: Closed session."
