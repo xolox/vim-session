@@ -46,6 +46,7 @@ function! xolox#session#save_colors(commands) " {{{2
   if exists('g:colors_name') && type(g:colors_name) == type('') && g:colors_name != ''
     let template = "if !exists('g:colors_name') || g:colors_name != %s | colorscheme %s | endif"
     call add(a:commands, printf(template, string(g:colors_name), fnameescape(g:colors_name)))
+    call add(a:commands, 'set background=' . &background)
   endif
 endfunction
 
