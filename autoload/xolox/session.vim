@@ -109,9 +109,8 @@ function! xolox#session#save_state(commands) " {{{2
   endtry
 endfunction
 
-" Integration between :mksession, :NERDTree and :Project. {{{3
-
-function! xolox#session#save_special_windows(session)
+function! xolox#session#save_special_windows(session) " {{{2
+  " Integration between :mksession, :NERDTree and :Project.
   let tabpage = tabpagenr()
   let window = winnr()
   try
@@ -172,6 +171,15 @@ function! s:jump_to_window(session, tabpage, window)
     call add(a:session, 'tabnext ' . a:tabpage)
   endif
   call add(a:session, a:window . 'wincmd w')
+endfunction
+
+function! s:nerdtree_persist()
+  " Remember current working directory and whether NERDTree is loaded.
+  if exists('b:NERDTreeRoot')
+    return 'NERDTree ' . fnameescape(b:NERDTreeRoot.path.str()) . ' | only'
+  else
+    return 'cd ' . fnameescape(getcwd())
+  endif
 endfunction
 
 " Automatic commands to manage the default session. {{{1
@@ -277,7 +285,7 @@ function! xolox#session#open_cmd(name, bang) abort " {{{2
       let msg = "%s: The %s session at %s doesn't exist!"
       call xolox#misc#msg#warn(msg, s:script, string(name), fnamemodify(path, ':~'))
     elseif a:bang == '!' || !s:session_is_locked(path, 'OpenSession')
-      let oldcwd = getcwd()
+      let oldcwd = s:nerdtree_persist()
       call xolox#session#close_cmd(a:bang, 1)
       let s:oldcwd = oldcwd
       call s:lock_session(path)
@@ -375,9 +383,9 @@ function! xolox#session#close_cmd(bang, silent) abort " {{{2
       execute 'silent bdelete' bufnr
     endif
   endfor
-  " Restore working directory from before :OpenSession.
+  " Restore working directory (and NERDTree?) from before :OpenSession.
   if exists('s:oldcwd')
-    execute 'cd' fnameescape(s:oldcwd)
+    execute s:oldcwd
     unlet s:oldcwd
   endif
   unlet! s:session_is_dirty
