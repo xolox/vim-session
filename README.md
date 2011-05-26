@@ -74,7 +74,7 @@ Execute this command to view the Vim script generated for a session. This comman
 
 ### The `sessionoptions` setting
 
-Because the `session.vim` plug-in uses Vim's [:mksession][mksession] command you can change how it works by setting ['sessionoptions'](http://vimdoc.sourceforge.net/htmldoc/options.html#%27sessionoptions%27) in your [vimrc script] [vimrc]:
+Because the `session.vim` plug-in uses Vim's [:mksession][mksession] command you can change how it works by setting ['sessionoptions'](http://vimdoc.sourceforge.net/htmldoc/options.html#%27sessionoptions%27) in your [vimrc script] [vimrc], for example:
 
     " If you only want to save the current tab page:
     set sessionoptions-=tabpages
@@ -94,6 +94,10 @@ By default this option is set to false (0). This means that when you start Vim w
 
 By default this option is set to false (0). When you've opened a session and you quit Vim, the `session.vim` plug-in will ask whether you want to save the changes to your session. Set this option to true (1) to always automatically save open sessions when you quit Vim.
 
+### The `g:session_default_to_last` option
+
+By default this option is set to false (0). When you set this option to true (1) and you start Vim, the session plug-in will open your last used session instead of the default session. Note that the session plug-in will still show you the dialog asking whether you want to restore the last used session. To get rid of the dialog you have to set `g:session_autoload` to true (1).
+
 ### The `g:loaded_session` option
 
 This variable isn't really an option but if you want to avoid loading the `session.vim` plug-in you can set this variable to any value in your [vimrc script] [vimrc]:
@@ -105,8 +109,8 @@ This variable isn't really an option but if you want to avoid loading the `sessi
 Vim's [:mksession][mksession] command isn't fully compatible with plug-ins that create buffers with generated content and because of this `session.vim` includes specific workarounds for such plug-ins:
 
  * [NERD tree](http://www.vim.org/scripts/script.php?script_id=1658) and [Project](http://www.vim.org/scripts/script.php?script_id=69) windows are supported;
- * When [shell.vim](http://peterodding.com/code/vim/shell/) is installed Vim's full-screen state is persisted.
- * The [netrw](http://vimdoc.sourceforge.net/htmldoc/pi_netrw.html#netrw-start) and [taglist.vim](http://www.vim.org/scripts/script.php?script_id=273) plug-ins support sessions out of the box;
+ * When [shell.vim](http://peterodding.com/code/vim/shell/) is installed Vim's full-screen state is persisted;
+ * The [netrw](http://vimdoc.sourceforge.net/htmldoc/pi_netrw.html#netrw-start) and [taglist.vim](http://www.vim.org/scripts/script.php?script_id=273) plug-ins support sessions out of the box.
 
 If your favorite plug-in doesn't work with `session.vim` drop me a mail and I'll see what I can do. Please include a link to the plug-in in your e-mail so that I can install and test the plug-in.
 

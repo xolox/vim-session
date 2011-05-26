@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: May 12, 2011
+" Last Change: May 26, 2011
 " URL: http://peterodding.com/code/vim/session/
 
 let s:script = expand('<sfile>:p:~')
@@ -187,12 +187,14 @@ function! xolox#session#auto_load() " {{{2
         endif
       endfor
     endif
-    " Check whether the default session should be loaded.
-    let path = xolox#session#name_to_path('default')
+    " Default to the last used session or the session named `default'?
+    let session = s:last_session_recall()
+    let path = xolox#session#name_to_path(session)
     if filereadable(path) && !s:session_is_locked(path)
-      let msg = "Do you want to restore your default editing session?"
-      if s:prompt(msg, 'g:session_autoload')
-        OpenSession default
+      let msg = "Do you want to restore your %s editing session?"
+      let label = session != 'default' ? 'last used' : 'default'
+      if s:prompt(printf(msg, label), 'g:session_autoload')
+        execute 'OpenSession' fnameescape(session)
       endif
     endif
   endif
@@ -280,6 +282,7 @@ function! xolox#session#open_cmd(name, bang) abort " {{{2
       call s:lock_session(path)
       execute 'source' fnameescape(path)
       unlet! s:session_is_dirty
+      call s:last_session_persist(name)
       call xolox#misc#timer#stop("%s: Opened %s session in %s.", s:script, string(name), starttime)
       call xolox#misc#msg#info("%s: Opened %s session from %s.", s:script, string(name), fnamemodify(path, ':~'))
     endif
@@ -315,6 +318,7 @@ function! xolox#session#save_cmd(name, bang) abort " {{{2
       let msg = "%s: Failed to save %s session to %s!"
       call xolox#misc#msg#warn(msg, s:script, string(name), friendly_path)
     else
+      call s:last_session_persist(name)
       call xolox#misc#timer#stop("%s: Saved %s session in %s.", s:script, string(name), starttime)
       call xolox#misc#msg#info("%s: Saved %s session to %s.", s:script, string(name), friendly_path)
       let v:this_session = path
@@ -475,6 +479,31 @@ endfunction
 function! xolox#session#complete_names(arg, line, pos) " {{{2
   let names = filter(xolox#session#get_names(), 'v:val =~ a:arg')
   return map(names, 'fnameescape(v:val)')
+endfunction
+
+" Default to last used session: {{{2
+
+function! s:last_session_file()
+  let directory = xolox#misc#path#absolute(g:session_directory)
+  return xolox#misc#path#merge(directory, 'last-session.txt')
+endfunction
+
+function! s:last_session_persist(name)
+  if g:session_default_to_last
+    if writefile([a:name], s:last_session_file()) != 0
+      call xolox#misc#msg#warn("Failed to persist name of last used session!")
+    endif
+  endif
+endfunction
+
+function! s:last_session_recall()
+  if g:session_default_to_last
+    let fname = s:last_session_file()
+    if filereadable(fname)
+      return readfile(fname)[0]
+    endif
+  endif
+  return 'default'
 endfunction
 
 " Lock file management: {{{2
