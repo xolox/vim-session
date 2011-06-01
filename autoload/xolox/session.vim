@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: May 26, 2011
+" Last Change: June 1, 2011
 " URL: http://peterodding.com/code/vim/session/
 
 let s:script = expand('<sfile>:p:~')
@@ -185,6 +185,9 @@ endfunction
 " Automatic commands to manage the default session. {{{1
 
 function! xolox#session#auto_load() " {{{2
+  if g:session_autoload == 'no'
+    return
+  endif
   " Check that the user has started Vim without editing any files.
   if bufnr('$') == 1 && bufname('%') == '' && !&mod && getline(1, '$') == ['']
     " Check whether a session matching the user-specified server name exists.
@@ -210,7 +213,7 @@ function! xolox#session#auto_load() " {{{2
 endfunction
 
 function! xolox#session#auto_save() " {{{2
-  if !v:dying
+  if !v:dying && g:session_autosave != 'no'
     let name = s:get_name('', 0)
     if name != '' && exists('s:session_is_dirty')
       let msg = "Do you want to save your editing session before quitting Vim?"
@@ -264,10 +267,11 @@ function! xolox#session#auto_dirty_check() " {{{2
 endfunction
 
 function! s:prompt(msg, var) " {{{2
-  if eval(a:var)
+  let value = eval(a:var)
+  if value == 'yes' || (type(value) != type('') && value)
     return 1
   else
-    let format = "%s Note that you can permanently disable this dialog by adding the following line to your %s script:\n\n\t:let %s = 1"
+    let format = "%s Note that you can permanently disable this dialog by adding the following line to your %s script:\n\n\t:let %s = 'no'"
     let vimrc = xolox#misc#os#is_win() ? '~\_vimrc' : '~/.vimrc'
     let prompt = printf(format, a:msg, vimrc, a:var)
     return confirm(prompt, "&Yes\n&No", 1, 'Question') == 1

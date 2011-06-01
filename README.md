@@ -88,15 +88,15 @@ This option controls the location of your session scripts. Its default value is 
 
 ### The `g:session_autoload` option
 
-By default this option is set to false (0). This means that when you start Vim without opening any files and the `default` session script exists, the `session.vim` plug-in will ask whether you want to restore your default session. When you set this option to true (1) and you start Vim without opening any files the default session will be restored without a prompt.
+By default this option is set to `'prompt'`. This means that when you start Vim without opening any files and the `default` session script exists, the session plug-in will ask whether you want to restore your default session. When you set this option to `'yes'` and you start Vim without opening any files the default session will be restored without a prompt. To completely disable automatic loading you can set this option to `'no'`.
 
 ### The `g:session_autosave` option
 
-By default this option is set to false (0). When you've opened a session and you quit Vim, the `session.vim` plug-in will ask whether you want to save the changes to your session. Set this option to true (1) to always automatically save open sessions when you quit Vim.
+By default this option is set to `'prompt'`. When you've opened a session and you quit Vim, the session plug-in will ask whether you want to save the changes to your session. Set this option to `'yes'` to always automatically save open sessions when you quit Vim. To completely disable automatic saving you can set this option to `'no'`.
 
 ### The `g:session_default_to_last` option
 
-By default this option is set to false (0). When you set this option to true (1) and you start Vim, the session plug-in will open your last used session instead of the default session. Note that the session plug-in will still show you the dialog asking whether you want to restore the last used session. To get rid of the dialog you have to set `g:session_autoload` to true (1).
+By default this option is set to false (0). When you set this option to true (1) and you start Vim, the session plug-in will open your last used session instead of the default session. Note that the session plug-in will still show you the dialog asking whether you want to restore the last used session. To get rid of the dialog you have to set `g:session_autoload` to `'yes'`.
 
 ### The `g:loaded_session` option
 
