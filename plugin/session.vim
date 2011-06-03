@@ -1,8 +1,8 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: June 1, 2011
+" Last Change: June 4, 2011
 " URL: http://peterodding.com/code/vim/session/
-" Version: 1.4.5
+" Version: 1.4.6
 
 " Support for automatic update using the GLVS plug-in.
 " GetLatestVimScripts: 3150 1 :AutoInstall: session.zip

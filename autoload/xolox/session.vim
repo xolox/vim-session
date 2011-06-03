@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: June 1, 2011
+" Last Change: June 4, 2011
 " URL: http://peterodding.com/code/vim/session/
 
 let s:script = expand('<sfile>:p:~')
@@ -19,7 +19,7 @@ function! xolox#session#save_session(commands, filename) " {{{2
   call add(a:commands, '" Open this file in Vim and run :source % to restore your session.')
   call add(a:commands, '')
   call add(a:commands, 'set guioptions=' . escape(&go, ' "\'))
-  call add(a:commands, 'set guifont=' . escape(&gfn, ' "\'))
+  call add(a:commands, 'silent! set guifont=' . escape(&gfn, ' "\'))
   call xolox#session#save_features(a:commands)
   call xolox#session#save_colors(a:commands)
   call xolox#session#save_qflist(a:commands)
