@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: June 4, 2011
+" Last Change: June 11, 2011
 " URL: http://peterodding.com/code/vim/session/
 
 let s:script = expand('<sfile>:p:~')
@@ -101,12 +101,21 @@ function! xolox#session#save_state(commands) " {{{2
       call remove(lines, -1)
     endif
     call xolox#session#save_special_windows(lines)
-    call extend(a:commands, lines)
+    call extend(a:commands, map(lines, 's:state_filter(v:val)'))
     return 1
   finally
     let &sessionoptions = ssop_save
     call delete(tempfile)
   endtry
+endfunction
+
+function! s:state_filter(line)
+  if a:line == 'normal zo'
+    " Silence "E490: No fold found" errors.
+    return 'silent! normal zo'
+  else
+    return a:line
+  endif
 endfunction
 
 function! xolox#session#save_special_windows(session) " {{{2
