@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: June 11, 2011
+" Last Change: June 13, 2011
 " URL: http://peterodding.com/code/vim/session/
 
 let s:script = expand('<sfile>:p:~')
@@ -439,7 +439,7 @@ function! xolox#session#restart_cmd(bang, args) abort " {{{2
       silent execute '! TERM=' . term command encoding '&'
     endif
     execute 'CloseSession' . a:bang
-    quitall
+    silent quitall
   endif
 endfunction
 
