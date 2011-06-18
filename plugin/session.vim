@@ -1,8 +1,7 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: June 13, 2011
+" Last Change: June 18, 2011
 " URL: http://peterodding.com/code/vim/session/
-" Version: 1.4.8
 
 " Support for automatic update using the GLVS plug-in.
 " GetLatestVimScripts: 3150 1 :AutoInstall: session.zip
@@ -11,6 +10,8 @@
 if &cp || exists('g:loaded_session')
   finish
 endif
+
+let g:session_version = '1.4.9'
 
 " When you start Vim without opening any files the plug-in will prompt you
 " whether you want to load the default session. Other supported values for
@@ -50,8 +51,8 @@ if !isdirectory(s:directory)
   call mkdir(s:directory, 'p')
 endif
 if filewritable(s:directory) != 2
-  let s:msg = "session.vim: The sessions directory %s isn't writable!"
-  call xolox#misc#msg#warn(s:msg, string(s:directory))
+  let s:msg = "session.vim %s: The sessions directory %s isn't writable!"
+  call xolox#misc#msg#warn(s:msg, g:session_version, string(s:directory))
   unlet s:msg
   finish
 endif
