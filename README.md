@@ -125,7 +125,7 @@ If you have questions, bug reports, suggestions, etc. the author can be contacte
 ## License
 
 This software is licensed under the [MIT license](http://en.wikipedia.org/wiki/MIT_License).  
-© 2010 Peter Odding &lt;<peter@peterodding.com>&gt;.
+© 2011 Peter Odding &lt;<peter@peterodding.com>&gt;.
 
 ## Sample session script
 

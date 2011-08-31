@@ -241,7 +241,7 @@ If you like the script please vote for it on Vim Online [10].
                                                                *session-license*
 License ~
 
-This software is licensed under the MIT license [11]. Copyright 2010 Peter
+This software is licensed under the MIT license [11]. Copyright 2011 Peter
 Odding <peter@peterodding.com>.
 
 ===============================================================================
