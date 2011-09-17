@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: September 4, 2011
+" Last Change: September 17, 2011
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.4.12'
+let g:xolox#session#version = '1.4.13'
 
 " Public API for session persistence. {{{1
 
@@ -45,8 +45,8 @@ endfunction
 function! xolox#session#save_colors(commands) " {{{2
   if exists('g:colors_name') && type(g:colors_name) == type('') && g:colors_name != ''
     let template = "if !exists('g:colors_name') || g:colors_name != %s | colorscheme %s | endif"
-    call add(a:commands, printf(template, string(g:colors_name), fnameescape(g:colors_name)))
     call add(a:commands, 'set background=' . &background)
+    call add(a:commands, printf(template, string(g:colors_name), fnameescape(g:colors_name)))
   endif
 endfunction
 
