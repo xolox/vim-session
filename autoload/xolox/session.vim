@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: September 17, 2011
+" Last Change: September 18, 2011
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.4.13'
+let g:xolox#session#version = '1.4.14'
 
 " Public API for session persistence. {{{1
 
@@ -113,6 +113,10 @@ function! s:state_filter(line)
   if a:line == 'normal zo'
     " Silence "E490: No fold found" errors.
     return 'silent! normal zo'
+  elseif a:line =~ '^file .\{-}[\\/]NERD_tree_\d$'
+    " Silence "E95: Buffer with this name already exists" when restoring
+    " mirrored NERDTree windows.
+    return 'silent! ' . a:line
   else
     return a:line
   endif
@@ -122,6 +126,7 @@ function! xolox#session#save_special_windows(session) " {{{2
   " Integration between :mksession, :NERDTree and :Project.
   let tabpage = tabpagenr()
   let window = winnr()
+  let s:nerdtrees = {}
   try
     if &sessionoptions =~ '\<tabpages\>'
       tabdo call s:check_special_tabpage(a:session)
@@ -129,6 +134,7 @@ function! xolox#session#save_special_windows(session) " {{{2
       call s:check_special_tabpage(a:session)
     endif
   finally
+    unlet s:nerdtrees
     execute 'tabnext' tabpage
     execute window . 'wincmd w'
     call s:jump_to_window(a:session, tabpage, window)
@@ -145,8 +151,14 @@ endfunction
 
 function! s:check_special_window(session)
   if exists('b:NERDTreeRoot')
-    let command = 'NERDTree'
-    let argument = b:NERDTreeRoot.path.str()
+    if !has_key(s:nerdtrees, bufnr('%'))
+      let command = 'NERDTree'
+      let argument = b:NERDTreeRoot.path.str()
+      let s:nerdtrees[bufnr('%')] = 1
+    else
+      let command = 'NERDTreeMirror'
+      let argument = ''
+    endif
   elseif exists('g:proj_running') && g:proj_running == bufnr('%')
     let command = 'Project'
     let argument = expand('%:p')
