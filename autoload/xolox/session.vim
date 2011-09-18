@@ -3,7 +3,7 @@
 " Last Change: September 18, 2011
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.4.14'
+let g:xolox#session#version = '1.4.15'
 
 " Public API for session persistence. {{{1
 
@@ -116,7 +116,7 @@ function! s:state_filter(line)
   elseif a:line =~ '^file .\{-}[\\/]NERD_tree_\d$'
     " Silence "E95: Buffer with this name already exists" when restoring
     " mirrored NERDTree windows.
-    return 'silent! ' . a:line
+    return '" ' . a:line
   else
     return a:line
   endif
@@ -171,9 +171,7 @@ function! s:check_special_window(session)
   endif
   if exists('command')
     call s:jump_to_window(a:session, tabpagenr(), winnr())
-    if command != 'edit'
-      call add(a:session, 'bwipeout')
-    endif
+    call add(a:session, 'let s:bufnr = bufnr("%")')
     if argument == ''
       call add(a:session, command)
     else
@@ -183,6 +181,7 @@ function! s:check_special_window(session)
       endif
       call add(a:session, command . ' ' . fnameescape(argument))
     endif
+    call add(a:session, 'execute "bwipeout" s:bufnr')
     return 1
   endif
 endfunction
