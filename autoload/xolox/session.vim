@@ -3,7 +3,7 @@
 " Last Change: September 18, 2011
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.4.15'
+let g:xolox#session#version = '1.4.16'
 
 " Public API for session persistence. {{{1
 
@@ -43,9 +43,11 @@ function! xolox#session#save_features(commands) " {{{2
 endfunction
 
 function! xolox#session#save_colors(commands) " {{{2
+  call add(a:commands, 'if &background != ' . string(&background))
+  call add(a:commands, "\tset background=" . &background)
+  call add(a:commands, 'endif')
   if exists('g:colors_name') && type(g:colors_name) == type('') && g:colors_name != ''
     let template = "if !exists('g:colors_name') || g:colors_name != %s | colorscheme %s | endif"
-    call add(a:commands, 'set background=' . &background)
     call add(a:commands, printf(template, string(g:colors_name), fnameescape(g:colors_name)))
   endif
 endfunction
