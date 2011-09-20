@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: September 18, 2011
+" Last Change: September 20, 2011
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.4.16'
+let g:xolox#session#version = '1.4.17'
 
 " Public API for session persistence. {{{1
 
@@ -115,7 +115,7 @@ function! s:state_filter(line)
   if a:line == 'normal zo'
     " Silence "E490: No fold found" errors.
     return 'silent! normal zo'
-  elseif a:line =~ '^file .\{-}[\\/]NERD_tree_\d$'
+  elseif a:line =~ '^file .\{-}\<NERD_tree_\d\+$'
     " Silence "E95: Buffer with this name already exists" when restoring
     " mirrored NERDTree windows.
     return '" ' . a:line
