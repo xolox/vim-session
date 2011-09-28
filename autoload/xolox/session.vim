@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: September 26, 2011
+" Last Change: September 28, 2011
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.4.18'
+let g:xolox#session#version = '1.4.19'
 
 " Public API for session persistence. {{{1
 
@@ -259,9 +259,10 @@ function! xolox#session#auto_unlock() " {{{2
 endfunction
 
 function! xolox#session#auto_dirty_check() " {{{2
-  " This function is called each time a WinEnter event fires to detect when
-  " the current tab page is changed in some way. This enables the plug-in to
-  " not bother with the auto-save dialog when the session hasn't changed.
+  " This function is called each time a BufEnter event fires to detect when
+  " the current tab page (or the buffer list) is changed in some way. This
+  " enables the plug-in to not bother with the auto-save dialog when the
+  " session hasn't changed.
   if v:this_session == ''
     " Don't waste CPU time when no session is loaded.
     return
@@ -272,6 +273,13 @@ function! xolox#session#auto_dirty_check() " {{{2
     let last_tabpage = tabpagenr('$')
     call filter(s:cached_layouts, 'v:key <= last_tabpage')
   endif
+  " Check the buffer list.
+  let all_buffers = s:serialize_buffer_list()
+  if all_buffers != get(s:cached_layouts, 0, '')
+    let s:session_is_dirty = 1
+  endif
+  let s:cached_layouts[0] = all_buffers
+  " Check the layout of the current tab page.
   let tabpagenr = tabpagenr()
   let keys = ['tabpage:' . tabpagenr]
   let buflist = tabpagebuflist()
@@ -281,11 +289,32 @@ function! xolox#session#auto_dirty_check() " {{{2
           \ winwidth(winnr), winheight(winnr), buflist[winnr - 1]))
   endfor
   let layout = join(keys, "\n")
-  let cached_layout = get(s:cached_layouts, tabpagenr, '')
-  if cached_layout != '' && cached_layout != layout
+  if layout != get(s:cached_layouts, tabpagenr, '')
     let s:session_is_dirty = 1
   endif
   let s:cached_layouts[tabpagenr] = layout
+endfunction
+
+function! s:serialize_buffer_list()
+  if &sessionoptions =~ '\<buffers\>'
+    return join(map(range(1, bufnr('$')), 's:serialize_buffer_state(v:val)'), "\n")
+  endif
+  return ''
+endfunction
+
+function! s:serialize_buffer_state(bufnr)
+  " TODO ssop =~ '\<blank\>' ?
+  let bufname = bufname(a:bufnr)
+  if bufname =~ '^NERD_tree_\d\+$'
+    " TODO I thought this would work, but somehow it doesn't?!
+    let root = getbufvar(a:bufnr, 'b:NERDTreeRoot')
+    if !empty(root)
+      let bufname = root.path.str() . '/' . bufname
+    endif
+  elseif bufname != ''
+    let bufname = fnamemodify(bufname, ':p')
+  endif
+  return a:bufnr . ':' . bufname
 endfunction
 
 function! s:prompt(msg, var) " {{{2

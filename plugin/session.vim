@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: August 31, 2011
+" Last Change: September 28, 2011
 " URL: http://peterodding.com/code/vim/session/
 
 " Support for automatic update using the GLVS plug-in.
@@ -62,7 +62,7 @@ augroup PluginSession
   au VimEnter * nested call xolox#session#auto_load()
   au VimLeavePre * call xolox#session#auto_save()
   au VimLeavePre * call xolox#session#auto_unlock()
-  au TabEnter,WinEnter * call xolox#session#auto_dirty_check()
+  au BufEnter * call xolox#session#auto_dirty_check()
 augroup END
 
 " Define commands that enable users to manage multiple named sessions.
