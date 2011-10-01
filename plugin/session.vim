@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: September 28, 2011
+" Last Change: October 1, 2011
 " URL: http://peterodding.com/code/vim/session/
 
 " Support for automatic update using the GLVS plug-in.
@@ -32,6 +32,12 @@ endif
 " session named `default'. Enable this option to use the second approach.
 if !exists('g:session_default_to_last')
   let g:session_default_to_last = 0
+endif
+
+" On UNIX the :RestartVim command will pass the following environment
+" variables on to the new instance of Vim.
+if !exists('g:session_restart_environment')
+  let g:session_restart_environment = ['TERM', 'VIM', 'VIMRUNTIME']
 endif
 
 " The default directory where session scripts are stored.

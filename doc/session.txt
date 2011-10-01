@@ -189,6 +189,14 @@ you the dialog asking whether you want to restore the last used session. To
 get rid of the dialog you have to set |g:session_autoload| to 'yes'.
 
 -------------------------------------------------------------------------------
+The *g:session_restart_environment* option
+
+This option is a list of environment variable names (without the dollar signs)
+that the |:RestartVim| command will pass on to the new instance of Vim. This
+option is only useful on UNIX. By default the three environment variables
+'$TERM', '$VIM' and '$VIMRUNTIME' are included in this list.
+
+-------------------------------------------------------------------------------
 The *g:loaded_session* option
 
 This variable isn't really an option but if you want to avoid loading the

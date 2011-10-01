@@ -98,6 +98,10 @@ By default this option is set to `'prompt'`. When you've opened a session and yo
 
 By default this option is set to false (0). When you set this option to true (1) and you start Vim, the session plug-in will open your last used session instead of the default session. Note that the session plug-in will still show you the dialog asking whether you want to restore the last used session. To get rid of the dialog you have to set `g:session_autoload` to `'yes'`.
 
+### The `g:session_restart_environment` option
+
+This option is a list of environment variable names (without the dollar signs) that the `:RestartVim` command will pass on to the new instance of Vim. This option is only useful on UNIX. By default the three environment variables `$TERM`, `$VIM` and `$VIMRUNTIME` are included in this list.
+
 ### The `g:loaded_session` option
 
 This variable isn't really an option but if you want to avoid loading the `session.vim` plug-in you can set this variable to any value in your [vimrc script] [vimrc]:

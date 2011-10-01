@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: September 28, 2011
+" Last Change: October 1, 2011
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.4.19'
+let g:xolox#session#version = '1.4.20'
 
 " Public API for session persistence. {{{1
 
@@ -259,6 +259,7 @@ function! xolox#session#auto_unlock() " {{{2
 endfunction
 
 function! xolox#session#auto_dirty_check() " {{{2
+  " TODO Why execute this on every buffer change?! Instead execute it only when we want to know whether the session is dirty!
   " This function is called each time a BufEnter event fires to detect when
   " the current tab page (or the buffer list) is changed in some way. This
   " enables the plug-in to not bother with the auto-save dialog when the
@@ -461,6 +462,7 @@ endfunction
 
 function! xolox#session#restart_cmd(bang, args) abort " {{{2
   if !has('gui_running')
+    " In console Vim we can't start a new Vim and kill the old one...
     let msg = "session.vim %s: The :RestartVim command only works in graphical Vim!"
     call xolox#misc#msg#warn(msg, g:xolox#session#version)
   else
@@ -473,12 +475,16 @@ function! xolox#session#restart_cmd(bang, args) abort " {{{2
     if !empty(args)
       let command .= ' -c ' . shellescape(args)
     endif
-    if has('win32') || has('win64')
+    if xolox#misc#os#is_win()
       execute '!start' command
     else
-      let term = shellescape(fnameescape($TERM))
-      let encoding = "--cmd ':set enc=" . escape(&enc, '\ ') . "'"
-      silent execute '! TERM=' . term command encoding '&'
+      let cmdline = []
+      for variable in g:session_restart_environment
+        call add(cmdline, variable . '=' . shellescape(fnameescape(eval('$' . variable))))
+      endfor
+      call add(cmdline, command)
+      call add(cmdline, printf("--cmd ':set enc=%s'", escape(&enc, '\ ')))
+      silent execute '!' join(cmdline, ' ') '&'
     endif
     execute 'CloseSession' . a:bang
     silent quitall
