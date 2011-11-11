@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: October 1, 2011
+" Last Change: November 11, 2011
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.4.20'
+let g:xolox#session#version = '1.4.21'
 
 " Public API for session persistence. {{{1
 
@@ -20,6 +20,7 @@ function! xolox#session#save_session(commands, filename) " {{{2
   call add(a:commands, '')
   call add(a:commands, 'set guioptions=' . escape(&go, ' "\'))
   call add(a:commands, 'silent! set guifont=' . escape(&gfn, ' "\'))
+  call xolox#session#save_globals(a:commands)
   call xolox#session#save_features(a:commands)
   call xolox#session#save_colors(a:commands)
   call xolox#session#save_qflist(a:commands)
@@ -27,6 +28,12 @@ function! xolox#session#save_session(commands, filename) " {{{2
   call xolox#session#save_fullscreen(a:commands)
   call add(a:commands, '')
   call add(a:commands, '" vim: ft=vim ro nowrap smc=128')
+endfunction
+
+function! xolox#session#save_globals(commands) " {{{2
+  for global in g:session_persist_globals
+    call add(a:commands, printf("let %s = %s", global, string(eval(global))))
+  endfor
 endfunction
 
 function! xolox#session#save_features(commands) " {{{2
