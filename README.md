@@ -113,7 +113,23 @@ The session.vim plug-in uses Vim's [:mksession] [mksession] command but it chang
 If you want the plug-in to persist specific global variables or options you can add their names to the list `g:session_persist_globals` in your [vimrc script] [vimrc]:
 
     " Persist the value of the global option 'makeprg'.
-    call add(g:session_persist_globals, '&makeprg')
+    let g:session_persist_globals = ['&makeprg']
+
+Because the [vimrc script] [vimrc] is loaded before the plug-in you have to define the list yourself. To persist multiple values:
+
+    " Persist all options related to :make.
+    let g:session_persist_globals = ['&makeprg', '&makeef']
+
+Here's how you persist global variables: (in this case the variables of the session plug-in itself :-)
+
+    " Persist the options of the session plug-in using the session plug-in...
+    let g:session_persist_globals = ['&sessionoptions']
+    call add(g:session_persist_globals, 'g:session_autoload')
+    call add(g:session_persist_globals, 'g:session_autosave')
+    call add(g:session_persist_globals, 'g:session_default_to_last')
+    call add(g:session_persist_globals, 'g:session_persist_globals')
+
+The example above doesn't persist the `g:session_directory` variable because this variable is used before loading a session script so persisting it inside the session script is pointless.
 
 ### The `g:session_restart_environment` option
 
