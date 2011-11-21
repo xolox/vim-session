@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: November 15, 2011
+" Last Change: November 21, 2011
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.4.22'
+let g:xolox#session#version = '1.4.23'
 
 " Public API for session persistence. {{{1
 
@@ -476,18 +476,18 @@ function! xolox#session#restart_cmd(bang, args) abort " {{{2
     let name = s:get_name('', 0)
     if name == '' | let name = 'restart' | endif
     execute 'SaveSession' . a:bang fnameescape(name)
-    let progname = shellescape(fnameescape(v:progname))
-    let command = progname . ' -c ' . shellescape('OpenSession\! ' . fnameescape(name))
+    let progname = xolox#misc#escape#shell(fnameescape(v:progname))
+    let command = progname . ' -c ' . xolox#misc#escape#shell('OpenSession\! ' . fnameescape(name))
     let args = matchstr(a:args, '^\s*|\s*\zs.\+$')
     if !empty(args)
-      let command .= ' -c ' . shellescape(args)
+      let command .= ' -c ' . xolox#misc#escape#shell(args)
     endif
     if xolox#misc#os#is_win()
       execute '!start' command
     else
       let cmdline = []
       for variable in g:session_restart_environment
-        call add(cmdline, variable . '=' . shellescape(fnameescape(eval('$' . variable))))
+        call add(cmdline, variable . '=' . xolox#misc#escape#shell(fnameescape(eval('$' . variable))))
       endfor
       call add(cmdline, command)
       call add(cmdline, printf("--cmd ':set enc=%s'", escape(&enc, '\ ')))
