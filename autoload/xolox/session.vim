@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: November 21, 2011
+" Last Change: November 26, 2011
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.4.23'
+let g:xolox#session#version = '1.4.24'
 
 " Public API for session persistence. {{{1
 
