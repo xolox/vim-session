@@ -135,6 +135,22 @@ The example above doesn't persist the `g:session_directory` variable because thi
 
 This option is a list of environment variable names (without the dollar signs) that the `:RestartVim` command will pass on to the new instance of Vim. This option is only useful on UNIX. By default the three environment variables `$TERM`, `$VIM` and `$VIMRUNTIME` are included in this list.
 
+### The `g:session_command_aliases` option
+
+The names of the commands defined by the session plug-in start with the action they perform, followed by the string 'Session'. Some people prefer it the other way around because they find it easier to remember and you can type `:Session<Tab>` to get completion of all available commands (actually this works with the other style as well if you type `:*Session<Tab>` but I digress). If you are one of those people you can enable this option in your [vimrc script] [vimrc] like this:
+
+    :let g:session_command_aliases = 1
+
+When this option is enabled the session plug-in will define the following command aliases:
+
+ * `SessionOpen` is an alias for `OpenSession`
+ * `SessionView` is an alias for `ViewSession`
+ * `SessionSave` is an alias for `SaveSession`
+ * `SessionDelete` is an alias for `DeleteSession`
+ * `SessionClose` is an alias for `CloseSession`
+
+The aliases support tab completion just like the real commands; they're exactly the same except for the names.
+
 ### The `g:loaded_session` option
 
 This variable isn't really an option but if you want to avoid loading the `session.vim` plug-in you can set this variable to any value in your [vimrc script] [vimrc]:
