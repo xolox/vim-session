@@ -282,15 +282,15 @@ script:
                                      *session-compatibility-with-other-plug-ins*
 Compatibility with other plug-ins ~
 
-Vim's |:mksession| command isn't fully compatible with plug-ins that create
+Vim's |:mksession| command isn't really compatible with plug-ins that create
 buffers with generated content and because of this 'session.vim' includes
 specific workarounds for such plug-ins:
 
- - NERD tree [6] and Project [7] windows are supported;
+ - BufExplorer [6], Project [7] and NERD tree [8] windows are supported;
 
- - When shell.vim [8] is installed Vim's full-screen state is persisted;
+ - When shell.vim [9] is installed Vim's full-screen state is persisted;
 
- - The netrw (see |netrw-start|) and taglist.vim [9] plug-ins support sessions
+ - The netrw (see |netrw-start|) and taglist.vim [10] plug-ins support sessions
    out of the box.
 
 If your favorite plug-in doesn't work with 'session.vim' drop me a mail and
@@ -316,13 +316,13 @@ Contact ~
 If you have questions, bug reports, suggestions, etc. the author can be
 contacted at peter@peterodding.com. The latest version is available at
 http://peterodding.com/code/vim/session/ and http://github.com/xolox/vim-session.
-If you like the script please vote for it on Vim Online [10].
+If you like the script please vote for it on Vim Online [11].
 
 ===============================================================================
                                                                *session-license*
 License ~
 
-This software is licensed under the MIT license [11]. Copyright 2011 Peter
+This software is licensed under the MIT license [12]. Copyright 2011 Peter
 Odding <peter@peterodding.com>.
 
 ===============================================================================
@@ -434,11 +434,12 @@ References ~
 [3] http://peterodding.com/code/vim/session/#sample_session_script
 [4] http://peterodding.com/code/vim/downloads/session.zip
 [5] http://peterodding.com/code/vim/reload/
-[6] http://www.vim.org/scripts/script.php?script_id=1658
+[6] http://www.vim.org/scripts/script.php?script_id=42
 [7] http://www.vim.org/scripts/script.php?script_id=69
-[8] http://peterodding.com/code/vim/shell/
-[9] http://www.vim.org/scripts/script.php?script_id=273
-[10] http://www.vim.org/scripts/script.php?script_id=3150
-[11] http://en.wikipedia.org/wiki/MIT_License
+[8] http://www.vim.org/scripts/script.php?script_id=1658
+[9] http://peterodding.com/code/vim/shell/
+[10] http://www.vim.org/scripts/script.php?script_id=273
+[11] http://www.vim.org/scripts/script.php?script_id=3150
+[12] http://en.wikipedia.org/wiki/MIT_License
 
 vim: ft=help

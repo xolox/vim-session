@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: December 11, 2011
+" Last Change: January 15, 2012
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.4.25'
+let g:xolox#session#version = '1.5'
 
 " Public API for session persistence. {{{1
 
@@ -126,6 +126,8 @@ function! s:state_filter(line)
     " Silence "E95: Buffer with this name already exists" when restoring
     " mirrored NERDTree windows.
     return '" ' . a:line
+  elseif a:line =~ '^file .\{-}\[BufExplorer\]$'
+    return '" ' . a:line
   else
     return a:line
   endif
@@ -168,6 +170,9 @@ function! s:check_special_window(session)
       let command = 'NERDTreeMirror'
       let argument = ''
     endif
+  elseif expand('%:t') == '[BufExplorer]'
+    let command = 'BufExplorer'
+    let argument = ''
   elseif exists('g:proj_running') && g:proj_running == bufnr('%')
     let command = 'Project'
     let argument = expand('%:p')
@@ -325,7 +330,9 @@ function! s:serialize_buffer_state(bufnr)
   return a:bufnr . ':' . bufname
 endfunction
 
-function! s:prompt(msg, var) " {{{2
+" Commands that enable users to manage multiple sessions. {{{1
+
+function! s:prompt(msg, var)
   let value = eval(a:var)
   if value == 'yes' || (type(value) != type('') && value)
     return 1
@@ -336,8 +343,6 @@ function! s:prompt(msg, var) " {{{2
     return confirm(prompt, "&Yes\n&No", 1, 'Question') == 1
   endif
 endfunction
-
-" Commands that enable users to manage multiple sessions. {{{1
 
 function! xolox#session#open_cmd(name, bang) abort " {{{2
   let name = s:select_name(s:unescape(a:name), 'restore')

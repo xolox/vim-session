@@ -159,9 +159,9 @@ This variable isn't really an option but if you want to avoid loading the `sessi
 
 ## Compatibility with other plug-ins
 
-Vim's [:mksession][mksession] command isn't fully compatible with plug-ins that create buffers with generated content and because of this `session.vim` includes specific workarounds for such plug-ins:
+Vim's [:mksession][mksession] command isn't really compatible with plug-ins that create buffers with generated content and because of this `session.vim` includes specific workarounds for such plug-ins:
 
- * [NERD tree](http://www.vim.org/scripts/script.php?script_id=1658) and [Project](http://www.vim.org/scripts/script.php?script_id=69) windows are supported;
+ * [BufExplorer](http://www.vim.org/scripts/script.php?script_id=42), [Project](http://www.vim.org/scripts/script.php?script_id=69) and [NERD tree](http://www.vim.org/scripts/script.php?script_id=1658) windows are supported;
  * When [shell.vim](http://peterodding.com/code/vim/shell/) is installed Vim's full-screen state is persisted;
  * The [netrw](http://vimdoc.sourceforge.net/htmldoc/pi_netrw.html#netrw-start) and [taglist.vim](http://www.vim.org/scripts/script.php?script_id=273) plug-ins support sessions out of the box.
 
