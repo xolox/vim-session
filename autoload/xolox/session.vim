@@ -353,6 +353,10 @@ function! xolox#session#open_cmd(name, bang) abort " {{{2
       let msg = "session.vim %s: The %s session at %s doesn't exist!"
       call xolox#misc#msg#warn(msg, g:xolox#session#version, string(name), fnamemodify(path, ':~'))
     elseif a:bang == '!' || !s:session_is_locked(path, 'OpenSession')
+      if name == s:get_name('', 0)
+        " We are re-opening the same session; no need to ask for saving changes.
+        unlet! s:session_is_dirty
+      endif
       let oldcwd = s:nerdtree_persist()
       call xolox#session#close_cmd(a:bang, 1)
       let s:oldcwd = oldcwd
