@@ -11,6 +11,9 @@ if &cp || exists('g:loaded_session')
   finish
 endif
 
+let s:save_cpo = &cpo
+set cpo&vim
+
 " When you start Vim without opening any files the plug-in will prompt you
 " whether you want to load the default session. Other supported values for
 " this option are 'yes' (to load the default session without prompting) and
@@ -90,6 +93,19 @@ command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names D
 command! -bar -bang CloseSession call xolox#session#close_cmd(<q-bang>, 0)
 command! -bang -nargs=* -complete=command RestartVim call xolox#session#restart_cmd(<q-bang>, <q-args>)
 
+if &sessionoptions =~ '\<tabpages\>'
+  command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SaveTabSession
+  \ call xolox#session#PushTabSessionOptions() | try | call xolox#session#save_cmd(<q-args>, <q-bang>) | finally | call xolox#session#PopTabSessionOptions() | endtry
+  command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names OpenTabSession
+  \ call xolox#session#PushTabSessionOptions() | try | call xolox#session#open_cmd(<q-args>, <q-bang>) | finally | call xolox#session#PopTabSessionOptions() | endtry
+  command! -bar -bang -count=94919 -nargs=? -complete=customlist,xolox#session#complete_names AppendTabSession
+  \ execute (<count> == 94919 ? '' : '<count>') . 'tabnew' |
+  \ call xolox#session#PushTabSessionOptions() | try | call xolox#session#open_cmd(<q-args>, <q-bang>) | finally | call xolox#session#PopTabSessionOptions() | endtry
+  command! -bar -bang CloseTabSession
+  \ call xolox#session#PushTabSessionOptions() | try | call xolox#session#close_cmd(<q-bang>, 0)       | finally | call xolox#session#PopTabSessionOptions() | endtry
+endif
+
+
 if g:session_command_aliases
   " Define command aliases of the form "Session" + Action in addition to
   " the real command names which are of the form Action + "Session" (above).
@@ -98,9 +114,23 @@ if g:session_command_aliases
   command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionSave call xolox#session#save_cmd(<q-args>, <q-bang>)
   command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionDelete call xolox#session#delete_cmd(<q-args>, <q-bang>)
   command! -bar -bang SessionClose call xolox#session#close_cmd(<q-bang>, 0)
+
+  if &sessionoptions =~ '\<tabpages\>'
+    command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names TabSessionSave
+    \ call xolox#session#PushTabSessionOptions() | try | call xolox#session#save_cmd(<q-args>, <q-bang>) | finally | call xolox#session#PopTabSessionOptions() | endtry
+    command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names TabSessionOpen
+    \ call xolox#session#PushTabSessionOptions() | try | call xolox#session#open_cmd(<q-args>, <q-bang>) | finally | call xolox#session#PopTabSessionOptions() | endtry
+    command! -bar -bang -count=94919 -nargs=? -complete=customlist,xolox#session#complete_names TabSessionAppend
+    \ execute (<count> == 94919 ? '' : '<count>') . 'tabnew' |
+    \ call xolox#session#PushTabSessionOptions() | try | call xolox#session#open_cmd(<q-args>, <q-bang>) | finally | call xolox#session#PopTabSessionOptions() | endtry
+    command! -bar -bang TabSessionClose
+    \ call xolox#session#PushTabSessionOptions() | try | call xolox#session#close_cmd(<q-bang>, 0)       | finally | call xolox#session#PopTabSessionOptions() | endtry
+  endif
 endif
 
 " Don't reload the plug-in once it has loaded successfully.
 let g:loaded_session = 1
 
+let &cpo = s:save_cpo
+unlet s:save_cpo
 " vim: ts=2 sw=2 et
