@@ -228,7 +228,7 @@ function! xolox#session#auto_load() " {{{2
     if v:servername !~ '^\cgvim\d*$'
       for session in xolox#session#get_names()
         if v:servername ==? session
-          execute 'OpenSession' fnameescape(session)
+          call xolox#session#open_cmd(session, '')
           return
         endif
       endfor
@@ -240,7 +240,7 @@ function! xolox#session#auto_load() " {{{2
       let msg = "Do you want to restore your %s editing session?"
       let label = session != 'default' ? 'last used' : 'default'
       if s:prompt(printf(msg, label), 'g:session_autoload')
-        execute 'OpenSession' fnameescape(session)
+        call xolox#session#open_cmd(session, '')
       endif
     endif
   endif
@@ -252,7 +252,7 @@ function! xolox#session#auto_save() " {{{2
     if name != '' && exists('s:session_is_dirty')
       let msg = "Do you want to save your editing session before quitting Vim?"
       if s:prompt(msg, 'g:session_autosave')
-        execute 'SaveSession' fnameescape(name)
+        call xolox#session#save_cmd(name, '')
       endif
     endif
   endif
@@ -430,7 +430,7 @@ function! xolox#session#close_cmd(bang, silent) abort " {{{2
   if name != '' && exists('s:session_is_dirty')
     let msg = "Do you want to save your current editing session before closing it?"
     if s:prompt(msg, 'g:session_autosave')
-      SaveSession
+      call xolox#session#save_cmd('', '')
     endif
     call s:unlock_session(xolox#session#name_to_path(name))
   endif
@@ -480,7 +480,7 @@ function! xolox#session#restart_cmd(bang, args) abort " {{{2
   else
     let name = s:get_name('', 0)
     if name == '' | let name = 'restart' | endif
-    execute 'SaveSession' . a:bang fnameescape(name)
+    call xolox#session#save_cmd(name, a:bang)
     let progname = xolox#misc#escape#shell(fnameescape(v:progname))
     let command = progname . ' -c ' . xolox#misc#escape#shell('OpenSession\! ' . fnameescape(name))
     let args = matchstr(a:args, '^\s*|\s*\zs.\+$')
@@ -498,7 +498,7 @@ function! xolox#session#restart_cmd(bang, args) abort " {{{2
       call add(cmdline, printf("--cmd ':set enc=%s'", escape(&enc, '\ ')))
       silent execute '!' join(cmdline, ' ') '&'
     endif
-    execute 'CloseSession' . a:bang
+    call xolox#session#close_cmd(a:bang, 0)
     silent quitall
   endif
 endfunction
