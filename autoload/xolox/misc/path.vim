@@ -71,7 +71,7 @@ function! xolox#misc#path#absolute(path)
     if exists('stripped_slash') && path !~ '/$'
       let path .= '/'
     endif
-    return path
+    return (s:windows_compatible ? (exists('+shellslash') && ! &shellslash ? substitute(path, '/', '\\', 'g') : substitute(path, '\\', '/', 'g')) : path)
   endif
   return ''
 endfunction
