@@ -234,13 +234,22 @@ function! xolox#session#auto_load() " {{{2
       endfor
     endif
     " Default to the last used session or the session named `default'?
-    let session = s:last_session_recall()
+    let [has_last_session_file, session] = s:last_session_recall()
     let path = xolox#session#name_to_path(session)
-    if filereadable(path) && !s:session_is_locked(path)
-      let msg = "Do you want to restore your %s editing session?"
-      let label = session != 'default' ? 'last used' : 'default'
-      if s:prompt(printf(msg, label), 'g:session_autoload')
-        execute 'OpenSession' fnameescape(session)
+    if (!g:session_default_to_last || has_last_session_file) && filereadable(path) && !s:session_is_locked(path)
+      let msg = "Do you want to restore your %s editing session%s?"
+      if session == 'default'
+        let label = 'default'
+        let sessionname = ''
+      else
+        let label = 'last used'
+        let sessionname = printf(' (%s)', fnamemodify(session, ':t:r'))
+      endif
+      let choice = s:prompt(printf(msg, label, sessionname), 'g:session_autoload', '&Skip just now')
+      if choice == 1
+        call xolox#session#open_cmd(session, '')
+      elseif choice == 2
+        call s:delete_last_session_file()
       endif
     endif
   endif
@@ -332,16 +341,20 @@ endfunction
 
 " Commands that enable users to manage multiple sessions. {{{1
 
-function! s:prompt(msg, var)
+function! s:prompt(msg, var, ...)
   let value = eval(a:var)
   if value == 'yes' || (type(value) != type('') && value)
     return 1
-  else
+  elseif g:session_verbose_messages
     let format = "%s Note that you can permanently disable this dialog by adding the following line to your %s script:\n\n\t:let %s = 'no'"
     let vimrc = xolox#misc#os#is_win() ? '~\_vimrc' : '~/.vimrc'
     let prompt = printf(format, a:msg, vimrc, a:var)
-    return confirm(prompt, "&Yes\n&No", 1, 'Question') == 1
+  else
+    let prompt = a:msg
   endif
+  let has_more = (a:0 && !empty(a:1))
+  let choice = confirm(prompt, "&Yes\n&No" . (has_more ? "\n" . a:1 : ''), 1, 'Question')
+  return (has_more ? choice : choice == 1)
 endfunction
 
 function! xolox#session#open_cmd(name, bang) abort " {{{2
@@ -579,13 +592,22 @@ function! s:last_session_persist(name)
 endfunction
 
 function! s:last_session_recall()
+  let fname = s:last_session_file()
+  let has_last_session_file = filereadable(fname)
+
+  if g:session_default_to_last && has_last_session_file
+    return [has_last_session_file, readfile(fname)[0]]
+  else
+    return [has_last_session_file, 'default']
+  endif
+endfunction
+
+function! s:delete_last_session_file()
   if g:session_default_to_last
-    let fname = s:last_session_file()
-    if filereadable(fname)
-      return readfile(fname)[0]
+    if delete(s:last_session_file()) != 0
+      call xolox#misc#msg#warn("session.vim %s: Failed to delete name of last used session!", g:xolox#session#version)
     endif
   endif
-  return 'default'
 endfunction
 
 " Lock file management: {{{2

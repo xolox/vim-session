@@ -60,6 +60,11 @@ if !exists('g:session_command_aliases')
   let g:session_command_aliases = 0
 endif
 
+" Define the verbosity of messages.
+if !exists('g:session_verbose_messages')
+  let g:session_verbose_messages = 1
+endif
+
 " Make sure the session scripts directory exists and is writable.
 let s:directory = fnamemodify(g:session_directory, ':p')
 if !isdirectory(s:directory)
