@@ -27,6 +27,7 @@ function! xolox#session#save_session(commands, filename) " {{{2
   call xolox#session#save_state(a:commands)
   call xolox#session#save_fullscreen(a:commands)
   call add(a:commands, 'doautoall SessionLoadPost')
+  call add(a:commands, 'unlet SessionLoad')
   call add(a:commands, '')
   call add(a:commands, '" vim: ft=vim ro nowrap smc=128')
 endfunction
@@ -116,6 +117,9 @@ function! xolox#session#save_state(commands) " {{{2
     
     " Remove the SessionLoadPost event firing at end of mksession; we will
     " fire it ourselves when we're really done
+    if lines[-1] == 'unlet SessionLoad'
+      call remove(lines, -1)
+    endif
     if lines[-1] == 'doautoall SessionLoadPost'
       call remove(lines, -1)
     endif
