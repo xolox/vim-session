@@ -26,6 +26,7 @@ function! xolox#session#save_session(commands, filename) " {{{2
   call xolox#session#save_qflist(a:commands)
   call xolox#session#save_state(a:commands)
   call xolox#session#save_fullscreen(a:commands)
+  call add(a:commands, 'doautoall SessionLoadPost')
   call add(a:commands, '')
   call add(a:commands, '" vim: ft=vim ro nowrap smc=128')
 endfunction
@@ -105,10 +106,20 @@ function! xolox#session#save_state(commands) " {{{2
     " value of &sessionoptions is changed temporarily to avoid these issues.
     set ssop-=options ssop+=resize
     execute 'mksession' fnameescape(tempfile)
+    
     let lines = readfile(tempfile)
+    
+    " Remove the trailing vim edit options from the saved session
     if lines[-1] == '" vim: set ft=vim :'
       call remove(lines, -1)
     endif
+    
+    " Remove the SessionLoadPost event firing at end of mksession; we will
+    " fire it ourselves when we're really done
+    if lines[-1] == 'doautoall SessionLoadPost'
+      call remove(lines, -1)
+    endif
+    
     call xolox#session#save_special_windows(lines)
     call extend(a:commands, map(lines, 's:state_filter(v:val)'))
     return 1
