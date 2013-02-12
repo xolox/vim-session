@@ -201,6 +201,7 @@ function! s:check_special_window(session)
   if exists('command')
     call s:jump_to_window(a:session, tabpagenr(), winnr())
     call add(a:session, 'let s:bufnr = bufnr("%")')
+    call add(a:session, 'let s:priorPWD = fnameescape(getcwd())')
     if argument == ''
       call add(a:session, command)
     else
@@ -211,6 +212,7 @@ function! s:check_special_window(session)
       call add(a:session, command . ' ' . fnameescape(argument))
     endif
     call add(a:session, 'execute "bwipeout" s:bufnr')
+    call add(a:session, 'execute "cd" s:priorPWD')
     return 1
   endif
 endfunction
