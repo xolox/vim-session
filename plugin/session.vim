@@ -79,7 +79,7 @@ augroup PluginSession
   au VimEnter * nested call xolox#session#auto_load()
   au VimLeavePre * call xolox#session#auto_save()
   au VimLeavePre * call xolox#session#auto_unlock()
-  au BufEnter * call xolox#session#auto_dirty_check()
+  "au BufEnter * call xolox#session#auto_dirty_check()
 augroup END
 
 " Define commands that enable users to manage multiple named sessions.

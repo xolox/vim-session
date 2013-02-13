@@ -26,6 +26,8 @@ function! xolox#session#save_session(commands, filename) " {{{2
   call xolox#session#save_qflist(a:commands)
   call xolox#session#save_state(a:commands)
   call xolox#session#save_fullscreen(a:commands)
+  call add(a:commands, 'doautoall SessionLoadPost')
+  call add(a:commands, 'unlet SessionLoad')
   call add(a:commands, '')
   call add(a:commands, '" vim: ft=vim ro nowrap smc=128')
 endfunction
@@ -105,10 +107,23 @@ function! xolox#session#save_state(commands) " {{{2
     " value of &sessionoptions is changed temporarily to avoid these issues.
     set ssop-=options ssop+=resize
     execute 'mksession' fnameescape(tempfile)
+    
     let lines = readfile(tempfile)
+    
+    " Remove the trailing vim edit options from the saved session
     if lines[-1] == '" vim: set ft=vim :'
       call remove(lines, -1)
     endif
+    
+    " Remove the SessionLoadPost event firing at end of mksession; we will
+    " fire it ourselves when we're really done
+    if lines[-1] == 'unlet SessionLoad'
+      call remove(lines, -1)
+    endif
+    if lines[-1] == 'doautoall SessionLoadPost'
+      call remove(lines, -1)
+    endif
+    
     call xolox#session#save_special_windows(lines)
     call extend(a:commands, map(lines, 's:state_filter(v:val)'))
     return 1
@@ -186,6 +201,7 @@ function! s:check_special_window(session)
   if exists('command')
     call s:jump_to_window(a:session, tabpagenr(), winnr())
     call add(a:session, 'let s:bufnr = bufnr("%")')
+    call add(a:session, 'let s:priorPWD = fnameescape(getcwd())')
     if argument == ''
       call add(a:session, command)
     else
@@ -196,6 +212,7 @@ function! s:check_special_window(session)
       call add(a:session, command . ' ' . fnameescape(argument))
     endif
     call add(a:session, 'execute "bwipeout" s:bufnr')
+    call add(a:session, 'execute "cd" s:priorPWD')
     return 1
   endif
 endfunction
@@ -270,43 +287,43 @@ function! xolox#session#auto_unlock() " {{{2
   endwhile
 endfunction
 
-function! xolox#session#auto_dirty_check() " {{{2
-  " TODO Why execute this on every buffer change?! Instead execute it only when we want to know whether the session is dirty!
-  " This function is called each time a BufEnter event fires to detect when
-  " the current tab page (or the buffer list) is changed in some way. This
-  " enables the plug-in to not bother with the auto-save dialog when the
-  " session hasn't changed.
-  if v:this_session == ''
-    " Don't waste CPU time when no session is loaded.
-    return
-  elseif !exists('s:cached_layouts')
-    let s:cached_layouts = {}
-  else
-    " Clear non-existing tab pages from s:cached_layouts.
-    let last_tabpage = tabpagenr('$')
-    call filter(s:cached_layouts, 'v:key <= last_tabpage')
-  endif
-  " Check the buffer list.
-  let all_buffers = s:serialize_buffer_list()
-  if all_buffers != get(s:cached_layouts, 0, '')
-    let s:session_is_dirty = 1
-  endif
-  let s:cached_layouts[0] = all_buffers
-  " Check the layout of the current tab page.
-  let tabpagenr = tabpagenr()
-  let keys = ['tabpage:' . tabpagenr]
-  let buflist = tabpagebuflist()
-  for winnr in range(1, winnr('$'))
-    " Create a string that describes the state of the window {winnr}.
-    call add(keys, printf('width:%i,height:%i,buffer:%i',
-          \ winwidth(winnr), winheight(winnr), buflist[winnr - 1]))
-  endfor
-  let layout = join(keys, "\n")
-  if layout != get(s:cached_layouts, tabpagenr, '')
-    let s:session_is_dirty = 1
-  endif
-  let s:cached_layouts[tabpagenr] = layout
-endfunction
+"function! xolox#session#auto_dirty_check() " {{{2
+  "" TODO Why execute this on every buffer change?! Instead execute it only when we want to know whether the session is dirty!
+  "" This function is called each time a BufEnter event fires to detect when
+  "" the current tab page (or the buffer list) is changed in some way. This
+  "" enables the plug-in to not bother with the auto-save dialog when the
+  "" session hasn't changed.
+  "if v:this_session == ''
+    "" Don't waste CPU time when no session is loaded.
+    "return
+  "elseif !exists('s:cached_layouts')
+    "let s:cached_layouts = {}
+  "else
+    "" Clear non-existing tab pages from s:cached_layouts.
+    "let last_tabpage = tabpagenr('$')
+    "call filter(s:cached_layouts, 'v:key <= last_tabpage')
+  "endif
+  "" Check the buffer list.
+  "let all_buffers = s:serialize_buffer_list()
+  "if all_buffers != get(s:cached_layouts, 0, '')
+    "let s:session_is_dirty = 1
+  "endif
+  "let s:cached_layouts[0] = all_buffers
+  "" Check the layout of the current tab page.
+  "let tabpagenr = tabpagenr()
+  "let keys = ['tabpage:' . tabpagenr]
+  "let buflist = tabpagebuflist()
+  "for winnr in range(1, winnr('$'))
+    "" Create a string that describes the state of the window {winnr}.
+    "call add(keys, printf('width:%i,height:%i,buffer:%i',
+          "\ winwidth(winnr), winheight(winnr), buflist[winnr - 1]))
+  "endfor
+  "let layout = join(keys, "\n")
+  "if layout != get(s:cached_layouts, tabpagenr, '')
+    "let s:session_is_dirty = 1
+  "endif
+  "let s:cached_layouts[tabpagenr] = layout
+"endfunction
 
 function! s:serialize_buffer_list()
   if &sessionoptions =~ '\<buffers\>'
@@ -358,7 +375,7 @@ function! xolox#session#open_cmd(name, bang) abort " {{{2
       let s:oldcwd = oldcwd
       call s:lock_session(path)
       execute 'source' fnameescape(path)
-      unlet! s:session_is_dirty
+      let s:session_is_dirty=1
       call s:last_session_persist(name)
       call xolox#misc#timer#stop("session.vim %s: Opened %s session in %s.", g:xolox#session#version, string(name), starttime)
       call xolox#misc#msg#info("session.vim %s: Opened %s session from %s.", g:xolox#session#version, string(name), fnamemodify(path, ':~'))
@@ -400,7 +417,7 @@ function! xolox#session#save_cmd(name, bang) abort " {{{2
       call xolox#misc#msg#info("session.vim %s: Saved %s session to %s.", g:xolox#session#version, string(name), friendly_path)
       let v:this_session = path
       call s:lock_session(path)
-      unlet! s:session_is_dirty
+      "unlet! s:session_is_dirty
     endif
   endif
 endfunction
