@@ -263,7 +263,7 @@ function! xolox#session#is_tabsession()
   return exists('t:session_tabsession_name') && exists('s:tabsession_name') && t:session_tabsession_name == s:tabsession_name
 endfunction
 
-function! xolox#session#session_name()
+function! xolox#session#session_name(...)
   if xolox#session#is_tabsession()
     " We're in the tab where the tab-scoped session was defined.
     return s:tabsession_name
@@ -272,7 +272,7 @@ function! xolox#session#session_name()
     return s:session_name
   else
     " There's no session.
-    return ''
+    return (a:0 ? a:1 : '')
   endif
 endfunction
 
@@ -310,7 +310,7 @@ function! xolox#session#auto_save() " {{{2
   if !v:dying && g:session_autosave != 'no'
     let name = s:get_name('', 0)
     if name != '' && exists('s:session_is_dirty')
-      let msg = printf("Do you want to save your editing session%s (%s) before quitting Vim?", (xolox#session#is_tabsession() ? ' for this tab page' : ''), xolox#session#session_name())
+      let msg = printf("Do you want to save your editing session%s (%s) before quitting Vim?", (xolox#session#is_tabsession() ? ' for this tab page' : ''), xolox#session#session_name(name))
       if s:prompt(msg, 'g:session_autosave')
         if xolox#session#is_tabsession()
           call xolox#session#PushTabSessionOptions()
