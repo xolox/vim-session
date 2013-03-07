@@ -237,19 +237,31 @@ function! xolox#session#auto_load() " {{{2
     let [has_last_session_file, session] = s:last_session_recall()
     let path = xolox#session#name_to_path(session)
     if (!g:session_default_to_last || has_last_session_file) && filereadable(path) && !s:session_is_locked(path)
+      let choices = ['&Skip just now']
       let msg = "Do you want to restore your %s editing session%s?"
       if session == 'default'
         let label = 'default'
         let sessionname = ''
+        call add(choices, '&Rename session')
       else
         let label = 'last used'
         let sessionname = printf(' (%s)', fnamemodify(session, ':t:r'))
       endif
-      let choice = s:prompt(printf(msg, label, sessionname), 'g:session_autoload', '&Skip just now')
+      let choice = s:prompt(printf(msg, label, sessionname), 'g:session_autoload', join(choices, "\n"))
       if choice == 1
         call xolox#session#open_cmd(session, '')
       elseif choice == 2
         call s:delete_last_session_file()
+      elseif choice == 4
+        let new_name = inputdialog('New name for the default session: ')
+        if ! empty(new_name)
+          if rename(xolox#session#name_to_path('default'), xolox#session#name_to_path(new_name)) == 0
+            call s:delete_last_session_file()
+          else
+            let msg = "session.vim %s: Could not rename the default session to %s!"
+            call xolox#misc#msg#warn(msg, g:xolox#session#version, fnamemodify(xolox#session#name_to_path(new_name), ':~'))
+          endif
+        endif
       endif
     endif
   endif
