@@ -355,8 +355,8 @@ If you like the script please vote for it on Vim Online [11].
                                                                *session-license*
 License ~
 
-This software is licensed under the MIT license [12]. ÂŠ 2013 Peter Odding
-<peter@peterodding.com>.
+This software is licensed under the MIT license [12]. Copyright 2013 Peter
+Odding <peter@peterodding.com>.
 
 ===============================================================================
                                                          *sample-session-script*
