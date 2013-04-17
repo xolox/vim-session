@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: January 15, 2012
+" Last Change: April 17, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.5'
+let g:xolox#session#version = '1.5.1'
 
 " Public API for session persistence. {{{1
 
@@ -106,6 +106,8 @@ function! xolox#session#save_state(commands) " {{{2
     set ssop-=options ssop+=resize
     execute 'mksession' fnameescape(tempfile)
     let lines = readfile(tempfile)
+    " Remove the mode line added by :mksession because we'll add our own in
+    " xolox#session#save_session().
     if lines[-1] == '" vim: set ft=vim :'
       call remove(lines, -1)
     endif
@@ -127,6 +129,13 @@ function! s:state_filter(line)
     " mirrored NERDTree windows.
     return '" ' . a:line
   elseif a:line =~ '^file .\{-}\[BufExplorer\]$'
+    " Same trick (about the E95) for BufExplorer.
+    return '" ' . a:line
+  elseif a:line =~ '^args '
+    " The :mksession command adds an :args line to the session file, but when
+    " :args is executed during a session restore it edits the first file it is
+    " given, thereby breaking the session that the user was expecting to
+    " get... I consider this to be a bug in :mksession, but anyway :-).
     return '" ' . a:line
   else
     return a:line
