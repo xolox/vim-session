@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: April 17, 2013
+" Last Change: April 18, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.5.1'
+let g:xolox#session#version = '1.5.2'
 
 " Public API for session persistence. {{{1
 
@@ -136,6 +136,11 @@ function! s:state_filter(line)
     " :args is executed during a session restore it edits the first file it is
     " given, thereby breaking the session that the user was expecting to
     " get... I consider this to be a bug in :mksession, but anyway :-).
+    return '" ' . a:line
+  elseif a:line =~ '^\(argglobal\|\dargu\)$'
+    " Because we disabled the :args command above we cause a potential error
+    " when :mksession adds corresponding :argglobal and/or :argument commands
+    " to the session script.
     return '" ' . a:line
   else
     return a:line
