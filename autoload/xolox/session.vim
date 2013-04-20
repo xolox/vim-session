@@ -3,7 +3,7 @@
 " Last Change: April 20, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.5.5'
+let g:xolox#session#version = '1.5.6'
 
 " Public API for session persistence. {{{1
 
@@ -319,7 +319,7 @@ function! xolox#session#open_cmd(name, bang) abort " {{{2
       call xolox#misc#msg#warn(msg, g:xolox#session#version, string(name), fnamemodify(path, ':~'))
     elseif a:bang == '!' || !s:session_is_locked(path, 'OpenSession')
       let oldcwd = s:nerdtree_persist()
-      call xolox#session#close_cmd(a:bang, 1)
+      call xolox#session#close_cmd(a:bang, 1, name != s:get_name('', 0))
       let s:oldcwd = oldcwd
       call s:lock_session(path)
       execute 'source' fnameescape(path)
@@ -388,12 +388,16 @@ function! xolox#session#delete_cmd(name, bang) " {{{2
   endif
 endfunction
 
-function! xolox#session#close_cmd(bang, silent) abort " {{{2
+function! xolox#session#close_cmd(bang, silent, save_allowed) abort " {{{2
   let name = s:get_name('', 0)
   if name != ''
-    let msg = "Do you want to save your current editing session before closing it?"
-    if s:prompt(msg, 'g:session_autosave')
-      SaveSession
+    if a:save_allowed
+      let msg = "Do you want to save your current editing session before closing it?"
+      if s:prompt(msg, 'g:session_autosave')
+        SaveSession
+      endif
+    else
+      call xolox#misc#msg#debug("session.vim %s: Session reset requested, not saving changes to session ..", g:xolox#session#version)
     endif
     call s:unlock_session(xolox#session#name_to_path(name))
   endif

@@ -86,7 +86,7 @@ command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names O
 command! -bar -nargs=? -complete=customlist,xolox#session#complete_names ViewSession call xolox#session#view_cmd(<q-args>)
 command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SaveSession call xolox#session#save_cmd(<q-args>, <q-bang>)
 command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names DeleteSession call xolox#session#delete_cmd(<q-args>, <q-bang>)
-command! -bar -bang CloseSession call xolox#session#close_cmd(<q-bang>, 0)
+command! -bar -bang CloseSession call xolox#session#close_cmd(<q-bang>, 0, 1)
 command! -bang -nargs=* -complete=command RestartVim call xolox#session#restart_cmd(<q-bang>, <q-args>)
 
 if g:session_command_aliases
@@ -96,7 +96,7 @@ if g:session_command_aliases
   command! -bar -nargs=? -complete=customlist,xolox#session#complete_names SessionView call xolox#session#view_cmd(<q-args>)
   command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionSave call xolox#session#save_cmd(<q-args>, <q-bang>)
   command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionDelete call xolox#session#delete_cmd(<q-args>, <q-bang>)
-  command! -bar -bang SessionClose call xolox#session#close_cmd(<q-bang>, 0)
+  command! -bar -bang SessionClose call xolox#session#close_cmd(<q-bang>, 0, 1)
 endif
 
 " Don't reload the plug-in once it has loaded successfully.
