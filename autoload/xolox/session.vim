@@ -3,7 +3,7 @@
 " Last Change: April 20, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.5.4'
+let g:xolox#session#version = '1.5.5'
 
 " Public API for session persistence. {{{1
 
@@ -208,7 +208,8 @@ function! s:check_special_window(session)
   endif
   if exists('command')
     call s:jump_to_window(a:session, tabpagenr(), winnr())
-    call add(a:session, 'let s:bufnr = bufnr("%")')
+    call add(a:session, 'let s:bufnr_save = bufnr("%")')
+    call add(a:session, 'let s:cwd_save = getcwd()')
     if argument == ''
       call add(a:session, command)
     else
@@ -218,7 +219,8 @@ function! s:check_special_window(session)
       endif
       call add(a:session, command . ' ' . fnameescape(argument))
     endif
-    call add(a:session, 'execute "bwipeout" s:bufnr')
+    call add(a:session, 'execute "bwipeout" s:bufnr_save')
+    call add(a:session, 'execute "cd" fnameescape(s:cwd_save)')
     return 1
   endif
 endfunction
