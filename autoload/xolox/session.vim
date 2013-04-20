@@ -130,9 +130,9 @@ function! s:eat_trailing_line(session, line)
 endfunction
 
 function! s:state_filter(line)
-  if a:line == 'normal zo'
+  if a:line =~ '^normal!\? zo$'
     " Silence "E490: No fold found" errors.
-    return 'silent! normal zo'
+    return 'silent! ' . a:line
   elseif a:line =~ '^file .\{-}\<NERD_tree_\d\+$'
     " Silence "E95: Buffer with this name already exists" when restoring
     " mirrored NERDTree windows.
