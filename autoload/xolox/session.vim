@@ -3,7 +3,7 @@
 " Last Change: April 20, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.5.3'
+let g:xolox#session#version = '1.5.4'
 
 " Public API for session persistence. {{{1
 
@@ -26,7 +26,8 @@ function! xolox#session#save_session(commands, filename) " {{{2
   call xolox#session#save_qflist(a:commands)
   call xolox#session#save_state(a:commands)
   call xolox#session#save_fullscreen(a:commands)
-  call add(a:commands, '')
+  call add(a:commands, 'doautoall SessionLoadPost')
+  call add(a:commands, 'unlet SessionLoad')
   call add(a:commands, '" vim: ft=vim ro nowrap smc=128')
 endfunction
 
@@ -108,9 +109,11 @@ function! xolox#session#save_state(commands) " {{{2
     let lines = readfile(tempfile)
     " Remove the mode line added by :mksession because we'll add our own in
     " xolox#session#save_session().
-    if lines[-1] == '" vim: set ft=vim :'
-      call remove(lines, -1)
-    endif
+    call s:eat_trailing_line(lines, '" vim: set ft=vim :')
+    " Remove the "SessionLoadPost" event firing at the end of the :mksession
+    " output. We will fire the event ourselves when we're really done.
+    call s:eat_trailing_line(lines, 'unlet SessionLoad')
+    call s:eat_trailing_line(lines, 'doautoall SessionLoadPost')
     call xolox#session#save_special_windows(lines)
     call extend(a:commands, map(lines, 's:state_filter(v:val)'))
     return 1
@@ -118,6 +121,12 @@ function! xolox#session#save_state(commands) " {{{2
     let &sessionoptions = ssop_save
     call delete(tempfile)
   endtry
+endfunction
+
+function! s:eat_trailing_line(session, line)
+  if a:session[-1] == a:line
+    call remove(a:session, -1)
+  endif
 endfunction
 
 function! s:state_filter(line)
