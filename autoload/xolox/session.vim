@@ -104,7 +104,7 @@ function! xolox#session#save_state(commands) " {{{2
     " which makes them slower to generate and evaluate. It can also be a bit
     " buggy, e.g. it breaks Ctrl-S when :runtime mswin.vim has been used. The
     " value of &sessionoptions is changed temporarily to avoid these issues.
-    set ssop-=options ssop+=resize
+    set ssop-=options
     execute 'mksession' fnameescape(tempfile)
     let lines = readfile(tempfile)
     " Remove the mode line added by :mksession because we'll add our own in
