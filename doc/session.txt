@@ -185,13 +185,10 @@ how it works by setting |'sessionoptions'| in your |vimrc| script, for example:
     set sessionoptions-=help
 
 Note that the session.vim plug-in automatically and unconditionally executes
-the following changes just before saving a session:
+the following change just before saving a session:
 >
     " Don't persist options and mappings because it can corrupt sessions.
     set sessionoptions-=options
-    
-    " Always persist Vim's window size.
-    set sessionoptions+=resize
 
 -------------------------------------------------------------------------------
 The *g:session_directory* option

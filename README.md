@@ -82,13 +82,10 @@ Because the `session.vim` plug-in uses Vim's [:mksession][mksession] command you
     " If you don't want help windows to be restored:
     set sessionoptions-=help
 
-Note that the session.vim plug-in automatically and unconditionally executes the following changes just before saving a session:
+Note that the session.vim plug-in automatically and unconditionally executes the following change just before saving a session:
 
     " Don't persist options and mappings because it can corrupt sessions.
     set sessionoptions-=options
-
-    " Always persist Vim's window size.
-    set sessionoptions+=resize
 
 ### The `g:session_directory` option
 
