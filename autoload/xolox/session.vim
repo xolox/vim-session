@@ -3,7 +3,7 @@
 " Last Change: April 21, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.5.8'
+let g:xolox#session#version = '1.5.9'
 
 call xolox#misc#compat#check('session', 1)
 
@@ -255,7 +255,7 @@ function! xolox#session#auto_load() " {{{2
     if v:servername !~ '^\cgvim\d*$'
       for session in xolox#session#get_names()
         if v:servername ==? session
-          execute 'OpenSession' fnameescape(session)
+          call xolox#session#open_cmd(session, '')
           return
         endif
       endfor
@@ -267,7 +267,7 @@ function! xolox#session#auto_load() " {{{2
       let msg = "Do you want to restore your %s editing session?"
       let label = session != 'default' ? 'last used' : 'default'
       if s:prompt(printf(msg, label), 'g:session_autoload')
-        execute 'OpenSession' fnameescape(session)
+        call xolox#session#open_cmd(session, '')
       endif
     endif
   endif
@@ -279,7 +279,7 @@ function! xolox#session#auto_save() " {{{2
     if name != ''
       let msg = "Do you want to save your editing session before quitting Vim?"
       if s:prompt(msg, 'g:session_autosave')
-        execute 'SaveSession' fnameescape(name)
+        call xolox#session#save_cmd(name, '')
       endif
     endif
   endif
@@ -396,7 +396,7 @@ function! xolox#session#close_cmd(bang, silent, save_allowed) abort " {{{2
     if a:save_allowed
       let msg = "Do you want to save your current editing session before closing it?"
       if s:prompt(msg, 'g:session_autosave')
-        SaveSession
+        call xolox#session#save_cmd(name, a:bang)
       endif
     else
       call xolox#misc#msg#debug("session.vim %s: Session reset requested, not saving changes to session ..", g:xolox#session#version)
@@ -448,7 +448,7 @@ function! xolox#session#restart_cmd(bang, args) abort " {{{2
   else
     let name = s:get_name('', 0)
     if name == '' | let name = 'restart' | endif
-    execute 'SaveSession' . a:bang fnameescape(name)
+    call xolox#session#save_cmd(name, a:bang)
     let progname = xolox#misc#escape#shell(fnameescape(v:progname))
     let command = progname . ' -c ' . xolox#misc#escape#shell('OpenSession\! ' . fnameescape(name))
     let args = matchstr(a:args, '^\s*|\s*\zs.\+$')
@@ -466,7 +466,7 @@ function! xolox#session#restart_cmd(bang, args) abort " {{{2
       call add(cmdline, printf("--cmd ':set enc=%s'", escape(&enc, '\ ')))
       silent execute '!' join(cmdline, ' ') '&'
     endif
-    execute 'CloseSession' . a:bang
+    call xolox#session#close_cmd(a:bang, 0, 1)
     silent quitall
   endif
 endfunction

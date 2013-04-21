@@ -299,6 +299,10 @@ command aliases:
 The aliases support tab completion just like the real commands; they're
 exactly the same except for the names.
 
+When you enable the aliases, the default command names will still be
+available. If you really don't like them, feel free to delete them using
+|:delcommand|.
+
 -------------------------------------------------------------------------------
 The *g:loaded_session* option
 
