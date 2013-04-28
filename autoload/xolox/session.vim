@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: April 21, 2013
+" Last Change: April 28, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.5.10'
+let g:xolox#session#version = '1.5.11'
 
 call xolox#misc#compat#check('session', 1)
 
