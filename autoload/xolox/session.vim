@@ -3,7 +3,7 @@
 " Last Change: April 30, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.5.12'
+let g:xolox#session#version = '1.5.13'
 
 call xolox#misc#compat#check('session', 2)
 
@@ -446,18 +446,26 @@ function! xolox#session#restart_cmd(bang, args) abort " {{{2
     let msg = "session.vim %s: The :RestartVim command only works in graphical Vim!"
     call xolox#misc#msg#warn(msg, g:xolox#session#version)
   else
+    " Save the current session (if there is no active
+    " session we will create a session called "restart").
     let name = s:get_name('', 0)
     if name == '' | let name = 'restart' | endif
     call xolox#session#save_cmd(name, a:bang)
+    " Generate the Vim command line.
     let progname = xolox#misc#escape#shell(fnameescape(v:progname))
     let command = progname . ' -c ' . xolox#misc#escape#shell('OpenSession\! ' . fnameescape(name))
     let args = matchstr(a:args, '^\s*|\s*\zs.\+$')
     if !empty(args)
       let command .= ' -c ' . xolox#misc#escape#shell(args)
     endif
+    " Close the session, releasing the session lock.
+    call xolox#session#close_cmd(a:bang, 0, 1)
+    " Start the new Vim instance.
     if xolox#misc#os#is_win()
+      " On Microsoft Windows.
       execute '!start' command
     else
+      " On anything other than Windows (UNIX like).
       let cmdline = []
       for variable in g:session_restart_environment
         call add(cmdline, variable . '=' . xolox#misc#escape#shell(fnameescape(eval('$' . variable))))
@@ -466,7 +474,7 @@ function! xolox#session#restart_cmd(bang, args) abort " {{{2
       call add(cmdline, printf("--cmd ':set enc=%s'", escape(&enc, '\ ')))
       silent execute '!' join(cmdline, ' ') '&'
     endif
-    call xolox#session#close_cmd(a:bang, 0, 1)
+    " Close Vim.
     silent quitall
   endif
 endfunction
