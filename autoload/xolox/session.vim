@@ -3,7 +3,7 @@
 " Last Change: May 2, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.6'
+let g:xolox#session#version = '1.6.1'
 
 call xolox#misc#compat#check('session', 2)
 
@@ -260,12 +260,12 @@ function! xolox#session#auto_load() " {{{2
         endif
       endfor
     endif
-    " Default to the last used session or the session named `default'?
+    " Default to the last used session or the default session?
     let session = s:last_session_recall()
     let path = xolox#session#name_to_path(session)
     if filereadable(path) && !s:session_is_locked(path)
       let msg = "Do you want to restore your %s editing session?"
-      let label = session != 'default' ? 'last used' : 'default'
+      let label = session != g:session_default_name ? 'last used' : 'default'
       if s:prompt(printf(msg, label), 'g:session_autoload')
         call xolox#session#open_cmd(session, '')
       endif
@@ -495,7 +495,7 @@ function! s:select_name(name, action) " {{{2
   endif
   let sessions = sort(xolox#session#get_names())
   if empty(sessions)
-    return 'default'
+    return g:session_default_name
   elseif len(sessions) == 1
     return sessions[0]
   endif
@@ -519,7 +519,7 @@ function! s:get_name(name, use_default) " {{{2
       let name = xolox#session#path_to_name(v:this_session)
     endif
   endif
-  return name != '' ? name : a:use_default ? 'default' : ''
+  return name != '' ? name : a:use_default ? g:session_default_name : ''
 endfunction
 
 function! xolox#session#name_to_path(name) " {{{2
@@ -565,7 +565,7 @@ function! s:last_session_recall()
       return readfile(fname)[0]
     endif
   endif
-  return 'default'
+  return g:session_default_name
 endfunction
 
 " Lock file management: {{{2

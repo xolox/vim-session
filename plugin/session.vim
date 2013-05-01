@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: April 20, 2013
+" Last Change: May 2, 2013
 " URL: http://peterodding.com/code/vim/session/
 
 " Support for automatic update using the GLVS plug-in.
@@ -9,6 +9,11 @@
 " Don't load the plug-in when &compatible is set or it was already loaded.
 if &cp || exists('g:loaded_session')
   finish
+endif
+
+" The name of the default session (without directory or filename extension).
+if !exists('g:session_default_name')
+  let g:session_default_name = 'default'
 endif
 
 " When you start Vim without opening any files the plug-in will prompt you
