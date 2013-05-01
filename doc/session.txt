@@ -16,13 +16,15 @@ Contents ~
  4. Options                                                    |session-options|
   1. The |sessionoptions| setting
   2. The |g:session_directory| option
-  3. The |g:session_autoload| option
-  4. The |g:session_autosave| option
-  5. The |g:session_default_to_last| option
-  6. The |g:session_persist_globals| option
-  7. The |g:session_restart_environment| option
-  8. The |g:session_command_aliases| option
-  9. The |g:loaded_session| option
+  3. The |g:session_default_name| option
+  4. The |g:session_extension| option
+  5. The |g:session_autoload| option
+  6. The |g:session_autosave| option
+  7. The |g:session_default_to_last| option
+  8. The |g:session_persist_globals| option
+  9. The |g:session_restart_environment| option
+  10. The |g:session_command_aliases| option
+  11. The |g:loaded_session| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Known issues                                          |session-known-issues|
  7. Contact                                                    |session-contact|
@@ -201,6 +203,18 @@ is '~/.vim/sessions' (on UNIX) or '~\vimfiles\sessions' (on Windows). If you
 don't mind the default you don't have to do anything; the directory will be
 created for you. Note that a leading '~' is expanded to your current home
 directory ('$HOME' on UNIX, '%USERPROFILE%' on Windows).
+
+-------------------------------------------------------------------------------
+The *g:session_default_name* option
+
+The name of the default session without directory or filename extension
+(you'll never guess what the default is).
+
+-------------------------------------------------------------------------------
+The *g:session_extension* option
+
+The filename extension of session scripts. This should include the dot that
+separates the basename from the extension. Defaults to '.vim'.
 
 -------------------------------------------------------------------------------
 The *g:session_autoload* option

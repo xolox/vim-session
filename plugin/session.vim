@@ -16,6 +16,11 @@ if !exists('g:session_default_name')
   let g:session_default_name = 'default'
 endif
 
+" The file extension of session scripts.
+if !exists('g:session_extension')
+  let g:session_extension = '.vim'
+endif
+
 " When you start Vim without opening any files the plug-in will prompt you
 " whether you want to load the default session. Other supported values for
 " this option are 'yes' (to load the default session without prompting) and

@@ -93,6 +93,14 @@ Note that the session.vim plug-in automatically and unconditionally executes the
 
 This option controls the location of your session scripts. Its default value is `~/.vim/sessions` (on UNIX) or `~\vimfiles\sessions` (on Windows). If you don't mind the default you don't have to do anything; the directory will be created for you. Note that a leading `~` is expanded to your current home directory (`$HOME` on UNIX, `%USERPROFILE%` on Windows).
 
+### The `g:session_default_name` option
+
+The name of the default session without directory or filename extension (you'll never guess what the default is).
+
+### The `g:session_extension` option
+
+The filename extension of session scripts. This should include the dot that separates the basename from the extension. Defaults to '.vim'.
+
 ### The `g:session_autoload` option
 
 By default this option is set to `'prompt'`. This means that when you start Vim without opening any files and the `default` session script exists, the session plug-in will ask whether you want to restore your default session. When you set this option to `'yes'` and you start Vim without opening any files the default session will be restored without a prompt. To completely disable automatic loading you can set this option to `'no'`.

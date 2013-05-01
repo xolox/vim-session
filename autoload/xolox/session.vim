@@ -3,7 +3,7 @@
 " Last Change: May 2, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.6.1'
+let g:xolox#session#version = '1.6.2'
 
 call xolox#misc#compat#check('session', 2)
 
@@ -524,7 +524,7 @@ endfunction
 
 function! xolox#session#name_to_path(name) " {{{2
   let directory = xolox#misc#path#absolute(g:session_directory)
-  let filename = xolox#misc#path#encode(a:name) . '.vim'
+  let filename = xolox#misc#path#encode(a:name) . g:session_extension
   return xolox#misc#path#merge(directory, filename)
 endfunction
 
@@ -534,7 +534,7 @@ endfunction
 
 function! xolox#session#get_names() " {{{2
   let directory = xolox#misc#path#absolute(g:session_directory)
-  let filenames = split(glob(xolox#misc#path#merge(directory, '*.vim')), "\n")
+  let filenames = split(glob(xolox#misc#path#merge(directory, '*' . g:session_extension)), "\n")
   return map(filenames, 'xolox#session#path_to_name(v:val)')
 endfunction
 
