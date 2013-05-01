@@ -24,6 +24,8 @@ Unzip the most recent [ZIP archive](http://peterodding.com/code/vim/downloads/se
 
 ## Commands
 
+Note that environment variables inside command arguments are expanded by the plug-in.
+
 ### The `:SaveSession` command
 
 This command saves your current editing session just like Vim's built-in [:mksession][mksession] command does. The difference is that you don't pass a full pathname as argument but just a name, any name really. Press `<Tab>` to get completion of existing session names. If you don't provide an argument the name 'default' is used, unless an existing session is open in which case the name of that session will be used.

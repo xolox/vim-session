@@ -83,6 +83,9 @@ commands will be available to you:
                                                               *session-commands*
 Commands ~
 
+Note that environment variables inside command arguments are expanded by the
+plug-in.
+
 -------------------------------------------------------------------------------
 The *:SaveSession* command
 

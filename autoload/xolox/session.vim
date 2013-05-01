@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: April 30, 2013
+" Last Change: May 2, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.5.13'
+let g:xolox#session#version = '1.6'
 
 call xolox#misc#compat#check('session', 2)
 
@@ -482,7 +482,11 @@ endfunction
 " Miscellaneous functions. {{{1
 
 function! s:unescape(s) " {{{2
-  return substitute(a:s, '\\\(.\)', '\1', 'g')
+  " Undo escaping of special characters (preceded by a backslash).
+  let s = substitute(a:s, '\\\(.\)', '\1', 'g')
+  " Expand any environment variables in the user input.
+  let s = substitute(s, '\(\$[A-Za-z0-9_]\+\)', '\=expand(submatch(1))', 'g')
+  return s
 endfunction
 
 function! s:select_name(name, action) " {{{2
