@@ -3,7 +3,7 @@
 " Last Change: May 2, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.6.4'
+let g:xolox#session#version = '1.7'
 
 call xolox#misc#compat#check('session', 2)
 
@@ -261,13 +261,25 @@ function! xolox#session#auto_load() " {{{2
       endfor
     endif
     " Default to the last used session or the default session?
-    let session = s:last_session_recall()
+    let [has_last_session, session] = s:get_last_or_default_session()
     let path = xolox#session#name_to_path(session)
-    if filereadable(path) && !s:session_is_locked(path)
-      let msg = "Do you want to restore your %s editing session?"
-      let label = session != g:session_default_name ? 'last used' : 'default'
-      if s:prompt(printf(msg, label), 'g:session_autoload')
+    if (g:session_default_to_last == 0 || has_last_session) && filereadable(path) && !s:session_is_locked(path)
+      " Compose the message for the prompt.
+      let is_default_session = (session == g:session_default_name)
+      let msg = printf("Do you want to restore your %s editing session%s?",
+            \ is_default_session ? 'default' : 'last used',
+            \ is_default_session ? '' : printf(' (%s)', session))
+      " Prepare the list of choices.
+      let choices = ['&Yes', '&No']
+      if !is_default_session
+        call add(choices, '&Forget')
+      endif
+      " Prompt the user (if not configured otherwise).
+      let choice = s:prompt(msg, choices, 'g:session_autoload')
+      if choice == 1
         call xolox#session#open_cmd(session, '')
+      elseif choice == 3
+        call s:last_session_forget()
       endif
     endif
   endif
@@ -278,7 +290,7 @@ function! xolox#session#auto_save() " {{{2
     let name = s:get_name('', 0)
     if name != ''
       let msg = "Do you want to save your editing session before quitting Vim?"
-      if s:prompt(msg, 'g:session_autosave')
+      if s:prompt(msg, ['&Yes', '&No'], 'g:session_autosave') == 1
         call xolox#session#save_cmd(name, '')
       endif
     endif
@@ -299,10 +311,12 @@ endfunction
 
 " Commands that enable users to manage multiple sessions. {{{1
 
-function! s:prompt(msg, var)
-  let value = eval(a:var)
-  if value == 'yes' || (type(value) != type('') && value)
+function! s:prompt(msg, choices, option_name)
+  let option_value = eval(a:option_name)
+  if option_value == 'yes'
     return 1
+  elseif option_value == 'no'
+    return 0
   else
     if g:session_verbose_messages
       let format = "%s Note that you can permanently disable this dialog by adding the following line to your %s script:\n\n\t:let %s = 'no'"
@@ -310,7 +324,7 @@ function! s:prompt(msg, var)
     else
       let prompt = a:msg
     endif
-    return confirm(prompt, "&Yes\n&No", 1, 'Question') == 1
+    return confirm(prompt, join(a:choices, "\n"), 1, 'Question')
   endif
 endfunction
 
@@ -398,7 +412,7 @@ function! xolox#session#close_cmd(bang, silent, save_allowed) abort " {{{2
   if name != ''
     if a:save_allowed
       let msg = "Do you want to save your current editing session before closing it?"
-      if s:prompt(msg, 'g:session_autosave')
+      if s:prompt(msg, ['&Yes', '&No'], 'g:session_autosave') == 1
         call xolox#session#save_cmd(name, a:bang)
       endif
     else
@@ -573,14 +587,22 @@ function! s:last_session_persist(name)
   endif
 endfunction
 
-function! s:last_session_recall()
-  if g:session_default_to_last
-    let fname = s:last_session_file()
-    if filereadable(fname)
-      return readfile(fname)[0]
-    endif
+function! s:last_session_forget()
+  let last_session_file = s:last_session_file()
+  if filereadable(last_session_file) && delete(last_session_file) != 0
+    call xolox#misc#msg#warn("session.vim %s: Failed to delete name of last used session!", g:xolox#session#version)
   endif
-  return g:session_default_name
+endfunction
+
+function! s:get_last_or_default_session()
+  let last_session_file = s:last_session_file()
+  let has_last_session = filereadable(last_session_file)
+  if g:session_default_to_last && has_last_session
+    let lines = readfile(last_session_file)
+    return [has_last_session, lines[0]]
+  else
+    return [has_last_session, g:session_default_name]
+  endif
 endfunction
 
 " Lock file management: {{{2

@@ -2,11 +2,11 @@
 
 The `session.vim` plug-in improves upon [Vim](http://www.vim.org/)'s built-in [:mksession][mksession] command by enabling you to easily and (if you want) automatically persist and restore your Vim editing sessions. It works by generating a [Vim script](http://vimdoc.sourceforge.net/htmldoc/usr_41.html#script) that restores your current settings and the arrangement of tab pages and/or split windows and the files they contain.
 
-To persist your current editing session you can execute the `:SaveSession` command. If you don't provide a name for the session 'default' is used. You're free to use whatever characters you like in session names. When you want to restore your session simply execute `:OpenSession`. Again the name 'default' is used if you don't provide one. When a session is active, has been changed and you quit Vim you'll be prompted whether you want to save the open session before quitting Vim:
+To persist your current editing session you can execute the `:SaveSession` command. If you don't provide a name for the session 'default' is used (you can change this name with an option). You're free to use whatever characters you like in session names. When you want to restore your session simply execute `:OpenSession`. Again the name 'default' is used if you don't provide one. When a session is active, has been changed and you quit Vim you'll be prompted whether you want to save the open session before quitting Vim:
 
 ![Screenshot of auto-save prompt](http://peterodding.com/code/vim/session/autosave.png)
 
-When you start Vim without editing any files and the 'default' session exists, you'll be prompted whether you want to restore the default session:
+When you start Vim without editing any files and the default session exists, you'll be prompted whether you want to restore the default session:
 
 ![Screenshot of auto-open prompt](http://peterodding.com/code/vim/session/autoopen.png)
 
@@ -28,7 +28,7 @@ Note that environment variables inside command arguments are expanded by the plu
 
 ### The `:SaveSession` command
 
-This command saves your current editing session just like Vim's built-in [:mksession][mksession] command does. The difference is that you don't pass a full pathname as argument but just a name, any name really. Press `<Tab>` to get completion of existing session names. If you don't provide an argument the name 'default' is used, unless an existing session is open in which case the name of that session will be used.
+This command saves your current editing session just like Vim's built-in [:mksession][mksession] command does. The difference is that you don't pass a full pathname as argument but just a name, any name really. Press `<Tab>` to get completion of existing session names. If you don't provide an argument the default session name is used, unless an existing session is open in which case the name of that session will be used.
 
 If the session you're trying to save is already active in another Vim instance you'll get a warning and nothing happens. You can use a bang (!) as in `:SaveSession! ...` to ignore the warning and save the session anyway.
 
@@ -103,7 +103,7 @@ The filename extension of session scripts. This should include the dot that sepa
 
 ### The `g:session_autoload` option
 
-By default this option is set to `'prompt'`. This means that when you start Vim without opening any files and the `default` session script exists, the session plug-in will ask whether you want to restore your default session. When you set this option to `'yes'` and you start Vim without opening any files the default session will be restored without a prompt. To completely disable automatic loading you can set this option to `'no'`.
+By default this option is set to `'prompt'`. This means that when you start Vim without opening any files and the default session script exists, the session plug-in will ask whether you want to restore your default session. When you set this option to `'yes'` and you start Vim without opening any files the default session will be restored without a prompt. To completely disable automatic loading you can set this option to `'no'`.
 
 ### The `g:session_autosave` option
 
