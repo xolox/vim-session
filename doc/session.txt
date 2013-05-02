@@ -20,11 +20,12 @@ Contents ~
   4. The |g:session_extension| option
   5. The |g:session_autoload| option
   6. The |g:session_autosave| option
-  7. The |g:session_default_to_last| option
-  8. The |g:session_persist_globals| option
-  9. The |g:session_restart_environment| option
-  10. The |g:session_command_aliases| option
-  11. The |g:loaded_session| option
+  7. The |g:session_verbose_messages| option
+  8. The |g:session_default_to_last| option
+  9. The |g:session_persist_globals| option
+  10. The |g:session_restart_environment| option
+  11. The |g:session_command_aliases| option
+  12. The |g:loaded_session| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Known issues                                          |session-known-issues|
  7. Contact                                                    |session-contact|
@@ -234,6 +235,14 @@ you quit Vim, the session plug-in will ask whether you want to save the
 changes to your session. Set this option to 'yes' to always automatically save
 open sessions when you quit Vim. To completely disable automatic saving you
 can set this option to 'no'.
+
+-------------------------------------------------------------------------------
+The *g:session_verbose_messages* option
+
+The session load/save prompts are quite verbose by default because they
+explain how to disable the prompts. If you find the additional explanation
+distracting you can lower the verbosity by setting this option to 0 (false) in
+your |vimrc| script.
 
 -------------------------------------------------------------------------------
 The *g:session_default_to_last* option

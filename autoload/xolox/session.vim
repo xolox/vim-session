@@ -3,7 +3,7 @@
 " Last Change: May 2, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.6.3'
+let g:xolox#session#version = '1.6.4'
 
 call xolox#misc#compat#check('session', 2)
 
@@ -304,9 +304,12 @@ function! s:prompt(msg, var)
   if value == 'yes' || (type(value) != type('') && value)
     return 1
   else
-    let format = "%s Note that you can permanently disable this dialog by adding the following line to your %s script:\n\n\t:let %s = 'no'"
-    let vimrc = xolox#misc#os#is_win() ? '~\_vimrc' : '~/.vimrc'
-    let prompt = printf(format, a:msg, vimrc, a:var)
+    if g:session_verbose_messages
+      let format = "%s Note that you can permanently disable this dialog by adding the following line to your %s script:\n\n\t:let %s = 'no'"
+      let prompt = printf(format, a:msg, xolox#misc#os#is_win() ? '~\_vimrc' : '~/.vimrc', a:var)
+    else
+      let prompt = a:msg
+    endif
     return confirm(prompt, "&Yes\n&No", 1, 'Question') == 1
   endif
 endfunction

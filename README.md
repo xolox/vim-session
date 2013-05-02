@@ -109,6 +109,10 @@ By default this option is set to `'prompt'`. This means that when you start Vim 
 
 By default this option is set to `'prompt'`. When you've opened a session and you quit Vim, the session plug-in will ask whether you want to save the changes to your session. Set this option to `'yes'` to always automatically save open sessions when you quit Vim. To completely disable automatic saving you can set this option to `'no'`.
 
+### The `g:session_verbose_messages` option
+
+The session load/save prompts are quite verbose by default because they explain how to disable the prompts. If you find the additional explanation distracting you can lower the verbosity by setting this option to 0 (false) in your [vimrc script] [vimrc].
+
 ### The `g:session_default_to_last` option
 
 By default this option is set to false (0). When you set this option to true (1) and you start Vim, the session plug-in will open your last used session instead of the default session. Note that the session plug-in will still show you the dialog asking whether you want to restore the last used session. To get rid of the dialog you have to set `g:session_autoload` to `'yes'`.

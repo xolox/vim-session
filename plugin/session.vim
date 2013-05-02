@@ -37,9 +37,14 @@ if !exists('g:session_autosave')
   let g:session_autosave = 'prompt'
 endif
 
+" Define the verbosity of messages.
+if !exists('g:session_verbose_messages')
+  let g:session_verbose_messages = 1
+endif
+
 " The session plug-in can automatically open sessions in three ways: based on
 " Vim's server name, by remembering the last used session or by opening the
-" session named `default'. Enable this option to use the second approach.
+" default session. Enable this option to use the second approach.
 if !exists('g:session_default_to_last')
   let g:session_default_to_last = 0
 endif
