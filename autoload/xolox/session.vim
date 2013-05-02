@@ -3,7 +3,7 @@
 " Last Change: May 2, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.6.2'
+let g:xolox#session#version = '1.6.3'
 
 call xolox#misc#compat#check('session', 2)
 
@@ -452,8 +452,8 @@ function! xolox#session#restart_cmd(bang, args) abort " {{{2
     if name == '' | let name = 'restart' | endif
     call xolox#session#save_cmd(name, a:bang)
     " Generate the Vim command line.
-    let progname = xolox#misc#escape#shell(fnameescape(v:progname))
-    let command = progname . ' -c ' . xolox#misc#escape#shell('OpenSession\! ' . fnameescape(name))
+    let progname = xolox#misc#escape#shell(fnameescape(s:find_executable()))
+    let command = progname . ' -g -c ' . xolox#misc#escape#shell('OpenSession\! ' . fnameescape(name))
     let args = matchstr(a:args, '^\s*|\s*\zs.\+$')
     if !empty(args)
       let command .= ' -c ' . xolox#misc#escape#shell(args)
@@ -477,6 +477,18 @@ function! xolox#session#restart_cmd(bang, args) abort " {{{2
     " Close Vim.
     silent quitall
   endif
+endfunction
+
+function! s:find_executable()
+  let progname = v:progname
+  if has('macunix')
+    " Special handling for Mac OS X where MacVim is usually not on the $PATH.
+    let segments = xolox#misc#path#split($VIMRUNTIME)
+    if segments[-3:] == ['Resources', 'vim', 'runtime']
+      let progname = xolox#misc#path#join(segments[0:-4] + ['MacOS', 'Vim'])
+    endif
+  endif
+  return progname
 endfunction
 
 " Miscellaneous functions. {{{1
