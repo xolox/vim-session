@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: May 3, 2013
+" Last Change: May 4, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.7.1'
+let g:xolox#session#version = '1.7.2'
 
 call xolox#misc#compat#check('session', 2)
 
@@ -286,13 +286,26 @@ function! xolox#session#auto_load() " {{{2
 endfunction
 
 function! xolox#session#auto_save() " {{{2
-  if !v:dying && g:session_autosave != 'no'
-    let name = s:get_name('', 0)
-    if name != ''
-      let msg = "Do you want to save your editing session before quitting Vim?"
-      if s:prompt(msg, ['&Yes', '&No'], 'g:session_autosave') == 1
-        call xolox#session#save_cmd(name, '')
-      endif
+  " We won't save the session if Vim is not terminating normally.
+  if v:dying
+    return
+  endif
+  " We won't save the session if auto-save is explicitly disabled.
+  if g:session_autosave == 'no'
+    return
+  endif
+  " Get the name of the active session (if any).
+  let name = s:get_name('', 0)
+  " If no session is active and the user doesn't have any sessions yet, help
+  " them get started by suggesting to create the default session.
+  if empty(name) && empty(xolox#session#get_names())
+    let name = g:session_default_name
+  endif
+  " Prompt the user to save the active or first session?
+  if !empty(name)
+    let msg = "Do you want to save your editing session before quitting Vim?"
+    if s:prompt(msg, ['&Yes', '&No'], 'g:session_autosave') == 1
+      call xolox#session#save_cmd(name, '')
     endif
   endif
 endfunction
