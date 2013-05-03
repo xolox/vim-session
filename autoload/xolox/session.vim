@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: May 2, 2013
+" Last Change: May 3, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.7'
+let g:xolox#session#version = '1.7.1'
 
 call xolox#misc#compat#check('session', 2)
 
@@ -320,7 +320,7 @@ function! s:prompt(msg, choices, option_name)
   else
     if g:session_verbose_messages
       let format = "%s Note that you can permanently disable this dialog by adding the following line to your %s script:\n\n\t:let %s = 'no'"
-      let prompt = printf(format, a:msg, xolox#misc#os#is_win() ? '~\_vimrc' : '~/.vimrc', a:var)
+      let prompt = printf(format, a:msg, xolox#misc#os#is_win() ? '~\_vimrc' : '~/.vimrc', a:option_name)
     else
       let prompt = a:msg
     endif
