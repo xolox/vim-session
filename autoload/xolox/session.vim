@@ -3,7 +3,7 @@
 " Last Change: May 4, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.7.2'
+let g:xolox#session#version = '1.7.3'
 
 call xolox#misc#compat#check('session', 2)
 
@@ -250,7 +250,10 @@ function! xolox#session#auto_load() " {{{2
     return
   endif
   " Check that the user has started Vim without editing any files.
-  if bufnr('$') == 1 && bufname('%') == '' && !&mod && getline(1, '$') == ['']
+  let current_buffer_is_empty = (&modified == 0 && getline(1, '$') == [''])
+  let buffer_list_is_empty = (bufnr('$') == 1 && bufname('%') == '')
+  let buffer_list_is_persistent = (index(xolox#misc#option#split(&viminfo), '%') >= 0)
+  if current_buffer_is_empty && (buffer_list_is_empty || buffer_list_is_persistent)
     " Check whether a session matching the user-specified server name exists.
     if v:servername !~ '^\cgvim\d*$'
       for session in xolox#session#get_names()
