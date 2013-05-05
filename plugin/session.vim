@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: May 2, 2013
+" Last Change: May 5, 2013
 " URL: http://peterodding.com/code/vim/session/
 
 " Support for automatic update using the GLVS plug-in.
@@ -35,6 +35,13 @@ endif
 " session).
 if !exists('g:session_autosave')
   let g:session_autosave = 'prompt'
+endif
+
+" Periodically save the active session automatically? Set this to the
+" auto-save interval in minutes. The value zero disables the feature
+" (this is the default).
+if !exists('g:session_autosave_periodic')
+  let g:session_autosave_periodic = 0
 endif
 
 " Define the verbosity of messages.
@@ -92,6 +99,7 @@ unlet s:directory
 augroup PluginSession
   autocmd!
   au VimEnter * nested call xolox#session#auto_load()
+  au CursorHold,CursorHoldI * call xolox#session#auto_save_periodic()
   au VimLeavePre * call xolox#session#auto_save()
   au VimLeavePre * call xolox#session#auto_unlock()
 augroup END

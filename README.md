@@ -6,7 +6,7 @@ To persist your current editing session you can execute the `:SaveSession` comma
 
 ![Screenshot of auto-save prompt](http://peterodding.com/code/vim/session/autosave.png)
 
-When you start Vim without editing any files and the default session exists, you'll be prompted whether you want to restore the default session:
+If you want, the plug-in can also automatically save your session every few minutes (see the `g:session_autosave_periodic` option). When you start Vim without editing any files and the default session exists, you'll be prompted whether you want to restore the default session:
 
 ![Screenshot of auto-open prompt](http://peterodding.com/code/vim/session/autoopen.png)
 
@@ -108,6 +108,12 @@ By default this option is set to `'prompt'`. This means that when you start Vim 
 ### The `g:session_autosave` option
 
 By default this option is set to `'prompt'`. When you've opened a session and you quit Vim, the session plug-in will ask whether you want to save the changes to your session. Set this option to `'yes'` to always automatically save open sessions when you quit Vim. To completely disable automatic saving you can set this option to `'no'`.
+
+### The `g:session_autosave_periodic` option
+
+This option sets the interval in minutes for automatic, periodic saving of active sessions. The default is zero which disables the feature.
+
+Note that when the plug-in automatically saves a session (because you enabled this feature) the plug-in will not prompt for your permission.
 
 ### The `g:session_verbose_messages` option
 

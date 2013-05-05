@@ -20,12 +20,13 @@ Contents ~
   4. The |g:session_extension| option
   5. The |g:session_autoload| option
   6. The |g:session_autosave| option
-  7. The |g:session_verbose_messages| option
-  8. The |g:session_default_to_last| option
-  9. The |g:session_persist_globals| option
-  10. The |g:session_restart_environment| option
-  11. The |g:session_command_aliases| option
-  12. The |g:loaded_session| option
+  7. The |g:session_autosave_periodic| option
+  8. The |g:session_verbose_messages| option
+  9. The |g:session_default_to_last| option
+  10. The |g:session_persist_globals| option
+  11. The |g:session_restart_environment| option
+  12. The |g:session_command_aliases| option
+  13. The |g:loaded_session| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Known issues                                          |session-known-issues|
  7. Contact                                                    |session-contact|
@@ -52,8 +53,10 @@ prompted whether you want to save the open session before quitting Vim:
 
     Screenshot of auto-save prompt, see reference [1]
 
-When you start Vim without editing any files and the default session exists,
-you'll be prompted whether you want to restore the default session:
+If you want, the plug-in can also automatically save your session every few
+minutes (see the |g:session_autosave_periodic| option). When you start Vim
+without editing any files and the default session exists, you'll be prompted
+whether you want to restore the default session:
 
     Screenshot of auto-open prompt, see reference [2]
 
@@ -235,6 +238,15 @@ you quit Vim, the session plug-in will ask whether you want to save the
 changes to your session. Set this option to 'yes' to always automatically save
 open sessions when you quit Vim. To completely disable automatic saving you
 can set this option to 'no'.
+
+-------------------------------------------------------------------------------
+The *g:session_autosave_periodic* option
+
+This option sets the interval in minutes for automatic, periodic saving of
+active sessions. The default is zero which disables the feature.
+
+Note that when the plug-in automatically saves a session (because you enabled
+this feature) the plug-in will not prompt for your permission.
 
 -------------------------------------------------------------------------------
 The *g:session_verbose_messages* option

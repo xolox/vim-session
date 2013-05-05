@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: May 4, 2013
+" Last Change: May 5, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '1.7.3'
+let g:xolox#session#version = '1.8'
 
 call xolox#misc#compat#check('session', 2)
 
@@ -246,6 +246,7 @@ endfunction
 " Automatic commands to manage the default session. {{{1
 
 function! xolox#session#auto_load() " {{{2
+  " Automatically load the default / last used session when Vim starts.
   if g:session_autoload == 'no'
     return
   endif
@@ -313,7 +314,31 @@ function! xolox#session#auto_save() " {{{2
   endif
 endfunction
 
+function! xolox#session#auto_save_periodic() " {{{2
+  " Automatically save the session every few minutes?
+  let interval = g:session_autosave_periodic * 60
+  let next_save = s:session_last_flushed + interval
+  if next_save < localtime()
+    call xolox#misc#msg#debug("session.vim %s: Skipping this beat of 'updatetime' (it's not our time yet).", g:xolox#session#version)
+  else
+    call xolox#misc#msg#debug("session.vim %s: This is our beat of 'updatetime'!", g:xolox#session#version)
+    let name = s:get_name('', 0)
+    if !empty(name)
+      call xolox#session#save_cmd(name, '')
+    endif
+  endif    
+endfunction
+
+function! s:flush_session()
+  let s:session_last_flushed = localtime()
+endfunction
+
+if !exists('s:session_last_flushed')
+  call s:flush_session()
+endif
+
 function! xolox#session#auto_unlock() " {{{2
+  " Automatically unlock all sessions when Vim quits.
   let i = 0
   while i < len(s:lock_files)
     let lock_file = s:lock_files[i]
@@ -359,6 +384,7 @@ function! xolox#session#open_cmd(name, bang) abort " {{{2
       call s:lock_session(path)
       execute 'source' fnameescape(path)
       call s:last_session_persist(name)
+      call s:flush_session()
       call xolox#misc#timer#stop("session.vim %s: Opened %s session in %s.", g:xolox#session#version, string(name), starttime)
       call xolox#misc#msg#info("session.vim %s: Opened %s session from %s.", g:xolox#session#version, string(name), fnamemodify(path, ':~'))
     endif
@@ -395,6 +421,7 @@ function! xolox#session#save_cmd(name, bang) abort " {{{2
       call xolox#misc#msg#warn(msg, g:xolox#session#version, string(name), friendly_path)
     else
       call s:last_session_persist(name)
+      call s:flush_session()
       call xolox#misc#timer#stop("session.vim %s: Saved %s session in %s.", g:xolox#session#version, string(name), starttime)
       call xolox#misc#msg#info("session.vim %s: Saved %s session to %s.", g:xolox#session#version, string(name), friendly_path)
       let v:this_session = path
@@ -458,6 +485,7 @@ function! xolox#session#close_cmd(bang, silent, save_allowed) abort " {{{2
     execute s:oldcwd
     unlet s:oldcwd
   endif
+  call s:flush_session()
   if v:this_session == ''
     if !a:silent
       let msg = "session.vim %s: Closed session."
