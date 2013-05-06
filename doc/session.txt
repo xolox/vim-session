@@ -13,7 +13,12 @@ Contents ~
   4. The |:CloseSession| command
   5. The |:DeleteSession| command
   6. The |:ViewSession| command
- 4. Options                                                    |session-options|
+  7. Tab scoped sessions                                   |tab-scoped-sessions|
+   1. The |:OpenTabSession| command
+   2. The |:SaveTabSession| command
+   3. The |:AppendTabSession| command
+   4. The |:CloseTabSession| command
+ 8. Options                                                    |session-options|
   1. The |sessionoptions| setting
   2. The |g:session_directory| option
   3. The |g:session_default_name| option
@@ -27,11 +32,11 @@ Contents ~
   11. The |g:session_restart_environment| option
   12. The |g:session_command_aliases| option
   13. The |g:loaded_session| option
- 5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
- 6. Known issues                                          |session-known-issues|
- 7. Contact                                                    |session-contact|
- 8. License                                                    |session-license|
- 9. Sample session script                                |sample-session-script|
+ 9. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
+ 10. Known issues                                         |session-known-issues|
+ 11. Contact                                                   |session-contact|
+ 12. License                                                   |session-license|
+ 13. Sample session script                               |sample-session-script|
 
 ===============================================================================
                                                           *session-introduction*
@@ -177,9 +182,53 @@ Execute this command to view the Vim script generated for a session. This
 command is useful when you need to review the generated Vim script repeatedly,
 for example while debugging or modifying the 'session.vim' plug-in.
 
+-------------------------------------------------------------------------------
+                                                           *tab-scoped-sessions*
+Tab scoped sessions ~
+
+When |'sessionoptions'| contains 'tabpages' (this is the default) session
+scripts will persist and restore all windows in all tab pages. When you remove
+'tabpages' from |'sessionoptions'| you get a sort of light-weight sessions: They
+are constrained to a single tab page. Vim's |:mksession| command and the
+vim-session plug-in both fully support this.
+
+You can change |'sessionoptions'| in your |vimrc| script but then you can never
+save a session including tab pages. To decide on the spot whether you want a
+global or tab scoped session, the vim-session plug-in defines the three
+commands documented below.
+
+Note that tab scoped sessions are regular session scripts, so when you load a
+tab scoped session using |:OpenSession| instead of |:OpenTabSession| the
+vim-session plug-in assumes it is a global session and will close all active
+tab pages before opening the tab scoped session.
+
+-------------------------------------------------------------------------------
+The *:OpenTabSession* command
+
+Just like |:OpenSession| but applies only to the current tab page.
+
+-------------------------------------------------------------------------------
+The *:SaveTabSession* command
+
+Just like |:SaveSession| but applies only to the current tab page.
+
+-------------------------------------------------------------------------------
+The *:AppendTabSession* command
+
+This command opens a new tab page and loads the given tab scoped session in
+that tab page. You can give this command a count just like |:tabnew|.
+
+-------------------------------------------------------------------------------
+The *:CloseTabSession* command
+
+Just like |:CloseSession| but applies only to the current tab page.
+
 ===============================================================================
                                                                *session-options*
 Options ~
+
+The following Vim options and plug-in options (global variables) can be used
+to configure the plug-in to your preferences.
 
 -------------------------------------------------------------------------------
 The *sessionoptions* setting
@@ -333,6 +382,16 @@ command aliases:
  - 'SessionDelete' is an alias for 'DeleteSession'
 
  - 'SessionClose' is an alias for 'CloseSession'
+
+Then there are the command aliases for tab scoped sessions:
+
+ - 'SessionTabOpen' is an alias for 'OpenTabSession'
+
+ - 'SessionTabSave' is an alias for 'SaveTabSession'
+
+ - 'SessionTabAppend' is an alias for 'AppendTabSession'
+
+ - 'SessionTabClose' is an alias for 'CloseTabSession'
 
 The aliases support tab completion just like the real commands; they're
 exactly the same except for the names.

@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: May 5, 2013
+" Last Change: May 6, 2013
 " URL: http://peterodding.com/code/vim/session/
 
 " Support for automatic update using the GLVS plug-in.
@@ -104,22 +104,37 @@ augroup PluginSession
   au VimLeavePre * call xolox#session#auto_unlock()
 augroup END
 
-" Define commands that enable users to manage multiple named sessions.
-command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names OpenSession call xolox#session#open_cmd(<q-args>, <q-bang>)
+" Define commands that enable users to manage multiple named, heavy-weight
+" sessions (used to persist/restore a complete Vim editing session including
+" one or more tab pages).
+command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names OpenSession call xolox#session#open_cmd(<q-args>, <q-bang>, 'OpenSession')
 command! -bar -nargs=? -complete=customlist,xolox#session#complete_names ViewSession call xolox#session#view_cmd(<q-args>)
-command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SaveSession call xolox#session#save_cmd(<q-args>, <q-bang>)
+command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SaveSession call xolox#session#save_cmd(<q-args>, <q-bang>, 'SaveSession')
 command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names DeleteSession call xolox#session#delete_cmd(<q-args>, <q-bang>)
-command! -bar -bang CloseSession call xolox#session#close_cmd(<q-bang>, 0, 1)
+command! -bar -bang CloseSession call xolox#session#close_cmd(<q-bang>, 0, 1, 'CloseSession')
+
+" Define commands that enable users to manage multiple named, light-weight
+" sessions (used to persist/restore the window layout of a single tab page).
+command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names OpenTabSession call xolox#session#open_tab_cmd(<q-args>, <q-bang>, 'OpenTabSession')
+command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SaveTabSession call xolox#session#save_tab_cmd(<q-args>, <q-bang>, 'SaveTabSession')
+command! -bar -bang -count=94919 -nargs=? -complete=customlist,xolox#session#complete_names AppendTabSession call xolox#session#append_tab_cmd(<q-args>, <q-bang>, <count>, 'AppendTabSession')
+command! -bar -bang CloseTabSession call xolox#session#close_tab_cmd(<q-bang>, 'CloseTabSession')
+
+" Define a command to restart Vim editing sessions.
 command! -bang -nargs=* -complete=command RestartVim call xolox#session#restart_cmd(<q-bang>, <q-args>)
 
 if g:session_command_aliases
   " Define command aliases of the form "Session" + Action in addition to
   " the real command names which are of the form Action + "Session" (above).
-  command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionOpen call xolox#session#open_cmd(<q-args>, <q-bang>)
+  command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionOpen call xolox#session#open_cmd(<q-args>, <q-bang>, 'SessionOpen')
   command! -bar -nargs=? -complete=customlist,xolox#session#complete_names SessionView call xolox#session#view_cmd(<q-args>)
-  command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionSave call xolox#session#save_cmd(<q-args>, <q-bang>)
+  command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionSave call xolox#session#save_cmd(<q-args>, <q-bang>, 'SessionSave')
   command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionDelete call xolox#session#delete_cmd(<q-args>, <q-bang>)
-  command! -bar -bang SessionClose call xolox#session#close_cmd(<q-bang>, 0, 1)
+  command! -bar -bang SessionClose call xolox#session#close_cmd(<q-bang>, 0, 1, 'SessionClose')
+  command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionTabOpen call xolox#session#open_tab_cmd(<q-args>, <q-bang>, 'SessionTabOpen')
+  command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionTabSave call xolox#session#save_tab_cmd(<q-args>, <q-bang>, 'SessionTabSave')
+  command! -bar -bang -count=94919 -nargs=? -complete=customlist,xolox#session#complete_names SessionTabAppend call xolox#session#append_tab_cmd(<q-args>, <q-bang>, <count>, 'SessionTabAppend')
+  command! -bar -bang SessionTabClose call xolox#session#close_tab_cmd(<q-bang>, 'SessionTabClose')
 endif
 
 " Don't reload the plug-in once it has loaded successfully.
