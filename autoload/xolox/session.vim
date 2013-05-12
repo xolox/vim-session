@@ -3,7 +3,7 @@
 " Last Change: May 12, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.1'
+let g:xolox#session#version = '2.2'
 
 call xolox#misc#compat#check('session', 2)
 
@@ -228,6 +228,9 @@ function! s:check_special_tabpage(session)
 endfunction
 
 function! s:check_special_window(session)
+  " If we detected a special window and the argument to the command is not a
+  " pathname, this variable should be set to false to disable normalization.
+  let do_normalize_path = 1
   if exists('b:NERDTreeRoot')
     if !has_key(s:nerdtrees, bufnr('%'))
       let command = 'NERDTree'
@@ -243,6 +246,10 @@ function! s:check_special_window(session)
   elseif exists('g:proj_running') && g:proj_running == bufnr('%')
     let command = 'Project'
     let argument = expand('%:p')
+  elseif exists('b:ConqueTerm_Idx')
+    let command = 'ConqueTerm'
+    let argument = g:ConqueTerm_Terminals[b:ConqueTerm_Idx]['program_name']
+    let do_normalize_path = 0
   elseif &filetype == 'netrw'
     let command = 'edit'
     let argument = bufname('%')
@@ -257,13 +264,17 @@ function! s:check_special_window(session)
     if argument == ''
       call add(a:session, command)
     else
-      let argument = fnamemodify(argument, ':~')
-      if xolox#session#options_include('slash')
-        let argument = substitute(argument, '\', '/', 'g')
+      if do_normalize_path
+        let argument = fnamemodify(argument, ':~')
+        if xolox#session#options_include('slash')
+          let argument = substitute(argument, '\', '/', 'g')
+        endif
       endif
       call add(a:session, command . ' ' . fnameescape(argument))
     endif
-    call add(a:session, 'execute "bwipeout" s:bufnr_save')
+    call add(a:session, 'if bufnr("%") != s:bufnr_save')
+    call add(a:session, '  execute "bwipeout" s:bufnr_save')
+    call add(a:session, 'endif')
     call add(a:session, 'execute "cd" fnameescape(s:cwd_save)')
     return 1
   endif
