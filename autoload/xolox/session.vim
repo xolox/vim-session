@@ -3,7 +3,7 @@
 " Last Change: May 13, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.2.1'
+let g:xolox#session#version = '2.3'
 
 call xolox#misc#compat#check('session', 3)
 
@@ -374,21 +374,23 @@ endfunction
 
 function! xolox#session#auto_save_periodic() " {{{2
   " Automatically save the session every few minutes?
-  let interval = g:session_autosave_periodic * 60
-  let next_save = s:session_last_flushed + interval
-  if next_save < localtime()
-    call xolox#misc#msg#debug("session.vim %s: Skipping this beat of 'updatetime' (it's not our time yet).", g:xolox#session#version)
-  else
-    call xolox#misc#msg#debug("session.vim %s: This is our beat of 'updatetime'!", g:xolox#session#version)
-    let name = s:get_name('', 0)
-    if !empty(name)
-      if xolox#session#is_tab_scoped()
-        call xolox#session#save_tab_cmd(name, '', 'SaveTabSession')
-      else
-        call xolox#session#save_cmd(name, '', 'SaveSession')
+  if g:session_autosave_periodic > 0
+    let interval = g:session_autosave_periodic * 60
+    let next_save = s:session_last_flushed + interval
+    if next_save > localtime()
+      call xolox#misc#msg#debug("session.vim %s: Skipping this beat of 'updatetime' (it's not our time yet).", g:xolox#session#version)
+    else
+      call xolox#misc#msg#debug("session.vim %s: This is our beat of 'updatetime'!", g:xolox#session#version)
+      let name = s:get_name('', 0)
+      if !empty(name)
+        if xolox#session#is_tab_scoped()
+          call xolox#session#save_tab_cmd(name, '', 'SaveTabSession')
+        else
+          call xolox#session#save_cmd(name, '', 'SaveSession')
+        endif
       endif
     endif
-  endif    
+  endif
 endfunction
 
 function! s:flush_session()
