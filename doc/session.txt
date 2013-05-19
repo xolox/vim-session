@@ -457,8 +457,8 @@ If you like the script please vote for it on Vim Online [12].
                                                                *session-license*
 License ~
 
-This software is licensed under the MIT license [13]. Copyright 2013 Peter
-Odding <peter@peterodding.com>.
+This software is licensed under the MIT license [13]. ÂŠ 2013 Peter Odding
+<peter@peterodding.com>.
 
 ===============================================================================
                                                          *sample-session-script*
