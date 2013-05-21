@@ -1,3 +1,9 @@
+" This Vim script was modified by a Python script that I use to manage the
+" inclusion of miscellaneous functions in the plug-ins that I publish to Vim
+" Online and GitHub. Please don't edit this file, instead make your changes on
+" the 'dev' branch of the git repository (thanks!). This file was generated on
+" May 21, 2013 at 03:10.
+
 " Vim script
 " Author: Peter Odding
 " Last Change: May 12, 2013
@@ -69,7 +75,7 @@ endif
 
 " The default directory where session scripts are stored.
 if !exists('g:session_directory')
-  if xolox#misc#os#is_win()
+  if xolox#session#misc#os#is_win()
     let g:session_directory = '~\vimfiles\sessions'
   else
     let g:session_directory = '~/.vim/sessions'
@@ -89,7 +95,7 @@ if !isdirectory(s:directory)
 endif
 if filewritable(s:directory) != 2
   let s:msg = "session.vim %s: The sessions directory %s isn't writable!"
-  call xolox#misc#msg#warn(s:msg, g:xolox#session#version, string(s:directory))
+  call xolox#session#misc#msg#warn(s:msg, g:xolox#session#version, string(s:directory))
   unlet s:msg
   finish
 endif
