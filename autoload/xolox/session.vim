@@ -327,10 +327,7 @@ function! xolox#session#auto_load() " {{{2
             \ is_default_session ? 'default' : 'last used',
             \ is_default_session ? '' : printf(' (%s)', session))
       " Prepare the list of choices.
-      let choices = ['&Yes', '&No']
-      if !is_default_session
-        call add(choices, '&Forget')
-      endif
+      let choices = ['&Yes', '&No', '&Forget']
       " Prompt the user (if not configured otherwise).
       let choice = s:prompt(msg, choices, 'g:session_autoload')
       if choice == 1
