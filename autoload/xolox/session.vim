@@ -2,14 +2,14 @@
 " inclusion of miscellaneous functions in the plug-ins that I publish to Vim
 " Online and GitHub. Please don't edit this file, instead make your changes on
 " the 'dev' branch of the git repository (thanks!). This file was generated on
-" May 21, 2013 at 03:10.
+" May 24, 2013 at 00:55.
 
 " Vim script
 " Author: Peter Odding
-" Last Change: May 21, 2013
+" Last Change: May 24, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.3.3'
+let g:xolox#session#version = '2.3.4'
 
 " Public API for session persistence. {{{1
 
@@ -448,16 +448,17 @@ function! xolox#session#open_cmd(name, bang, command) abort " {{{2
     elseif a:bang == '!' || !s:session_is_locked(path, a:command)
       let oldcwd = s:nerdtree_persist()
       call xolox#session#close_cmd(a:bang, 1, name != s:get_name('', 0), a:command)
-      if xolox#session#include_tabs()
-        let g:session_old_cwd = oldcwd
-      else
-        let t:session_old_cwd = oldcwd
-      endif
       call s:lock_session(path)
       execute 'source' fnameescape(path)
+      if xolox#session#is_tab_scoped()
+        let t:session_old_cwd = oldcwd
+        let session_type = 'tab scoped'
+      else
+        let g:session_old_cwd = oldcwd
+        let session_type = 'global'
+      endif
       call s:last_session_persist(name)
       call s:flush_session()
-      let session_type = xolox#session#include_tabs() ? 'global' : 'tab scoped'
       call xolox#session#misc#timer#stop("session.vim %s: Opened %s %s session in %s.", g:xolox#session#version, session_type, string(name), starttime)
       call xolox#session#misc#msg#info("session.vim %s: Opened %s %s session from %s.", g:xolox#session#version, session_type, string(name), fnamemodify(path, ':~'))
     endif

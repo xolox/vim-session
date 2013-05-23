@@ -2,7 +2,7 @@
 " inclusion of miscellaneous functions in the plug-ins that I publish to Vim
 " Online and GitHub. Please don't edit this file, instead make your changes on
 " the 'dev' branch of the git repository (thanks!). This file was generated on
-" May 21, 2013 at 03:10.
+" May 24, 2013 at 00:55.
 
 " Operating system interfaces.
 "
@@ -109,7 +109,7 @@ function! xolox#session#misc#os#exec(options) " {{{1
       if xolox#shell#can_use_dll()
         " Let the user know what's happening (in case they're interested).
         call xolox#session#misc#msg#debug("os.vim %s: Executing external command using compiled DLL: %s", g:xolox#session#misc#os#version, cmd)
-        let exit_code = xolox#shell#execute_with_dll({'command': cmd, 'async': async})
+        let exit_code = xolox#shell#execute_with_dll(cmd, async)
       endif
     catch /^Vim\%((\a\+)\)\=:E117/
       call xolox#session#misc#msg#debug("os.vim %s: The vim-shell plug-in is not installed, falling back to system() function.", g:xolox#session#misc#os#version)

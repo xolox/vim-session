@@ -2,7 +2,7 @@
 " inclusion of miscellaneous functions in the plug-ins that I publish to Vim
 " Online and GitHub. Please don't edit this file, instead make your changes on
 " the 'dev' branch of the git repository (thanks!). This file was generated on
-" May 21, 2013 at 03:10.
+" May 24, 2013 at 00:55.
 
 " Vim script
 " Author: Peter Odding
