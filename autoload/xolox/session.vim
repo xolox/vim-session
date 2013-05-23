@@ -448,12 +448,13 @@ function! xolox#session#open_cmd(name, bang, command) abort " {{{2
       execute 'source' fnameescape(path)
       if xolox#session#is_tab_scoped()
         let t:session_old_cwd = oldcwd
+        let session_type = 'tab scoped'
       else
         let g:session_old_cwd = oldcwd
+        let session_type = 'global'
       endif
       call s:last_session_persist(name)
       call s:flush_session()
-      let session_type = xolox#session#is_tab_scoped() ? 'tab scoped' : 'global'
       call xolox#misc#timer#stop("session.vim %s: Opened %s %s session in %s.", g:xolox#session#version, session_type, string(name), starttime)
       call xolox#misc#msg#info("session.vim %s: Opened %s %s session from %s.", g:xolox#session#version, session_type, string(name), fnamemodify(path, ':~'))
     endif
