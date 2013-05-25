@@ -3,7 +3,7 @@
 " Last Change: May 26, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.3.8'
+let g:xolox#session#version = '2.3.9'
 
 " Public API for session persistence. {{{1
 
@@ -331,7 +331,10 @@ function! xolox#session#auto_load() " {{{2
             \ is_default_session ? 'default' : 'last used',
             \ is_default_session ? '' : printf(' (%s)', session))
       " Prepare the list of choices.
-      let choices = ['&Yes', '&No', '&Forget']
+      let choices = ['&Yes', '&No']
+      if g:session_default_to_last && has_last_session
+        call add(choices, '&Forget')
+      endif
       " Prompt the user (if not configured otherwise).
       let choice = s:prompt(msg, choices, 'g:session_autoload')
       if choice == 1
