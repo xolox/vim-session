@@ -3,7 +3,7 @@
 " Last Change: May 25, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.3.5'
+let g:xolox#session#version = '2.3.6'
 
 " Public API for session persistence. {{{1
 
@@ -20,6 +20,9 @@ function! xolox#session#save_session(commands, filename) " {{{2
   call add(a:commands, '" Created by session.vim ' . g:xolox#session#version . ' on ' . strftime('%d %B %Y at %H:%M:%S.'))
   call add(a:commands, '" Open this file in Vim and run :source % to restore your session.')
   call add(a:commands, '')
+  if &verbose >= 1
+    call add(a:commands, 'set verbose=' . &verbose)
+  endif
   if is_all_tabs
     call add(a:commands, 'set guioptions=' . escape(&go, ' "\'))
     call add(a:commands, 'silent! set guifont=' . escape(&gfn, ' "\'))
