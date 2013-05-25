@@ -3,7 +3,7 @@
 " Last Change: May 25, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.3.6'
+let g:xolox#session#version = '2.3.7'
 
 " Public API for session persistence. {{{1
 
@@ -78,16 +78,19 @@ endfunction
 
 function! xolox#session#save_fullscreen(commands) " {{{2
   try
-    if xolox#shell#is_fullscreen()
-      call add(a:commands, "if has('gui_running')")
-      call add(a:commands, "  try")
-      call add(a:commands, "    call xolox#shell#fullscreen()")
-      " XXX Without this hack Vim on GTK doesn't restore &lines and &columns.
-      call add(a:commands, "    call feedkeys(\":set lines=" . &lines . " columns=" . &columns . "\\<CR>\")")
-      call add(a:commands, "  catch " . '/^Vim\%((\a\+)\)\=:E117/')
-      call add(a:commands, "    \" Ignore missing full-screen plug-in.")
-      call add(a:commands, "  endtry")
-      call add(a:commands, "endif")
+    let commands = xolox#shell#persist_fullscreen()
+    if !empty(commands)
+      call add(a:commands, "try")
+      for line in commands
+        call add(a:commands, "  " . line)
+      endfor
+      if has('gui_running') && (has('gui_gtk') || has('gui_gtk2') || has('gui_gnome'))
+        " Without this hack GVim on GTK doesn't preserve the window size.
+        call add(a:commands, "  call feedkeys(\":set lines=" . &lines . " columns=" . &columns . "\\<CR>\")")
+      endif
+      call add(a:commands, "catch " . '/^Vim\%((\a\+)\)\=:E117/')
+      call add(a:commands, "  \" Ignore missing full-screen plug-in.")
+      call add(a:commands, "endtry")
     endif
   catch /^Vim\%((\a\+)\)\=:E117/
     " Ignore missing full-screen functionality.
