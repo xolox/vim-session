@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: May 24, 2013
+" Last Change: May 25, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.3.4'
+let g:xolox#session#version = '2.3.5'
 
 " Public API for session persistence. {{{1
 
@@ -628,7 +628,7 @@ function! xolox#session#restart_cmd(bang, args) abort " {{{2
     if name == '' | let name = 'restart' | endif
     call xolox#session#save_cmd(name, a:bang, 'RestartVim')
     " Generate the Vim command line.
-    let progname = xolox#misc#escape#shell(fnameescape(xolox#misc#os#find_vim()))
+    let progname = xolox#misc#escape#shell(xolox#misc#os#find_vim())
     let command = progname . ' -g -c ' . xolox#misc#escape#shell('OpenSession\! ' . fnameescape(name))
     let args = matchstr(a:args, '^\s*|\s*\zs.\+$')
     if !empty(args)
