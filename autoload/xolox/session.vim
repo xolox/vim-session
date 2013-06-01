@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: May 26, 2013
+" Last Change: June 1, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.3.9'
+let g:xolox#session#version = '2.3.10'
 
 " Public API for session persistence. {{{1
 
@@ -366,7 +366,7 @@ function! xolox#session#auto_save() " {{{2
   if !empty(name)
     let is_tab_scoped = xolox#session#is_tab_scoped()
     let msg = "Do you want to save your %s before quitting Vim?"
-    if s:prompt(printf(msg, xolox#session#get_label(name)), ['&Yes', '&No'], 'g:session_autosave') == 1
+    if s:prompt(printf(msg, xolox#session#get_label(name, is_tab_scoped)), ['&Yes', '&No'], 'g:session_autosave') == 1
       if is_tab_scoped
         call xolox#session#save_tab_cmd(name, '', 'SaveTabSession')
       else
@@ -496,7 +496,7 @@ function! xolox#session#save_cmd(name, bang, command) abort " {{{2
     else
       call s:last_session_persist(name)
       call s:flush_session()
-      let label = xolox#session#get_label(name)
+      let label = xolox#session#get_label(name, !xolox#session#include_tabs())
       call xolox#misc#timer#stop("session.vim %s: Saved %s in %s.", g:xolox#session#version, label, starttime)
       call xolox#misc#msg#info("session.vim %s: Saved %s to %s.", g:xolox#session#version, label, friendly_path)
       if xolox#session#include_tabs()
@@ -535,7 +535,7 @@ function! xolox#session#close_cmd(bang, silent, save_allowed, command) abort " {
   if name != ''
     if a:save_allowed
       let msg = "Do you want to save your current %s before closing it?"
-      let label = xolox#session#get_label(name)
+      let label = xolox#session#get_label(name, !is_all_tabs)
       if s:prompt(printf(msg, label), ['&Yes', '&No'], 'g:session_autosave') == 1
         call xolox#session#save_cmd(name, a:bang, a:command)
       endif
@@ -573,7 +573,7 @@ function! xolox#session#close_cmd(bang, silent, save_allowed, command) abort " {
   call s:flush_session()
   if !a:silent
     let msg = "session.vim %s: Closed %s."
-    let label = xolox#session#get_label(xolox#session#find_current_session())
+    let label = xolox#session#get_label(xolox#session#find_current_session(), !is_all_tabs)
     call xolox#misc#msg#info(msg, g:xolox#session#version, label)
   endif
   if xolox#session#is_tab_scoped()
@@ -743,14 +743,8 @@ function! xolox#session#find_current_session() " {{{2
   return xolox#session#path_to_name(pathname)
 endfunction
 
-function! xolox#session#get_label(name) " {{{2
-  if xolox#session#is_tab_scoped()
-    let name = xolox#session#path_to_name(t:this_session)
-    if a:name == name
-      return printf('tab scoped session %s', string(a:name))
-    endif
-  endif
-  return printf('global session %s', string(a:name))
+function! xolox#session#get_label(name, is_tab_scoped) " {{{2
+  return printf('%s session %s', a:is_tab_scoped ? 'tab scoped' : 'global', string(a:name))
 endfunction
 
 function! xolox#session#options_include(value) " {{{2
