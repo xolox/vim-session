@@ -6,31 +6,31 @@ Contents ~
  1. Introduction                                         |session-introduction|
  2. Installation                                         |session-installation|
  3. Commands                                                 |session-commands|
-  1. The :SaveSession command
-  2. The :OpenSession command
-  3. The :RestartVim command
-  4. The :CloseSession command
-  5. The :DeleteSession command
-  6. The :ViewSession command
+  1. The |:SaveSession| command
+  2. The |:OpenSession| command
+  3. The |:RestartVim| command
+  4. The |:CloseSession| command
+  5. The |:DeleteSession| command
+  6. The |:ViewSession| command
   7. Tab scoped sessions                                  |tab-scoped-sessions|
-   1. The :OpenTabSession command
-   2. The :SaveTabSession command
-   3. The :AppendTabSession command
-   4. The :CloseTabSession command
+   1. The |:OpenTabSession| command
+   2. The |:SaveTabSession| command
+   3. The |:AppendTabSession| command
+   4. The |:CloseTabSession| command
  4. Options                                                   |session-options|
-  1. The sessionoptions setting
-  2. The g:session_directory option
-  3. The g:session_default_name option
-  4. The g:session_extension option
-  5. The g:session_autoload option
-  6. The g:session_autosave option
-  7. The g:session_autosave_periodic option
-  8. The g:session_verbose_messages option
-  9. The g:session_default_to_last option
-  10. The g:session_persist_globals option
-  11. The g:session_restart_environment option
-  12. The g:session_command_aliases option
-  13. The g:loaded_session option
+  1. The |sessionoptions| setting
+  2. The |g:session_directory| option
+  3. The |g:session_default_name| option
+  4. The |g:session_extension| option
+  5. The |g:session_autoload| option
+  6. The |g:session_autosave| option
+  7. The |g:session_autosave_periodic| option
+  8. The |g:session_verbose_messages| option
+  9. The |g:session_default_to_last| option
+  10. The |g:session_persist_globals| option
+  11. The |g:session_restart_environment| option
+  12. The |g:session_command_aliases| option
+  13. The |g:loaded_session| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Known issues                                         |session-known-issues|
  7. Contact                                                   |session-contact|

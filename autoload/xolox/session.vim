@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: June 1, 2013
+" Last Change: June 6, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.3.10'
+let g:xolox#session#version = '2.3.11'
 
 " Public API for session persistence. {{{1
 
@@ -23,7 +23,12 @@ function! xolox#session#save_session(commands, filename) " {{{2
   if &verbose >= 1
     call add(a:commands, 'set verbose=' . &verbose)
   endif
-  if is_all_tabs
+  " We save the GUI options only for global sessions, not for tab scoped
+  " sessions. Also, if the Vim we're currently running in doesn't have GUI
+  " support, Vim will report &go as an empty string. We should never persist
+  " this value if the user didn't specifically set it! Otherwise the next time
+  " the session is restored in a GUI Vim, things will look funky :-).
+  if has('gui') && is_all_tabs
     call add(a:commands, 'set guioptions=' . escape(&go, ' "\'))
     call add(a:commands, 'silent! set guifont=' . escape(&gfn, ' "\'))
   endif
