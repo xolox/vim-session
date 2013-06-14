@@ -645,13 +645,13 @@ function! xolox#session#restart_cmd(bang, args) abort " {{{2
     if !empty(args)
       let command .= ' -c ' . xolox#misc#escape#shell(args)
     endif
+    if !empty(v:servername)
+        let command .= ' --servername ' . v:servername
+    endif
     " Close the session, releasing the session lock.
     call xolox#session#close_cmd(a:bang, 0, 1, 'RestartVim')
     " Start the new Vim instance.
     if xolox#misc#os#is_win()
-        if !empty(v:servername)
-            let command .= ' --servername ' . v:servername
-        endif
       " On Microsoft Windows.
       execute '!start' command
     else
