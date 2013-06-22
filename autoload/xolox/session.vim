@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: June 6, 2013
+" Last Change: June 22, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.3.11'
+let g:xolox#session#version = '2.4'
 
 " Public API for session persistence. {{{1
 
@@ -644,6 +644,9 @@ function! xolox#session#restart_cmd(bang, args) abort " {{{2
     let args = matchstr(a:args, '^\s*|\s*\zs.\+$')
     if !empty(args)
       let command .= ' -c ' . xolox#misc#escape#shell(args)
+    endif
+    if !empty(v:servername)
+      let command .= ' --servername ' . xolox#misc#escape#shell(v:servername)
     endif
     " Close the session, releasing the session lock.
     call xolox#session#close_cmd(a:bang, 0, 1, 'RestartVim')
