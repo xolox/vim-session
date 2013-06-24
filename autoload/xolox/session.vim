@@ -1,9 +1,9 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: June 22, 2013
+" Last Change: June 24, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.4.1'
+let g:xolox#session#version = '2.4.2'
 
 " Public API for session persistence. {{{1
 
@@ -367,7 +367,7 @@ function! xolox#session#auto_save() " {{{2
     return
   endif
   " Get the name of the active session (if any).
-  let name = s:get_name('', 0)
+  let name = xolox#session#find_current_session()
   " If no session is active and the user doesn't have any sessions yet, help
   " them get started by suggesting to create the default session.
   if empty(name) && empty(xolox#session#get_names())
@@ -396,7 +396,7 @@ function! xolox#session#auto_save_periodic() " {{{2
       call xolox#misc#msg#debug("session.vim %s: Skipping this beat of 'updatetime' (it's not our time yet).", g:xolox#session#version)
     else
       call xolox#misc#msg#debug("session.vim %s: This is our beat of 'updatetime'!", g:xolox#session#version)
-      let name = s:get_name('', 0)
+      let name = xolox#session#find_current_session()
       if !empty(name)
         if xolox#session#is_tab_scoped()
           call xolox#session#save_tab_cmd(name, '', 'SaveTabSession')
@@ -458,7 +458,7 @@ function! xolox#session#open_cmd(name, bang, command) abort " {{{2
       call xolox#misc#msg#warn(msg, g:xolox#session#version, string(name), fnamemodify(path, ':~'))
     elseif a:bang == '!' || !s:session_is_locked(path, a:command)
       let oldcwd = s:nerdtree_persist()
-      call xolox#session#close_cmd(a:bang, 1, name != s:get_name('', 0), a:command)
+      call xolox#session#close_cmd(a:bang, 1, name != xolox#session#find_current_session(), a:command)
       call s:lock_session(path)
       execute 'source' fnameescape(path)
       if xolox#session#is_tab_scoped()
@@ -477,7 +477,13 @@ function! xolox#session#open_cmd(name, bang, command) abort " {{{2
 endfunction
 
 function! xolox#session#view_cmd(name) abort " {{{2
-  let name = s:select_name(s:get_name(s:unescape(a:name), 0), 'view')
+  let name = s:unescape(a:name)
+  if empty(name)
+    let name = xolox#session#find_current_session()
+  endif
+  if empty(name)
+    let name = s:select_name('', 'view')
+  endif
   if name != ''
     let path = xolox#session#name_to_path(name)
     if !filereadable(path)
@@ -492,7 +498,13 @@ endfunction
 
 function! xolox#session#save_cmd(name, bang, command) abort " {{{2
   let starttime = xolox#misc#timer#start()
-  let name = s:get_name(s:unescape(a:name), 1)
+  let name = s:unescape(a:name)
+  if empty(name)
+    let name = xolox#session#find_current_session()
+  endif
+  if empty(name)
+    let name = g:session_default_name
+  endif
   let path = xolox#session#name_to_path(name)
   let friendly_path = fnamemodify(path, ':~')
   if a:bang == '!' || !s:session_is_locked(path, a:command)
@@ -542,7 +554,7 @@ endfunction
 
 function! xolox#session#close_cmd(bang, silent, save_allowed, command) abort " {{{2
   let is_all_tabs = xolox#session#include_tabs()
-  let name = s:get_name('', 0)
+  let name = xolox#session#find_current_session()
   if name != ''
     if a:save_allowed
       let msg = "Do you want to save your current %s before closing it?"
@@ -641,8 +653,10 @@ function! xolox#session#restart_cmd(bang, args) abort " {{{2
   else
     " Save the current session (if there is no active
     " session we will create a session called "restart").
-    let name = s:get_name('', 0)
-    if name == '' | let name = 'restart' | endif
+    let name = xolox#session#find_current_session()
+    if empty(name)
+      let name = 'restart'
+    endif
     call xolox#session#save_cmd(name, a:bang, 'RestartVim')
     " Generate the Vim command line.
     let progname = xolox#misc#escape#shell(xolox#misc#os#find_vim())
@@ -707,24 +721,6 @@ function! s:select_name(name, action) " {{{2
   return i >= 1 && i <= len(sessions) ? sessions[i - 1] : ''
 endfunction
 
-function! s:get_name(name, use_default) " {{{2
-  let name = a:name
-  if name == ''
-    for variable in ['t:this_session', 'v:this_session']
-      if exists(variable)
-        let value = eval(variable)
-        if value != ''
-          if xolox#misc#path#equals(fnamemodify(value, ':p:h'), g:session_directory)
-            let name = xolox#session#path_to_name(value)
-            break
-          endif
-        endif
-      endif
-    endfor
-  endif
-  return name != '' ? name : a:use_default ? g:session_default_name : ''
-endfunction
-
 function! xolox#session#name_to_path(name) " {{{2
   let directory = xolox#misc#path#absolute(g:session_directory)
   let filename = xolox#misc#path#encode(a:name) . g:session_extension
@@ -752,9 +748,19 @@ function! xolox#session#is_tab_scoped() " {{{2
 endfunction
 
 function! xolox#session#find_current_session() " {{{2
-  " Find the name of the current session.
-  let pathname = xolox#session#is_tab_scoped() ? t:this_session : v:this_session
-  return xolox#session#path_to_name(pathname)
+  " Find the name of the current tab scoped or global session.
+  for variable in ['t:this_session', 'v:this_session']
+    if exists(variable)
+      let filename = eval(variable)
+      if !empty(filename)
+        let directory = fnamemodify(filename, ':p:h')
+        if xolox#misc#path#equals(directory, g:session_directory)
+          return xolox#session#path_to_name(filename)
+        endif
+      endif
+    endif
+  endfor
+  return ''
 endfunction
 
 function! xolox#session#get_label(name, is_tab_scoped) " {{{2
