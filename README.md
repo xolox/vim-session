@@ -236,9 +236,9 @@ Recently this plug-in switched from reimplementing [:mksession][mksession] to ac
 <!-- Start of generated documentation -->
 
 The documentation of the 34 functions below was extracted from
-2 Vim scripts on June 24, 2013 at 22:49.
+1 Vim scripts on June 24, 2013 at 23:47.
 
-### Public API for vim-notes plug-in
+### Public API for the vim-notes plug-in
 
 #### The `xolox#session#save_session()` function
 

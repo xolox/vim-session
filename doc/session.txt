@@ -34,7 +34,7 @@ Contents ~
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Known issues                                         |session-known-issues|
  7. Function reference                             |session-function-reference|
-  1. Public API for vim-notes plug-in |session-public-api-for-vim-notes-plug-in|
+  1. Public API for the vim-notes plug-in |session-public-api-for-vim-notes-plug-in|
    1. The |xolox#session#save_session()| function
    2. The |xolox#session#save_globals()| function
    3. The |xolox#session#save_features()| function
@@ -476,12 +476,12 @@ might take a while...)
                                                    *session-function-reference*
 Function reference ~
 
-The documentation of the 34 functions below was extracted from 2 Vim scripts on
-June 24, 2013 at 22:49.
+The documentation of the 34 functions below was extracted from 1 Vim scripts on
+June 24, 2013 at 23:47.
 
 -------------------------------------------------------------------------------
                                      *session-public-api-for-vim-notes-plug-in*
-Public API for vim-notes plug-in ~
+Public API for the vim-notes plug-in ~
 
 -------------------------------------------------------------------------------
 The *xolox#session#save_session()* function
