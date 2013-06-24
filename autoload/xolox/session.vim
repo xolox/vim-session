@@ -3,7 +3,7 @@
 " Last Change: June 24, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.4.2'
+let g:xolox#session#version = '2.4.3'
 
 " Public API for session persistence. {{{1
 
@@ -449,7 +449,10 @@ function! s:prompt(msg, choices, option_name)
 endfunction
 
 function! xolox#session#open_cmd(name, bang, command) abort " {{{2
-  let name = s:select_name(s:unescape(a:name), 'restore')
+  let name = s:unescape(a:name)
+  if empty(name)
+    let name = xolox#session#prompt_for_name('restore')
+  endif
   if name != ''
     let starttime = xolox#misc#timer#start()
     let path = xolox#session#name_to_path(name)
@@ -477,12 +480,15 @@ function! xolox#session#open_cmd(name, bang, command) abort " {{{2
 endfunction
 
 function! xolox#session#view_cmd(name) abort " {{{2
+  " Name of session given as command argument?
   let name = s:unescape(a:name)
+  " Default to the current session?
   if empty(name)
     let name = xolox#session#find_current_session()
   endif
+  " Prompt the user to select a session.
   if empty(name)
-    let name = s:select_name('', 'view')
+    let name = xolox#session#prompt_for_name('view')
   endif
   if name != ''
     let path = xolox#session#name_to_path(name)
@@ -533,7 +539,10 @@ function! xolox#session#save_cmd(name, bang, command) abort " {{{2
 endfunction
 
 function! xolox#session#delete_cmd(name, bang) " {{{2
-  let name = s:select_name(s:unescape(a:name), 'delete')
+  let name = s:unescape(a:name)
+  if empty(name)
+    let name = xolox#session#prompt_for_name('delete')
+  endif
   if name != ''
     let path = xolox#session#name_to_path(name)
     if !filereadable(path)
@@ -699,26 +708,43 @@ function! s:unescape(s) " {{{2
   return s
 endfunction
 
-function! s:select_name(name, action) " {{{2
-  if a:name != ''
-    return a:name
-  endif
-  let sessions = sort(xolox#session#get_names())
-  if empty(sessions)
-    return g:session_default_name
-  elseif len(sessions) == 1
+function! xolox#session#prompt_for_name(action) " {{{2
+  " Prompt the user to select one of the existing sessions. The first argument
+  " is expected to be a string describing what will be done to the session
+  " once it's been selected. Returns the name of the selected session as a
+  " string (if no session is selected an empty string is returned). Here's
+  " an example of what the prompt looks like:
+  "
+  "     :call xolox#session#prompt_for_name('trash')
+  "
+  "     Please select the session to trash:
+  "
+  "      1. first-session
+  "      2. second-session
+  "      3. third-session
+  "
+  "     Type number and <Enter> or click with mouse (empty cancels):
+  "
+  " If only a single session exists there's nothing to choose from so the name
+  " of that session will be returned directly, without prompting the user.
+  let sessions = sort(xolox#session#get_names(), 1)
+  if len(sessions) == 1
     return sessions[0]
+  elseif !empty(sessions)
+    let lines = copy(sessions)
+    for i in range(len(sessions))
+      let lines[i] = ' ' . (i + 1) . '. ' . lines[i]
+    endfor
+    redraw
+    sleep 100 m
+    echo "\nPlease select the session to " . a:action . ":"
+    sleep 100 m
+    let i = inputlist([''] + lines + [''])
+    if i >= 1 && i <= len(sessions)
+      return sessions[i - 1]
+    endif
   endif
-  let lines = copy(sessions)
-  for i in range(len(sessions))
-    let lines[i] = ' ' . (i + 1) . '. ' . lines[i]
-  endfor
-  redraw
-  sleep 100 m
-  echo "\nPlease select the session to " . a:action . ":"
-  sleep 100 m
-  let i = inputlist([''] + lines + [''])
-  return i >= 1 && i <= len(sessions) ? sessions[i - 1] : ''
+  return ''
 endfunction
 
 function! xolox#session#name_to_path(name) " {{{2
