@@ -35,24 +35,30 @@ Contents ~
  6. Known issues                                         |session-known-issues|
  7. Function reference                             |session-function-reference|
   1. Public API for vim-notes plug-in |session-public-api-for-vim-notes-plug-in|
-   1. The |xolox#session#save_special_windows()| function
-   2. The |xolox#session#auto_load()| function
-   3. The |xolox#session#auto_save()| function
-   4. The |xolox#session#auto_save_periodic()| function
-   5. The |xolox#session#auto_unlock()| function
-   6. The |xolox#session#view_cmd()| function
-   7. The |xolox#session#prompt_for_name()| function
-   8. The |xolox#session#name_to_path()| function
-   9. The |xolox#session#path_to_name()| function
-   10. The |xolox#session#get_names()| function
-   11. The |xolox#session#complete_names()| function
-   12. The |xolox#session#is_tab_scoped()| function
-   13. The |xolox#session#find_current_session()| function
-   14. The |xolox#session#get_label()| function
-   15. The |xolox#session#options_include()| function
-   16. The |xolox#session#include_tabs()| function
-   17. The |xolox#session#change_tab_options()| function
-   18. The |xolox#session#restore_tab_options()| function
+   1. The |xolox#session#save_session()| function
+   2. The |xolox#session#save_globals()| function
+   3. The |xolox#session#save_features()| function
+   4. The |xolox#session#save_colors()| function
+   5. The |xolox#session#save_fullscreen()| function
+   6. The |xolox#session#save_qflist()| function
+   7. The |xolox#session#save_state()| function
+   8. The |xolox#session#save_special_windows()| function
+   9. The |xolox#session#auto_load()| function
+   10. The |xolox#session#auto_save()| function
+   11. The |xolox#session#auto_save_periodic()| function
+   12. The |xolox#session#auto_unlock()| function
+   13. The |xolox#session#prompt_for_name()| function
+   14. The |xolox#session#name_to_path()| function
+   15. The |xolox#session#path_to_name()| function
+   16. The |xolox#session#get_names()| function
+   17. The |xolox#session#complete_names()| function
+   18. The |xolox#session#is_tab_scoped()| function
+   19. The |xolox#session#find_current_session()| function
+   20. The |xolox#session#get_label()| function
+   21. The |xolox#session#options_include()| function
+   22. The |xolox#session#include_tabs()| function
+   23. The |xolox#session#change_tab_options()| function
+   24. The |xolox#session#restore_tab_options()| function
  8. Contact                                                   |session-contact|
  9. License                                                   |session-license|
  10. Sample session script                              |sample-session-script|
@@ -471,41 +477,107 @@ might take a while...)
 Function reference ~
 
 The documentation of the 34 functions below was extracted from 2 Vim scripts on
-June 24, 2013 at 22:18.
+June 24, 2013 at 22:49.
 
 -------------------------------------------------------------------------------
                                      *session-public-api-for-vim-notes-plug-in*
 Public API for vim-notes plug-in ~
 
 -------------------------------------------------------------------------------
+The *xolox#session#save_session()* function
+
+Save the current Vim editing session to a Vim script using the |:mksession|
+command and some additional Vim magic provided by the vim-session plug-in. When
+the generated session script is later sourced using the |:source| command
+(possibly in another process or even on another machine) it will restore the
+editing session to its previous state (provided all of the files involved in
+the session are still there at their original locations).
+
+The first argument is expected to be a list, it will be extended with the lines
+to be added to the session script. The second argument is expected to be the
+filename under which the script will later be saved (it's embedded in a comment
+at the top of the script).
+
+-------------------------------------------------------------------------------
+The *xolox#session#save_globals()* function
+
+Serialize the values of the global variables configured by the user with the
+|g:session_persist_globals| option. The first argument is expected to be a
+list, it will be extended with the lines to be added to the session script.
+
+-------------------------------------------------------------------------------
+The *xolox#session#save_features()* function
+
+Save the current state of the following Vim features:
+
+- Whether syntax highlighting is enabled (':syntax on')
+- Whether file type detection is enabled (':filetype on')
+- Whether file type plug-ins are enabled (':filetype plugin on')
+- Whether file type indent plug-ins are enabled (':filetype indent on')
+
+The first argument is expected to be a list, it will be extended with the lines
+to be added to the session script.
+
+-------------------------------------------------------------------------------
+The *xolox#session#save_colors()* function
+
+Save the current color scheme and background color. The first argument is
+expected to be a list, it will be extended with the lines to be added to the
+session script.
+
+-------------------------------------------------------------------------------
+The *xolox#session#save_fullscreen()* function
+
+Save the full screen state of Vim. This function provides integration between
+my vim-session [17] and vim-shell [18] plug-ins. The first argument is expected
+to be a list, it will be extended with the lines to be added to the session
+script.
+
+-------------------------------------------------------------------------------
+The *xolox#session#save_qflist()* function
+
+Save the contents of the quick-fix list. The first argument is expected to be a
+list, it will be extended with the lines to be added to the session script.
+
+-------------------------------------------------------------------------------
+The *xolox#session#save_state()* function
+
+Wrapper for the |:mksession| command that slightly massages the generated Vim
+script to get rid of some strange quirks in the way Vim generates sessions.
+Also implements support for buffers with content that was generated by other
+Vim plug-ins. The first argument is expected to be a list, it will be extended
+with the lines to be added to the session script.
+
+-------------------------------------------------------------------------------
 The *xolox#session#save_special_windows()* function
 
-Integration between :mksession, :NERDTree and :Project.
+Implements support for buffers with content that was generated by other Vim
+plug-ins. The first argument is expected to be a list, it will be extended with
+the lines to be added to the session script.
 
 -------------------------------------------------------------------------------
 The *xolox#session#auto_load()* function
 
-Automatically load the default / last used session when Vim starts.
+Automatically load the default or last used session when Vim starts. Normally
+called by the |VimEnter| automatic command event.
 
 -------------------------------------------------------------------------------
 The *xolox#session#auto_save()* function
 
-We won't save the session if Vim is not terminating normally.
+Automatically save the current editing session when Vim is closed. Normally
+called by the |VimLeavePre| automatic command event.
 
 -------------------------------------------------------------------------------
 The *xolox#session#auto_save_periodic()* function
 
-Automatically save the session every few minutes?
+Automatically saves the current editing session every few minutes. Normally
+called by the |CursorHold| and |CursorHoldI| automatic command events.
 
 -------------------------------------------------------------------------------
 The *xolox#session#auto_unlock()* function
 
-Automatically unlock all sessions when Vim quits.
-
--------------------------------------------------------------------------------
-The *xolox#session#view_cmd()* function
-
-Name of session given as command argument?
+Automatically unlock all sessions when Vim quits. Normally called by the
+|VimLeavePre| automatic command event.
 
 -------------------------------------------------------------------------------
 The *xolox#session#prompt_for_name()* function
@@ -614,13 +686,13 @@ Contact ~
 If you have questions, bug reports, suggestions, etc. the author can be
 contacted at peter@peterodding.com. The latest version is available at
 http://peterodding.com/code/vim/session/ and http://github.com/xolox/vim-
-session. If you like the script please vote for it on Vim Online [17].
+session. If you like the script please vote for it on Vim Online [19].
 
 ===============================================================================
                                                               *session-license*
 License ~
 
-This software is licensed under the MIT license [18]. © 2013 Peter Odding
+This software is licensed under the MIT license [20]. © 2013 Peter Odding
 <peter@peterodding.com>.
 
 ===============================================================================
@@ -743,7 +815,9 @@ References ~
 [14] http://www.vim.org/scripts/script.php?script_id=69
 [15] http://peterodding.com/code/vim/shell/
 [16] http://www.vim.org/scripts/script.php?script_id=273
-[17] http://www.vim.org/scripts/script.php?script_id=3150
-[18] http://en.wikipedia.org/wiki/MIT_License
+[17] http://peterodding.com/code/vim/session
+[18] http://peterodding.com/code/vim/shell
+[19] http://www.vim.org/scripts/script.php?script_id=3150
+[20] http://en.wikipedia.org/wiki/MIT_License
 
 vim: ft=help
