@@ -231,6 +231,130 @@ If your favorite plug-in doesn't work with the vim-session plug-in drop me a mai
 
 Recently this plug-in switched from reimplementing [:mksession][mksession] to actually using it because this was the only way to support complex split window layouts. Only after making this change did I realize [:mksession][mksession] doesn't support [quickfix](http://vimdoc.sourceforge.net/htmldoc/quickfix.html#quickfix) and [location list](http://vimdoc.sourceforge.net/htmldoc/quickfix.html#location-list) windows and of course it turns out that bolting on support for these after the fact is going to complicate the plug-in significantly (in other words, I'm working on it but it might take a while...)
 
+## Function reference
+
+<!-- Start of generated documentation -->
+
+The documentation of the 34 functions below was extracted from
+2 Vim scripts on June 24, 2013 at 22:18.
+
+### Public API for vim-notes plug-in
+
+#### The `xolox#session#save_special_windows()` function
+
+Integration between :mksession, :NERDTree and :Project.
+
+#### The `xolox#session#auto_load()` function
+
+Automatically load the default / last used session when Vim starts.
+
+#### The `xolox#session#auto_save()` function
+
+We won't save the session if Vim is not terminating normally.
+
+#### The `xolox#session#auto_save_periodic()` function
+
+Automatically save the session every few minutes?
+
+#### The `xolox#session#auto_unlock()` function
+
+Automatically unlock all sessions when Vim quits.
+
+#### The `xolox#session#view_cmd()` function
+
+Name of session given as command argument?
+
+#### The `xolox#session#prompt_for_name()` function
+
+Prompt the user to select one of the existing sessions. The first argument
+is expected to be a string describing what will be done to the session
+once it's been selected. Returns the name of the selected session as a
+string. If no session is selected an empty string is returned. Here's
+an example of what the prompt looks like:
+
+    :call xolox#session#prompt_for_name('trash')
+
+    Please select the session to trash:
+
+     1. first-session
+     2. second-session
+     3. third-session
+
+    Type number and <Enter> or click with mouse (empty cancels):
+
+If only a single session exists there's nothing to choose from so the name
+of that session will be returned directly, without prompting the user.
+
+#### The `xolox#session#name_to_path()` function
+
+Convert the name of a session (the first argument, expected to be a
+string) to an absolute pathname. Any special characters in the session
+name will be encoded using URL encoding. This means you're free to use
+whatever naming conventions you like (regardless of special characters
+like slashes). Returns a string.
+
+#### The `xolox#session#path_to_name()` function
+
+Convert the absolute pathname of a session script (the first argument,
+expected to be a string) to a session name. This function assumes the
+absolute pathname refers to the configured session directory, but it does
+not check for it nor does it require it (it simple takes the base name
+of the absolute pathname of the session script and decodes it). Returns a
+string.
+
+#### The `xolox#session#get_names()` function
+
+Get the names of all available sessions. This scans the directory
+configured with `g:session_directory` for files that end with the suffix
+configured with `g:session_extension`, takes the base name of each file
+and decodes any URL encoded characters. Returns a list of strings.
+
+#### The `xolox#session#complete_names()` function
+
+Completion function for user defined Vim commands. Used by commands like
+`:OpenSession` and `:DeleteSession` to support user friendly completion.
+
+#### The `xolox#session#is_tab_scoped()` function
+
+Determine whether the current session is tab scoped or global. Returns 1
+(true) when the session is tab scoped, 0 (false) otherwise.
+
+#### The `xolox#session#find_current_session()` function
+
+Find the name of the current tab scoped or global session. Returns a
+string. If no session is active an empty string is returned.
+
+#### The `xolox#session#get_label()` function
+
+Get a human readable label based on the scope (tab scoped or global) and
+name of a session. The first argument is the name (a string) and the
+second argument is a boolean indicating the scope of the session; 1 (true)
+means tab scoped and 0 (false) means global scope. Returns a string.
+
+#### The `xolox#session#options_include()` function
+
+Check whether Vim's [sessionoptions] [] option includes the keyword given
+as the first argument (expected to be a string). Returns 1 (true) when it
+does, 0 (false) otherwise.
+
+[sessionoptions]: http://vimdoc.sourceforge.net/htmldoc/options.html#'sessionoptions'
+
+#### The `xolox#session#include_tabs()` function
+
+Check whether Vim's [sessionoptions] [] option includes the `tabpages`
+keyword. Returns 1 (true) when it does, 0 (false) otherwise.
+
+#### The `xolox#session#change_tab_options()` function
+
+Temporarily change Vim's [sessionoptions] [] option so we can save a tab
+scoped session. Saves a copy of the original value to be restored later.
+
+#### The `xolox#session#restore_tab_options()` function
+
+Restore the original value of Vim's [sessionoptions] [] option.
+
+<!-- End of generated documentation -->
+
 ## Contact
 
 If you have questions, bug reports, suggestions, etc. the author can be contacted at <peter@peterodding.com>. The latest version is available at <http://peterodding.com/code/vim/session/> and <http://github.com/xolox/vim-session>. If you like the script please vote for it on [Vim Online](http://www.vim.org/scripts/script.php?script_id=3150).

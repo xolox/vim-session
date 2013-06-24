@@ -1,4 +1,5 @@
-" Vim script
+" Public API for vim-notes plug-in.
+"
 " Author: Peter Odding
 " Last Change: June 24, 2013
 " URL: http://peterodding.com/code/vim/session/
@@ -712,7 +713,7 @@ function! xolox#session#prompt_for_name(action) " {{{2
   " Prompt the user to select one of the existing sessions. The first argument
   " is expected to be a string describing what will be done to the session
   " once it's been selected. Returns the name of the selected session as a
-  " string (if no session is selected an empty string is returned). Here's
+  " string. If no session is selected an empty string is returned. Here's
   " an example of what the prompt looks like:
   "
   "     :call xolox#session#prompt_for_name('trash')
@@ -748,33 +749,52 @@ function! xolox#session#prompt_for_name(action) " {{{2
 endfunction
 
 function! xolox#session#name_to_path(name) " {{{2
+  " Convert the name of a session (the first argument, expected to be a
+  " string) to an absolute pathname. Any special characters in the session
+  " name will be encoded using URL encoding. This means you're free to use
+  " whatever naming conventions you like (regardless of special characters
+  " like slashes). Returns a string.
   let directory = xolox#misc#path#absolute(g:session_directory)
   let filename = xolox#misc#path#encode(a:name) . g:session_extension
   return xolox#misc#path#merge(directory, filename)
 endfunction
 
 function! xolox#session#path_to_name(path) " {{{2
+  " Convert the absolute pathname of a session script (the first argument,
+  " expected to be a string) to a session name. This function assumes the
+  " absolute pathname refers to the configured session directory, but it does
+  " not check for it nor does it require it (it simple takes the base name
+  " of the absolute pathname of the session script and decodes it). Returns a
+  " string.
   return xolox#misc#path#decode(fnamemodify(a:path, ':t:r'))
 endfunction
 
 function! xolox#session#get_names() " {{{2
+  " Get the names of all available sessions. This scans the directory
+  " configured with `g:session_directory` for files that end with the suffix
+  " configured with `g:session_extension`, takes the base name of each file
+  " and decodes any URL encoded characters. Returns a list of strings.
   let directory = xolox#misc#path#absolute(g:session_directory)
   let filenames = split(glob(xolox#misc#path#merge(directory, '*' . g:session_extension)), "\n")
   return map(filenames, 'xolox#session#path_to_name(v:val)')
 endfunction
 
 function! xolox#session#complete_names(arg, line, pos) " {{{2
+  " Completion function for user defined Vim commands. Used by commands like
+  " `:OpenSession` and `:DeleteSession` to support user friendly completion.
   let names = filter(xolox#session#get_names(), 'v:val =~ a:arg')
   return map(names, 'fnameescape(v:val)')
 endfunction
 
 function! xolox#session#is_tab_scoped() " {{{2
-  " Determine whether the current session is tab scoped or global.
+  " Determine whether the current session is tab scoped or global. Returns 1
+  " (true) when the session is tab scoped, 0 (false) otherwise.
   return exists('t:this_session')
 endfunction
 
 function! xolox#session#find_current_session() " {{{2
-  " Find the name of the current tab scoped or global session.
+  " Find the name of the current tab scoped or global session. Returns a
+  " string. If no session is active an empty string is returned.
   for variable in ['t:this_session', 'v:this_session']
     if exists(variable)
       let filename = eval(variable)
@@ -790,21 +810,33 @@ function! xolox#session#find_current_session() " {{{2
 endfunction
 
 function! xolox#session#get_label(name, is_tab_scoped) " {{{2
+  " Get a human readable label based on the scope (tab scoped or global) and
+  " name of a session. The first argument is the name (a string) and the
+  " second argument is a boolean indicating the scope of the session; 1 (true)
+  " means tab scoped and 0 (false) means global scope. Returns a string.
   return printf('%s session %s', a:is_tab_scoped ? 'tab scoped' : 'global', string(a:name))
 endfunction
 
 function! xolox#session#options_include(value) " {{{2
+  " Check whether Vim's [sessionoptions] [] option includes the keyword given
+  " as the first argument (expected to be a string). Returns 1 (true) when it
+  " does, 0 (false) otherwise.
+  "
+  " [sessionoptions]: http://vimdoc.sourceforge.net/htmldoc/options.html#'sessionoptions'
   return index(xolox#misc#option#split(&sessionoptions), a:value) >= 0
 endfunction
 
 " Tab scoped sessions: {{{2
 
 function! xolox#session#include_tabs() " {{{3
+  " Check whether Vim's [sessionoptions] [] option includes the `tabpages`
+  " keyword. Returns 1 (true) when it does, 0 (false) otherwise.
   return xolox#session#options_include('tabpages')
 endfunction
 
 function! xolox#session#change_tab_options() " {{{3
-  " Save the original value of 'sessionoptions'.
+  " Temporarily change Vim's [sessionoptions] [] option so we can save a tab
+  " scoped session. Saves a copy of the original value to be restored later.
   let s:ssop_save = &sessionoptions
   " Only persist the current tab page.
   set sessionoptions-=tabpages
@@ -813,7 +845,7 @@ function! xolox#session#change_tab_options() " {{{3
 endfunction
 
 function! xolox#session#restore_tab_options() " {{{3
-  " Restore the original value of 'sessionoptions'.
+  " Restore the original value of Vim's [sessionoptions] [] option.
   if exists('s:ssop_save')
     let &ssop = s:ssop_save
     unlet s:ssop_save
