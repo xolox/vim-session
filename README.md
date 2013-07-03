@@ -236,7 +236,7 @@ Recently this plug-in switched from reimplementing [:mksession][mksession] to ac
 <!-- Start of generated documentation -->
 
 The documentation of the 34 functions below was extracted from
-1 Vim scripts on June 24, 2013 at 23:47.
+1 Vim scripts on July  4, 2013 at 00:27.
 
 ### Public API for the vim-notes plug-in
 

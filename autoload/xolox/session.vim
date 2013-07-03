@@ -1,10 +1,10 @@
 " Public API for the vim-notes plug-in.
 "
 " Author: Peter Odding
-" Last Change: June 24, 2013
+" Last Change: July 4, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.4.4'
+let g:xolox#session#version = '2.4.5'
 
 " Public API for session persistence. {{{1
 
