@@ -32,6 +32,12 @@ if !exists('g:session_default_name')
   let g:session_default_name = 'default'
 endif
 
+" If you set this to 1 (true), every Vim instance without an explicit session
+" loaded will overwrite the default session (the last Vim instance wins).
+if !exists('g:session_default_overwrite')
+  let g:session_default_overwrite = 0
+endif
+
 " The file extension of session scripts.
 if !exists('g:session_extension')
   let g:session_extension = '.vim'

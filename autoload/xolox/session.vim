@@ -4,7 +4,7 @@
 " Last Change: July 4, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.4.5'
+let g:xolox#session#version = '2.4.6'
 
 " Public API for session persistence. {{{1
 
@@ -430,18 +430,23 @@ function! xolox#session#auto_save() " {{{2
   let name = xolox#session#find_current_session()
   " If no session is active and the user doesn't have any sessions yet, help
   " them get started by suggesting to create the default session.
-  if empty(name) && empty(xolox#session#get_names())
+  if empty(name) && (empty(xolox#session#get_names()) || g:session_default_overwrite)
     let name = g:session_default_name
   endif
-  " Prompt the user to save the active or first session?
+  " Prompt the user to save the active/first/default session?
   if !empty(name)
     let is_tab_scoped = xolox#session#is_tab_scoped()
     let msg = "Do you want to save your %s before quitting Vim?"
     if s:prompt(printf(msg, xolox#session#get_label(name, is_tab_scoped)), ['&Yes', '&No'], 'g:session_autosave') == 1
-      if is_tab_scoped
-        call xolox#session#save_tab_cmd(name, '', 'SaveTabSession')
+      if g:session_default_overwrite && (name == g:session_default_overwrite)
+        let bang = '!'
       else
-        call xolox#session#save_cmd(name, '', 'SaveSession')
+        let bang = ''
+      endif
+      if is_tab_scoped
+        call xolox#session#save_tab_cmd(name, bang, 'SaveTabSession')
+      else
+        call xolox#session#save_cmd(name, bang, 'SaveSession')
       endif
     endif
   endif

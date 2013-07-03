@@ -131,6 +131,10 @@ This option controls the location of your session scripts. Its default value is 
 
 The name of the default session without directory or filename extension (you'll never guess what the default is).
 
+### The `g:session_default_overwrite` option
+
+If you set this to true (1), every Vim instance without an explicit session loaded will overwrite the default session (the last Vim instance wins).
+
 ### The `g:session_extension` option
 
 The filename extension of session scripts. This should include the dot that separates the basename from the extension. Defaults to '.vim'.
@@ -236,7 +240,7 @@ Recently this plug-in switched from reimplementing [:mksession][mksession] to ac
 <!-- Start of generated documentation -->
 
 The documentation of the 34 functions below was extracted from
-1 Vim scripts on July  4, 2013 at 00:27.
+1 Vim scripts on July  4, 2013 at 01:25.
 
 ### Public API for the vim-notes plug-in
 

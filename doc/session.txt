@@ -21,16 +21,17 @@ Contents ~
   1. The |sessionoptions| setting
   2. The |g:session_directory| option
   3. The |g:session_default_name| option
-  4. The |g:session_extension| option
-  5. The |g:session_autoload| option
-  6. The |g:session_autosave| option
-  7. The |g:session_autosave_periodic| option
-  8. The |g:session_verbose_messages| option
-  9. The |g:session_default_to_last| option
-  10. The |g:session_persist_globals| option
-  11. The |g:session_restart_environment| option
-  12. The |g:session_command_aliases| option
-  13. The |g:loaded_session| option
+  4. The |g:session_default_overwrite| option
+  5. The |g:session_extension| option
+  6. The |g:session_autoload| option
+  7. The |g:session_autosave| option
+  8. The |g:session_autosave_periodic| option
+  9. The |g:session_verbose_messages| option
+  10. The |g:session_default_to_last| option
+  11. The |g:session_persist_globals| option
+  12. The |g:session_restart_environment| option
+  13. The |g:session_command_aliases| option
+  14. The |g:loaded_session| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Known issues                                         |session-known-issues|
  7. Function reference                             |session-function-reference|
@@ -305,6 +306,12 @@ The name of the default session without directory or filename extension (you'll
 never guess what the default is).
 
 -------------------------------------------------------------------------------
+The *g:session_default_overwrite* option
+
+If you set this to true (1), every Vim instance without an explicit session
+loaded will overwrite the default session (the last Vim instance wins).
+
+-------------------------------------------------------------------------------
 The *g:session_extension* option
 
 The filename extension of session scripts. This should include the dot that
@@ -477,7 +484,7 @@ might take a while...)
 Function reference ~
 
 The documentation of the 34 functions below was extracted from 1 Vim scripts on
-July 4, 2013 at 00:27.
+July 4, 2013 at 01:25.
 
 -------------------------------------------------------------------------------
                                      *session-public-api-for-vim-notes-plug-in*
