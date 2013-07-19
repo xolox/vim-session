@@ -104,6 +104,11 @@ if !exists('g:session_command_aliases')
   let g:session_command_aliases = 0
 endif
 
+" Allow to turn off the menu.
+if !exists('g:session_menu')
+  let g:session_menu = 1
+endif
+
 " Make sure the sessions directory exists and is writable. {{{1
 
 let s:directory = fnamemodify(g:session_directory, ':p')
@@ -120,18 +125,20 @@ unlet s:directory
 
 " Menu items to make the plug-in more accessible. {{{1
 
-amenu 400.10 &Sessions.&Open\ session\.\.\.<Tab>:OpenSession :OpenSession<CR>
-amenu 400.20 &Sessions.&Save\ session\.\.\.<Tab>:SaveSession :SaveSession<CR>
-amenu 400.30 &Sessions.&Close\ session\.\.\.<Tab>:CloseSession :CloseSession<CR>
-amenu 400.40 &Sessions.&Delete\ session\.\.\.<Tab>:DeleteSession :DeleteSession<CR>
-amenu 400.50 &Sessions.&View\ session\.\.\.<Tab>:ViewSession :ViewSession<CR>
-amenu 400.60 &Sessions.-Sep1- :
-amenu 400.70 &Sessions.Open\ tab\ session\.\.\.<Tab>:OpenTabSession :OpenTabSession<CR>
-amenu 400.80 &Sessions.&Append\ tab\ session\.\.\.<Tab>:AppendTabSession :AppendTabSession<CR>
-amenu 400.90 &Sessions.Save\ tab\ session\.\.\.<Tab>:SaveTabSession :SaveTabSession<CR>
-amenu 400.100 &Sessions.Close\ tab\ session\.\.\.<Tab>:CloseTabSession :CloseTabSession<CR>
-amenu 400.110 &Sessions.-Sep2- :
-amenu 400.120 &Sessions.&Restart\ Vim\.\.\.<Tab>:RestartVim :RestartVim<CR>
+if g:session_menu
+  amenu 400.10 &Sessions.&Open\ session\.\.\.<Tab>:OpenSession :OpenSession<CR>
+  amenu 400.20 &Sessions.&Save\ session\.\.\.<Tab>:SaveSession :SaveSession<CR>
+  amenu 400.30 &Sessions.&Close\ session\.\.\.<Tab>:CloseSession :CloseSession<CR>
+  amenu 400.40 &Sessions.&Delete\ session\.\.\.<Tab>:DeleteSession :DeleteSession<CR>
+  amenu 400.50 &Sessions.&View\ session\.\.\.<Tab>:ViewSession :ViewSession<CR>
+  amenu 400.60 &Sessions.-Sep1- :
+  amenu 400.70 &Sessions.Open\ tab\ session\.\.\.<Tab>:OpenTabSession :OpenTabSession<CR>
+  amenu 400.80 &Sessions.&Append\ tab\ session\.\.\.<Tab>:AppendTabSession :AppendTabSession<CR>
+  amenu 400.90 &Sessions.Save\ tab\ session\.\.\.<Tab>:SaveTabSession :SaveTabSession<CR>
+  amenu 400.100 &Sessions.Close\ tab\ session\.\.\.<Tab>:CloseTabSession :CloseTabSession<CR>
+  amenu 400.110 &Sessions.-Sep2- :
+  amenu 400.120 &Sessions.&Restart\ Vim\.\.\.<Tab>:RestartVim :RestartVim<CR>
+endif
 
 " Automatic commands for automatic session management. {{{1
 
