@@ -31,7 +31,8 @@ Contents ~
   11. The |g:session_persist_globals| option
   12. The |g:session_restart_environment| option
   13. The |g:session_command_aliases| option
-  14. The |g:loaded_session| option
+  14. The |g:session_menu| option
+  15. The |g:loaded_session| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Known issues                                         |session-known-issues|
  7. Function reference                             |session-function-reference|
@@ -439,6 +440,13 @@ the same except for the names.
 When you enable the aliases, the default command names will still be available.
 If you really don't like them, feel free to delete them using |:delcommand|.
 
+-------------------------------------------------------------------------------
+The *g:session_menu* option
+
+If you don't want the plugin's Sessions menu, you can turn it off via: >
+
+    :let g:session_menu = 0
+<
 -------------------------------------------------------------------------------
 The *g:loaded_session* option
 
