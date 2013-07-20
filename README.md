@@ -215,6 +215,12 @@ The aliases support tab completion just like the real commands; they're exactly 
 
 When you enable the aliases, the default command names will still be available. If you really don't like them, feel free to delete them using [:delcommand] [delcommand].
 
+### The `g:session_menu` option
+
+By default the plug-in installs a top level menu. If you don't like this you can disable it by adding the following line to your [vimrc script] [vimrc]:
+
+    :let g:session_menu = 0
+
 ### The `g:loaded_session` option
 
 This variable isn't really an option but if you want to avoid loading the vim-session plug-in you can set this variable to any value in your [vimrc script] [vimrc]:
@@ -240,7 +246,7 @@ Recently this plug-in switched from reimplementing [:mksession][mksession] to ac
 <!-- Start of generated documentation -->
 
 The documentation of the 34 functions below was extracted from
-1 Vim scripts on July  5, 2013 at 00:31.
+1 Vim scripts on July 20, 2013 at 12:48.
 
 ### Public API for the vim-session plug-in
 

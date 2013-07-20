@@ -31,7 +31,8 @@ Contents ~
   11. The |g:session_persist_globals| option
   12. The |g:session_restart_environment| option
   13. The |g:session_command_aliases| option
-  14. The |g:loaded_session| option
+  14. The |g:session_menu| option
+  15. The |g:loaded_session| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Known issues                                         |session-known-issues|
  7. Function reference                             |session-function-reference|
@@ -440,6 +441,14 @@ When you enable the aliases, the default command names will still be available.
 If you really don't like them, feel free to delete them using |:delcommand|.
 
 -------------------------------------------------------------------------------
+The *g:session_menu* option
+
+By default the plug-in installs a top level menu. If you don't like this you
+can disable it by adding the following line to your |vimrc| script:
+>
+  :let g:session_menu = 0
+<
+-------------------------------------------------------------------------------
 The *g:loaded_session* option
 
 This variable isn't really an option but if you want to avoid loading the vim-
@@ -481,7 +490,7 @@ might take a while...)
 Function reference ~
 
 The documentation of the 34 functions below was extracted from 1 Vim scripts on
-July 5, 2013 at 00:31.
+July 20, 2013 at 12:48.
 
 -------------------------------------------------------------------------------
                                            *public-api-for-vim-session-plug-in*
