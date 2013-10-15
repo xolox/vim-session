@@ -1,10 +1,10 @@
 " Public API for the vim-session plug-in.
 "
 " Author: Peter Odding
-" Last Change: July 20, 2013
+" Last Change: October 15, 2013
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.4.8'
+let g:xolox#session#version = '2.4.9'
 
 " Public API for session persistence. {{{1
 
@@ -584,7 +584,11 @@ function! xolox#session#view_cmd(name) abort " {{{2
       let msg = "session.vim %s: The %s session at %s doesn't exist!"
       call xolox#misc#msg#warn(msg, g:xolox#session#version, string(name), fnamemodify(path, ':~'))
     else
-      execute 'tab drop' fnameescape(path)
+      if has('gui_running')
+        execute 'tab drop' fnameescape(path)
+      else
+        execute 'tabedit' fnameescape(path)
+      endif
       call xolox#misc#msg#info("session.vim %s: Viewing session script %s.", g:xolox#session#version, fnamemodify(path, ':~'))
     endif
   endif
