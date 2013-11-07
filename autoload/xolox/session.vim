@@ -98,6 +98,9 @@ function! xolox#session#save_colors(commands) " {{{2
   " Save the current color scheme and background color. The first argument is
   " expected to be a list, it will be extended with the lines to be added to
   " the session script.
+  if exists('g:session_save_color') && g:session_save_color == 0
+    return
+  endif
   call add(a:commands, 'if &background != ' . string(&background))
   call add(a:commands, "\tset background=" . &background)
   call add(a:commands, 'endif')
