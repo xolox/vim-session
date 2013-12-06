@@ -1014,6 +1014,28 @@ function! s:unlock_session(session_path)
   endif
 endfunction
 
+" @param [string] name The file-extension-less name representation of the name, generated via the
+" complete list
+function! xolox#session#jump_to_tab(name)
+  " path [string] represents full path to the session file
+  let path = xolox#session#name_to_path(a:name)
+  let lock_file = path . '.lock'
+
+  " if the tab page is already open
+  if filereadable(lock_file)
+    let lock_obj = eval(get(readfile(lock_file), 0, '{}'))
+    if has_key(lock_obj, 'tabpage')
+
+      " then jump to the corresponding tab number
+      let tab_number = lock_obj['tabpage']
+      execute "normal! " . tab_number . "gt"
+    endif
+  else
+    " otherwise, just issue a warning
+    echom path . " wasn't found"
+  endif
+endfunction
+
 function! s:session_is_locked(session_path, ...)
   let lock_file = a:session_path . '.lock'
   if filereadable(lock_file)
