@@ -171,6 +171,9 @@ command! -bar -bang CloseTabSession call xolox#session#close_tab_cmd(<q-bang>, '
 " Define a command to restart Vim editing sessions.
 command! -bang -nargs=* -complete=command RestartVim call xolox#session#restart_cmd(<q-bang>, <q-args>)
 
+" Define a command to jump to a tab-page-session.
+command! -bar -count=94919 -nargs=1 -complete=customlist,xolox#session#complete_names JumpToTab call xolox#session#jump_to_tab(<q-args>)
+
 " Plug-in command aliases. {{{2
 
 if g:session_command_aliases
