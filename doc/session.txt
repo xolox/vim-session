@@ -25,6 +25,7 @@ Contents ~
   5. The |g:session_extension| option
   6. The |g:session_autoload| option
   7. The |g:session_autosave| option
+  7. The |g:session_autosave_to| option
   8. The |g:session_autosave_periodic| option
   9. The |g:session_verbose_messages| option
   10. The |g:session_default_to_last| option
@@ -336,6 +337,16 @@ you quit Vim, the session plug-in will ask whether you want to save the changes
 to your session. Set this option to "'yes'" to always automatically save open
 sessions when you quit Vim. To completely disable automatic saving you can set
 this option to "'no'".
+
+-------------------------------------------------------------------------------
+The *g:session_autosave_to* option
+
+If |g:session_autosave| equals "'yes'" and this option is different from "''",
+autosave always autosaves to a session with name |g:session_autosave_to| regardless
+of what the current session is or any other options. In particular,
+|g:session_default_overwrite| does not have any effect. If "''", autosave saves to
+the session name that would be used if this option did not exist. The default
+value is "''".
 
 -------------------------------------------------------------------------------
 The *g:session_autosave_periodic* option

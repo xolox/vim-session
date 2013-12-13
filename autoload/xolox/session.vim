@@ -442,12 +442,17 @@ function! xolox#session#auto_save() " {{{2
     " We won't save the session if auto-save is explicitly disabled.
     return
   endif
-  " Get the name of the active session (if any).
-  let name = xolox#session#find_current_session()
-  " If no session is active and the user doesn't have any sessions yet, help
-  " them get started by suggesting to create the default session.
-  if empty(name) && (empty(xolox#session#get_names()) || g:session_default_overwrite)
-    let name = g:session_default_name
+  if empty(g:session_autosave_to)
+    " Get the name of the active session (if any).
+    let name = xolox#session#find_current_session()
+    " If no session is active and the user doesn't have any sessions yet, help
+    " them get started by suggesting to create the default session.
+    if empty(name) && (empty(xolox#session#get_names()) || g:session_default_overwrite)
+      let name = g:session_default_name
+    endif
+    " Prompt the user to save the active/first/default session?
+  else
+    let name = g:session_autosave_to
   endif
   " Prompt the user to save the active/first/default session?
   if !empty(name)
