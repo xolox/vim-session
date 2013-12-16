@@ -729,7 +729,7 @@ endfunction
 function! xolox#session#append_tab_cmd(name, bang, count, command) abort " {{{2
   try
     call xolox#session#change_tab_options()
-    execute printf('%stabnew', a:count == 94919 ? '' : a:count)
+    execute printf('%stabnew', a:count == -1 ? '' : a:count)
     call xolox#session#open_cmd(a:name, a:bang, a:command)
   finally
     call xolox#session#restore_tab_options()
