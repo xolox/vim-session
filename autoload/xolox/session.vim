@@ -542,12 +542,15 @@ function! xolox#session#open_cmd(name, bang, command) abort " {{{2
   if empty(name)
     let name = xolox#session#prompt_for_name('restore')
   endif
-  if name != ''
+  if name == ''
+    return -1
+  else
     let starttime = xolox#misc#timer#start()
     let path = xolox#session#name_to_path(name)
     if !filereadable(path)
       let msg = "session.vim %s: The %s session at %s doesn't exist!"
       call xolox#misc#msg#warn(msg, g:xolox#session#version, string(name), fnamemodify(path, ':~'))
+      return 0
     elseif a:bang == '!' || !s:session_is_locked(path, a:command)
       let oldcwd = s:nerdtree_persist()
       call xolox#session#close_cmd(a:bang, 1, name != xolox#session#find_current_session(), a:command)
@@ -566,6 +569,7 @@ function! xolox#session#open_cmd(name, bang, command) abort " {{{2
       call xolox#misc#msg#info("session.vim %s: Opened %s %s session from %s.", g:xolox#session#version, session_type, string(name), fnamemodify(path, ':~'))
     endif
   endif
+  return 1
 endfunction
 
 function! xolox#session#view_cmd(name) abort " {{{2
@@ -729,8 +733,19 @@ endfunction
 function! xolox#session#append_tab_cmd(name, bang, count, command) abort " {{{2
   try
     call xolox#session#change_tab_options()
+    let original_tabpage = tabpagenr()
     execute printf('%stabnew', a:count == 94919 ? '' : a:count)
-    call xolox#session#open_cmd(a:name, a:bang, a:command)
+    let status = xolox#session#open_cmd(a:name, a:bang, a:command)
+    if status <= 0 && empty(bufname(''))
+      tabclose
+      if tabpagenr() != original_tabpage
+        execute original_tabpage . 'tabnext'
+      endif
+      if status == 0
+        " Switching tab pages cleared the warning message. Repeat it now.
+        call xolox#misc#msg#warn(get(g:xolox_messages, -1, ''))
+      endif
+    endif
   finally
     call xolox#session#restore_tab_options()
   endtry
