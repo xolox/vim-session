@@ -55,8 +55,10 @@ function! xolox#session#save_session(commands, filename) " {{{2
   if is_all_tabs
     call add(a:commands, 'doautoall SessionLoadPost')
   else
+    call add(a:commands, 'let s:winrestcmd = winrestcmd()')
     call add(a:commands, 'windo doautocmd SessionLoadPost')
     call s:jump_to_window(a:commands, tabpagenr(), winnr())
+    call add(a:commands, 'silent! execute s:winrestcmd')
   endif
   call add(a:commands, 'unlet SessionLoad')
   call add(a:commands, '" vim: ft=vim ro nowrap smc=128')
@@ -294,9 +296,13 @@ endfunction
 
 function! s:check_special_tabpage(session)
   let status = 0
-  windo let status += s:check_special_window(a:session)
+  let winrestcmd = winrestcmd()
+  let window = winnr()
+    windo let status += s:check_special_window(a:session)
+    execute window . 'wincmd w'
+  silent! execute winrestcmd
   if status > 0 && winnr('$') > 1
-    call add(a:session, winrestcmd())
+    call add(a:session, winrestcmd)
   endif
 endfunction
 
