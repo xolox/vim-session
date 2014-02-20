@@ -41,6 +41,9 @@ function! xolox#session#save_session(commands, filename) " {{{2
   if has('gui') && is_all_tabs
     call add(a:commands, 'set guioptions=' . escape(&go, ' "\'))
     call add(a:commands, 'silent! set guifont=' . escape(&gfn, ' "\'))
+    call add(a:commands, 'set linespace=' . &linespace)
+    " Changing the linespace sometimes leaves the screen messed up.
+    call add(a:commands, 'redraw')
   endif
   call xolox#session#save_globals(a:commands)
   if is_all_tabs
@@ -51,6 +54,7 @@ function! xolox#session#save_session(commands, filename) " {{{2
   call xolox#session#save_state(a:commands)
   if is_all_tabs
     call xolox#session#save_fullscreen(a:commands)
+    call add(a:commands, 'set laststatus=' . &laststatus)
   endif
   if is_all_tabs
     call add(a:commands, 'doautoall SessionLoadPost')
