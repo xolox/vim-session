@@ -33,6 +33,7 @@ Contents ~
   13. The |g:session_command_aliases| option
   14. The |g:session_menu| option
   15. The |g:loaded_session| option
+  16. The |g:session_save_color| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Known issues                                         |session-known-issues|
  7. Function reference                             |session-function-reference|
@@ -455,6 +456,15 @@ This variable isn't really an option but if you want to avoid loading the vim-
 session plug-in you can set this variable to any value in your |vimrc| script:
 >
   :let g:loaded_session = 1
+
+-------------------------------------------------------------------------------
+The *g:session_save_color* option
+
+By default the plug-in will save the colorscheme with the session to be
+reused the next time that session is loaded, this can be disabled by adding
+the following line to your |vimrc| script:
+>
+  :let g:session_save_color = 0
 <
 ===============================================================================
                                     *session-compatibility-with-other-plug-ins*
