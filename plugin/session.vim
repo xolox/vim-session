@@ -111,7 +111,7 @@ endif
 
 " Toggle the saving colorschemes with the session
 if !exists('g:session_save_color')
-  let g:session_save_color == 1
+  let g:session_save_color = 1
 endif
 
 " Make sure the sessions directory exists and is writable. {{{1
