@@ -109,6 +109,11 @@ if !exists('g:session_menu')
   let g:session_menu = 1
 endif
 
+" Toggle the saving colorschemes with the session
+if !exists('g:session_save_color')
+  let g:session_save_color == 1
+endif
+
 " Make sure the sessions directory exists and is writable. {{{1
 
 let s:directory = fnamemodify(g:session_directory, ':p')
