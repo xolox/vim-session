@@ -860,20 +860,33 @@ function! xolox#session#path_to_name(path) " {{{2
   return xolox#misc#path#decode(fnamemodify(a:path, ':t:r'))
 endfunction
 
-function! xolox#session#get_names() " {{{2
+function! xolox#session#get_names(list_mode) " {{{2
   " Get the names of all available sessions. This scans the directory
   " configured with `g:session_directory` for files that end with the suffix
   " configured with `g:session_extension`, takes the base name of each file
-  " and decodes any URL encoded characters. Returns a list of strings.
+  " and decodes any URL encoded characters. Optionally prefixes file names
+  " from a user-supplied function if defined by the user.  Returns a list of
+  " strings.
   let directory = xolox#misc#path#absolute(g:session_directory)
   let filenames = split(glob(xolox#misc#path#merge(directory, '*' . g:session_extension)), "\n")
+  if g:session_additional_names_function != 'none' && a:list_mode == 'save'
+    let AdditionalNames = function(g:session_additional_names_function)
+    let filenames = AdditionalNames() + filenames
+  endif
   return map(filenames, 'xolox#session#path_to_name(v:val)')
 endfunction
 
 function! xolox#session#complete_names(arg, line, pos) " {{{2
   " Completion function for user defined Vim commands. Used by commands like
-  " `:OpenSession` and `:DeleteSession` to support user friendly completion.
-  let names = filter(xolox#session#get_names(), 'v:val =~ a:arg')
+  " `:OpenSession` and `:DeleteSession`  (but not `:SaveSession`) to support
+  " user friendly completion.
+  let names = filter(xolox#session#get_names(''), 'v:val =~ a:arg')
+  return map(names, 'fnameescape(v:val)')
+endfunction
+
+function! xolox#session#complete_save_names(arg, line, pos) " {{{2
+  " Completion function for `:SaveSession`
+  let names = filter(xolox#session#get_names('save'), 'v:val =~ a:arg')
   return map(names, 'fnameescape(v:val)')
 endfunction
 

@@ -33,6 +33,7 @@ Contents ~
   13. The |g:session_command_aliases| option
   14. The |g:session_menu| option
   15. The |g:loaded_session| option
+  16. The |g:session_default_save_function| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Known issues                                         |session-known-issues|
  7. Function reference                             |session-function-reference|
@@ -167,11 +168,11 @@ that session is opened, otherwise the plug-in will ask you to select one from a
 list:
 >
   Please select the session to restore:
-  
+
    1. vim-profile
    2. session-plugin
    3. etc.
-  
+
   Type number and <Enter> or click with mouse (empty cancels):
 <
 If the session you're trying to open is already active in another Vim instance
@@ -281,7 +282,7 @@ how it works by setting |'sessionoptions'| in your |vimrc| script, for example:
 >
   " If you only want to save the current tab page:
   set sessionoptions-=tabpages
-  
+
   " If you don't want help windows to be restored:
   set sessionoptions-=help
 <
@@ -456,6 +457,24 @@ session plug-in you can set this variable to any value in your |vimrc| script:
 >
   :let g:loaded_session = 1
 <
+-------------------------------------------------------------------------------
+The *g:session_default_save_function* option
+
+This variable influences the first choice of the |:SaveSession| command to
+allow users to specify their own defaults.
+>
+  :let g:session_default_save_function = 'function_name'
+<
+
+One use is to name sessions based on your current feature branch. Currently,
+the following function is provided:
+
+A function to determine the current git branch in your current working
+directory.
+>
+  :let g:session_default_save_function = 'xolox#save_default#get_git_branch'
+<
+
 ===============================================================================
                                     *session-compatibility-with-other-plug-ins*
 Compatibility with other plug-ins ~
@@ -602,13 +621,13 @@ session is selected an empty string is returned. Here's an example of what the
 prompt looks like:
 >
   :call xolox#session#prompt_for_name('trash')
-  
+
   Please select the session to trash:
-  
+
    1. first-session
    2. second-session
    3. third-session
-  
+
   Type number and <Enter> or click with mouse (empty cancels):
 <
 If only a single session exists there's nothing to choose from so the name of
@@ -718,7 +737,7 @@ was editing the plug-in itself in Vim:
   " ~/.vim/sessions/example.vim: Vim session script.
   " Created by session.vim on 30 August 2010 at 05:26:28.
   " Open this file in Vim and run :source % to restore your session.
-  
+
   set guioptions=aegit
   set guifont=Monaco\ 13
   if exists('g:syntax_on') != 1 | syntax on | endif
