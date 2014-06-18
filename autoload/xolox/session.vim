@@ -392,7 +392,7 @@ function! xolox#session#auto_load() " {{{2
   endif
   " Check that the user has started Vim without editing any files.
   let current_buffer_is_empty = (&modified == 0 && getline(1, '$') == [''])
-  let buffer_list_is_empty = (bufnr('$') == 1 && bufname('%') == '')
+  let buffer_list_is_empty = (bufname('%') == '' && empty(filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != ' . bufnr(''))))
   let buffer_list_is_persistent = (index(xolox#misc#option#split(&viminfo), '%') >= 0)
   if current_buffer_is_empty && (buffer_list_is_empty || buffer_list_is_persistent)
     " Check whether a session matching the user-specified server name exists.
