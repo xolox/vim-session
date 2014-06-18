@@ -246,7 +246,7 @@ Recently this plug-in switched from reimplementing [:mksession][mksession] to ac
 <!-- Start of generated documentation -->
 
 The documentation of the 34 functions below was extracted from
-1 Vim scripts on June 18, 2014 at 22:52.
+1 Vim scripts on June 18, 2014 at 23:00.
 
 ### Public API for the vim-session plug-in
 
@@ -451,8 +451,10 @@ If you have questions, bug reports, suggestions, etc. the author can be contacte
 
 ## License
 
-This software is licensed under the [MIT license](http://en.wikipedia.org/wiki/MIT_License).
-© 2014 Peter Odding &lt;<peter@peterodding.com>&gt;.
+This software is licensed under the [MIT license](http://en.wikipedia.org/wiki/MIT_License).  
+© 2014 Peter Odding &lt;<peter@peterodding.com>&gt; and Ingo Karkat.
+
+Thanks go out to everyone who has helped to improve the vim-session plug-in (whether through pull requests, bug reports or personal e-mails).
 
 ## Sample session script
 

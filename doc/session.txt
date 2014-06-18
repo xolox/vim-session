@@ -490,7 +490,7 @@ might take a while...)
 Function reference ~
 
 The documentation of the 34 functions below was extracted from 1 Vim scripts on
-June 18, 2014 at 22:52.
+June 18, 2014 at 23:00.
 
 -------------------------------------------------------------------------------
                                            *public-api-for-vim-session-plug-in*
@@ -706,7 +706,10 @@ session. If you like the script please vote for it on Vim Online [19].
 License ~
 
 This software is licensed under the MIT license [20]. ÂŠ 2014 Peter Odding
-<peter@peterodding.com>.
+<peter@peterodding.com> and Ingo Karkat.
+
+Thanks go out to everyone who has helped to improve the vim-session plug-in
+(whether through pull requests, bug reports or personal e-mails).
 
 ===============================================================================
                                                         *sample-session-script*
