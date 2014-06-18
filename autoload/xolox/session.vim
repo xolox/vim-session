@@ -356,10 +356,10 @@ function! s:check_special_window(session)
 endfunction
 
 function! s:jump_to_window(session, tabpage, window)
+  call add(a:session, a:window . 'wincmd w')
   if xolox#session#include_tabs()
     call add(a:session, 'tabnext ' . a:tabpage)
   endif
-  call add(a:session, a:window . 'wincmd w')
 endfunction
 
 function! s:nerdtree_persist()
