@@ -227,6 +227,10 @@ By default the plug-in installs a top level menu. If you don't like this you can
 
     :let g:session_menu = 0
 
+### The `g:session_name_suggestion_function` option
+
+The default completion of the `:SaveSession` command is based on the names of the existing sessions. You can add your own suggestions using this option by setting the option to the name of a Vim script function. By default this option is set to an example function that suggests the name of the current git or Mercurial feature branch (when you're working in a version control repository).
+
 ### The `g:loaded_session` option
 
 This variable isn't really an option but if you want to avoid loading the vim-session plug-in you can set this variable to any value in your [vimrc script] [vimrc]:
@@ -251,8 +255,8 @@ Recently this plug-in switched from reimplementing [:mksession][mksession] to ac
 
 <!-- Start of generated documentation -->
 
-The documentation of the 34 functions below was extracted from
-1 Vim scripts on July  6, 2014 at 21:01.
+The documentation of the 37 functions below was extracted from
+2 Vim scripts on July  6, 2014 at 22:23.
 
 ### Public API for the vim-session plug-in
 
@@ -405,10 +409,20 @@ configured with `g:session_directory` for files that end with the suffix
 configured with `g:session_extension`, takes the base name of each file
 and decodes any URL encoded characters. Returns a list of strings.
 
+If the first argument is true (1) then the user defined function
+configured with `g:session_name_suggestion_function` is called to find
+suggested session names, which are prefixed to the list of available
+sessions, otherwise the argument should be false (0).
+
 #### The `xolox#session#complete_names()` function
 
 Completion function for user defined Vim commands. Used by commands like
-`:OpenSession` and `:DeleteSession` to support user friendly completion.
+`:OpenSession` and `:DeleteSession`  (but not `:SaveSession`) to support
+user friendly completion.
+
+#### The `xolox#session#complete_names_with_suggestions()` function
+
+Completion function for the Vim command `:SaveSession`.
 
 #### The `xolox#session#is_tab_scoped()` function
 
@@ -448,6 +462,16 @@ scoped session. Saves a copy of the original value to be restored later.
 #### The `xolox#session#restore_tab_options()` function
 
 Restore the original value of Vim's [sessionoptions] [] option.
+
+### Example function for session name suggestions
+
+#### The `xolox#session#suggestions#vcs_feature_branch()` function
+
+This function implements an example of a function that can be used with
+the `g:session_name_suggestion_function` option. It finds the name of the
+current git or Mercurial feature branch (if any) and suggests this name as
+the name for the session that is being saved with :SaveSession. Returns a
+list with one string on success and an empty list on failure.
 
 <!-- End of generated documentation -->
 

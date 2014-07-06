@@ -4,7 +4,7 @@
 " Last Change: July 6, 2014
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.5'
+let g:xolox#session#version = '2.6'
 
 " Public API for session persistence. {{{1
 
@@ -403,7 +403,7 @@ function! xolox#session#auto_load() " {{{2
   if current_buffer_is_empty && (buffer_list_is_empty || buffer_list_is_persistent)
     " Check whether a session matching the user-specified server name exists.
     if v:servername !~ '^\cgvim\d*$'
-      for session in xolox#session#get_names()
+      for session in xolox#session#get_names(0)
         if v:servername ==? session
           call xolox#session#open_cmd(session, '', 'OpenSession')
           return
@@ -452,7 +452,7 @@ function! xolox#session#auto_save() " {{{2
   let name = xolox#session#find_current_session()
   " If no session is active and the user doesn't have any sessions yet, help
   " them get started by suggesting to create the default session.
-  if empty(name) && (empty(xolox#session#get_names()) || g:session_default_overwrite)
+  if empty(name) && (empty(xolox#session#get_names(0)) || g:session_default_overwrite)
     let name = g:session_default_name
   endif
   " Prompt the user to save the active/first/default session?
@@ -837,7 +837,7 @@ function! xolox#session#prompt_for_name(action) " {{{2
   "
   " If only a single session exists there's nothing to choose from so the name
   " of that session will be returned directly, without prompting the user.
-  let sessions = sort(xolox#session#get_names(), 1)
+  let sessions = sort(xolox#session#get_names(0), 1)
   if len(sessions) == 1
     return sessions[0]
   elseif !empty(sessions)
@@ -878,20 +878,37 @@ function! xolox#session#path_to_name(path) " {{{2
   return xolox#misc#path#decode(fnamemodify(a:path, ':t:r'))
 endfunction
 
-function! xolox#session#get_names() " {{{2
+function! xolox#session#get_names(include_suggestions) " {{{2
   " Get the names of all available sessions. This scans the directory
   " configured with `g:session_directory` for files that end with the suffix
   " configured with `g:session_extension`, takes the base name of each file
   " and decodes any URL encoded characters. Returns a list of strings.
+  "
+  " If the first argument is true (1) then the user defined function
+  " configured with `g:session_name_suggestion_function` is called to find
+  " suggested session names, which are prefixed to the list of available
+  " sessions, otherwise the argument should be false (0).
   let directory = xolox#misc#path#absolute(g:session_directory)
   let filenames = split(glob(xolox#misc#path#merge(directory, '*' . g:session_extension)), "\n")
-  return map(filenames, 'xolox#session#path_to_name(v:val)')
+  call map(filenames, 'xolox#session#path_to_name(v:val)')
+  if a:include_suggestions && !empty(g:session_name_suggestion_function)
+    let suggested_names = call(g:session_name_suggestion_function, [])
+    let filenames = suggested_names + filenames
+  endif
+  return filenames
 endfunction
 
 function! xolox#session#complete_names(arg, line, pos) " {{{2
   " Completion function for user defined Vim commands. Used by commands like
-  " `:OpenSession` and `:DeleteSession` to support user friendly completion.
-  let names = filter(xolox#session#get_names(), 'v:val =~ a:arg')
+  " `:OpenSession` and `:DeleteSession`  (but not `:SaveSession`) to support
+  " user friendly completion.
+  let names = filter(xolox#session#get_names(0), 'v:val =~ a:arg')
+  return map(names, 'fnameescape(v:val)')
+endfunction
+
+function! xolox#session#complete_names_with_suggestions(arg, line, pos) " {{{2
+  " Completion function for the Vim command `:SaveSession`.
+  let names = filter(xolox#session#get_names(1), 'v:val =~ a:arg')
   return map(names, 'fnameescape(v:val)')
 endfunction
 

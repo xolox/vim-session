@@ -114,6 +114,11 @@ if !exists('g:session_persist_colors')
   let g:session_persist_colors = 1
 endif
 
+" Enable user defined session name completion suggestions for :SaveSession.
+if !exists('g:session_name_suggestion_function')
+  let g:session_name_suggestion_function = 'xolox#session#suggestions#vcs_feature_branch'
+endif
+
 " Make sure the sessions directory exists and is writable. {{{1
 
 let s:directory = fnamemodify(g:session_directory, ':p')
@@ -163,7 +168,7 @@ call xolox#misc#cursorhold#register({'function': 'xolox#session#auto_save_period
 " one or more tab pages).
 command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names OpenSession call xolox#session#open_cmd(<q-args>, <q-bang>, 'OpenSession')
 command! -bar -nargs=? -complete=customlist,xolox#session#complete_names ViewSession call xolox#session#view_cmd(<q-args>)
-command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SaveSession call xolox#session#save_cmd(<q-args>, <q-bang>, 'SaveSession')
+command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names_with_suggestions SaveSession call xolox#session#save_cmd(<q-args>, <q-bang>, 'SaveSession')
 command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names DeleteSession call xolox#session#delete_cmd(<q-args>, <q-bang>)
 command! -bar -bang CloseSession call xolox#session#close_cmd(<q-bang>, 0, 1, 'CloseSession')
 
