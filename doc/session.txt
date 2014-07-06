@@ -28,11 +28,12 @@ Contents ~
   8. The |g:session_autosave_periodic| option
   9. The |g:session_verbose_messages| option
   10. The |g:session_default_to_last| option
-  11. The |g:session_persist_globals| option
-  12. The |g:session_restart_environment| option
-  13. The |g:session_command_aliases| option
-  14. The |g:session_menu| option
-  15. The |g:loaded_session| option
+  11. The |g:session_persist_colors| option
+  12. The |g:session_persist_globals| option
+  13. The |g:session_restart_environment| option
+  14. The |g:session_command_aliases| option
+  15. The |g:session_menu| option
+  16. The |g:loaded_session| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Known issues                                         |session-known-issues|
  7. Function reference                             |session-function-reference|
@@ -364,6 +365,15 @@ you the dialog asking whether you want to restore the last used session. To get
 rid of the dialog you have to set |g:session_autoload| to "'yes'".
 
 -------------------------------------------------------------------------------
+The *g:session_persist_colors* option
+
+By default the plug-in will save the color scheme and the |'background'| option
+with the session to be reused the next time that session is loaded, this can be
+disabled by adding the following line to your |vimrc| script:
+>
+  :let g:session_persist_colors = 0
+<
+-------------------------------------------------------------------------------
 The *g:session_persist_globals* option
 
 The vim-session plug-in uses Vim's |:mksession| command but it changes
@@ -490,7 +500,7 @@ might take a while...)
 Function reference ~
 
 The documentation of the 34 functions below was extracted from 1 Vim scripts on
-July 6, 2014 at 20:47.
+July 6, 2014 at 21:01.
 
 -------------------------------------------------------------------------------
                                            *public-api-for-vim-session-plug-in*

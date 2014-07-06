@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: June 22, 2014
+" Last Change: July 6, 2014
 " URL: http://peterodding.com/code/vim/session/
 
 " Support for automatic update using the GLVS plug-in.
@@ -107,6 +107,11 @@ endif
 " Allow to turn off the menu.
 if !exists('g:session_menu')
   let g:session_menu = 1
+endif
+
+" Toggle the persistence of color schemes and the 'background' option.
+if !exists('g:session_persist_colors')
+  let g:session_persist_colors = 1
 endif
 
 " Make sure the sessions directory exists and is writable. {{{1

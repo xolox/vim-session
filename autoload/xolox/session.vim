@@ -4,7 +4,7 @@
 " Last Change: July 6, 2014
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.4.15'
+let g:xolox#session#version = '2.5'
 
 " Public API for session persistence. {{{1
 
@@ -45,14 +45,14 @@ function! xolox#session#save_session(commands, filename) " {{{2
   call xolox#session#save_globals(a:commands)
   if is_all_tabs
     call xolox#session#save_features(a:commands)
-    call xolox#session#save_colors(a:commands)
+    if g:session_persist_colors
+      call xolox#session#save_colors(a:commands)
+    endif
   endif
   call xolox#session#save_qflist(a:commands)
   call xolox#session#save_state(a:commands)
   if is_all_tabs
     call xolox#session#save_fullscreen(a:commands)
-  endif
-  if is_all_tabs
     call add(a:commands, 'doautoall SessionLoadPost')
   else
     call add(a:commands, 'let s:winrestcmd = winrestcmd()')
