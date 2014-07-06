@@ -1,10 +1,10 @@
 " Public API for the vim-session plug-in.
 "
 " Author: Peter Odding
-" Last Change: July 6, 2014
+" Last Change: July 7, 2014
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.6'
+let g:xolox#session#version = '2.6.1'
 
 " Public API for session persistence. {{{1
 
@@ -413,7 +413,7 @@ function! xolox#session#auto_load() " {{{2
     " Default to the last used session or the default session?
     let [has_last_session, session] = s:get_last_or_default_session()
     let path = xolox#session#name_to_path(session)
-    if (g:session_default_to_last == 0 || has_last_session) && filereadable(path) && !s:session_is_locked(path)
+    if (g:session_default_to_last == 0 || has_last_session) && filereadable(path) && !s:session_is_locked(session, 'OpenSession')
       " Compose the message for the prompt.
       let is_default_session = (session == g:session_default_name)
       let msg = printf("Do you want to restore your %s editing session%s?",
@@ -554,7 +554,7 @@ function! xolox#session#open_cmd(name, bang, command) abort " {{{2
       let msg = "session.vim %s: The %s session at %s doesn't exist!"
       call xolox#misc#msg#warn(msg, g:xolox#session#version, string(name), fnamemodify(path, ':~'))
       return 0
-    elseif a:bang == '!' || !s:session_is_locked(path, a:command)
+    elseif a:bang == '!' || !s:session_is_locked(name, a:command)
       let oldcwd = s:nerdtree_persist()
       call xolox#session#close_cmd(a:bang, 1, name != xolox#session#find_current_session(), a:command)
       call s:lock_session(path)
@@ -612,7 +612,7 @@ function! xolox#session#save_cmd(name, bang, command) abort " {{{2
   endif
   let path = xolox#session#name_to_path(name)
   let friendly_path = fnamemodify(path, ':~')
-  if a:bang == '!' || !s:session_is_locked(path, a:command)
+  if a:bang == '!' || !s:session_is_locked(name, a:command)
     let lines = []
     call xolox#session#save_session(lines, friendly_path)
     if xolox#misc#os#is_win() && !xolox#session#options_include('unix')
@@ -647,7 +647,7 @@ function! xolox#session#delete_cmd(name, bang) " {{{2
     if !filereadable(path)
       let msg = "session.vim %s: The %s session at %s doesn't exist!"
       call xolox#misc#msg#warn(msg, g:xolox#session#version, string(name), fnamemodify(path, ':~'))
-    elseif a:bang == '!' || !s:session_is_locked(path, 'DeleteSession')
+    elseif a:bang == '!' || !s:session_is_locked(name, 'DeleteSession')
       if delete(path) != 0
         let msg = "session.vim %s: Failed to delete %s session at %s!"
         call xolox#misc#msg#warn(msg, g:xolox#session#version, string(name), fnamemodify(path, ':~'))
@@ -1030,7 +1030,7 @@ endfunction
 
 function! s:lock_session(session_path)
   let lock_file = a:session_path . '.lock'
-  if writefile([string(s:vim_instance_id())], lock_file) == 0
+  if xolox#misc#persist#save(lock_file, s:vim_instance_id())
     if index(s:lock_files, lock_file) == -1
       call add(s:lock_files, lock_file)
     endif
@@ -1049,13 +1049,13 @@ function! s:unlock_session(session_path)
   endif
 endfunction
 
-function! s:session_is_locked(session_path, ...)
-  let lock_file = a:session_path . '.lock'
+function! s:session_is_locked(session_name, command)
+  let session_path = xolox#session#name_to_path(a:session_name)
+  let lock_file = session_path . '.lock'
   if filereadable(lock_file)
     let this_instance = s:vim_instance_id()
-    let other_instance = eval(get(readfile(lock_file), 0, '{}'))
-    let name = string(fnamemodify(a:session_path, ':t:r'))
-    let arguments = [g:xolox#session#version, name]
+    let other_instance = xolox#misc#persist#load(lock_file)
+    let arguments = [g:xolox#session#version, string(a:session_name)]
     if this_instance == other_instance
       " Session belongs to current Vim instance and tab page.
       return 0
@@ -1073,11 +1073,10 @@ function! s:session_is_locked(session_path, ...)
       else
         call add(arguments, 'with PID ' . other_instance['pid'])
       endif
+      let msg .= " If that doesn't seem right maybe you forcefully closed Vim or it crashed?"
     endif
-    if exists('a:1')
-      let msg .= " Use :%s! to override."
-      call add(arguments, a:1)
-    endif
+    let msg .= " Use the command ':%s! %s' to override."
+    call extend(arguments, [a:command, a:session_name])
     call call('xolox#misc#msg#warn', [msg] + arguments)
     return 1
   endif
