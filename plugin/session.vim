@@ -1,6 +1,6 @@
 " Vim script
 " Author: Peter Odding
-" Last Change: July 4, 2013
+" Last Change: June 22, 2014
 " URL: http://peterodding.com/code/vim/session/
 
 " Support for automatic update using the GLVS plug-in.
@@ -145,10 +145,11 @@ endif
 augroup PluginSession
   autocmd!
   au VimEnter * nested call xolox#session#auto_load()
-  au CursorHold,CursorHoldI * call xolox#session#auto_save_periodic()
   au VimLeavePre * call xolox#session#auto_save()
   au VimLeavePre * call xolox#session#auto_unlock()
 augroup END
+
+call xolox#misc#cursorhold#register({'function': 'xolox#session#auto_save_periodic', 'interval': 60})
 
 " Plug-in commands (user defined commands). {{{1
 

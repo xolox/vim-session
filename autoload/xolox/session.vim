@@ -1,10 +1,10 @@
 " Public API for the vim-session plug-in.
 "
 " Author: Peter Odding
-" Last Change: June 18, 2014
+" Last Change: July 6, 2014
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.4.14'
+let g:xolox#session#version = '2.4.15'
 
 " Public API for session persistence. {{{1
 
@@ -484,10 +484,7 @@ function! xolox#session#auto_save_periodic() " {{{2
   if g:session_autosave_periodic > 0
     let interval = g:session_autosave_periodic * 60
     let next_save = s:session_last_flushed + interval
-    if next_save > localtime()
-      call xolox#misc#msg#debug("session.vim %s: Skipping this beat of 'updatetime' (it's not our time yet).", g:xolox#session#version)
-    else
-      call xolox#misc#msg#debug("session.vim %s: This is our beat of 'updatetime'!", g:xolox#session#version)
+    if localtime() > next_save
       let name = xolox#session#find_current_session()
       if !empty(name)
         if xolox#session#is_tab_scoped()
