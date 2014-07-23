@@ -560,6 +560,7 @@ function! xolox#session#open_cmd(name, bang, command) abort " {{{2
       call s:lock_session(path)
       execute 'source' fnameescape(path)
       if xolox#session#is_tab_scoped()
+        call s:lock_session(path) " Retroactively (this is only known after the session has been loaded) add the tabpage to the lock.
         let t:session_old_cwd = oldcwd
         let session_type = 'tab scoped'
       else
@@ -1022,7 +1023,7 @@ function! s:vim_instance_id()
   if !empty(v:servername)
     let id['servername'] = v:servername
   endif
-  if !xolox#session#include_tabs()
+  if !xolox#session#include_tabs() || xolox#session#is_tab_scoped()
     let id['tabpage'] = tabpagenr()
   endif
   return id
