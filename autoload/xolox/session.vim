@@ -4,7 +4,7 @@
 " Last Change: July 30, 2014
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.6.3'
+let g:xolox#session#version = '2.6.4'
 
 " Public API for session persistence. {{{1
 
@@ -245,17 +245,6 @@ function! s:state_filter(line) " {{{3
     return '" ' . a:line
   elseif a:line =~ '^file .\{-}__Tag_List__$'
     " Same trick (about the E95) for TagList.
-    return '" ' . a:line
-  elseif a:line =~ '^args '
-    " The :mksession command adds an :args line to the session file, but when
-    " :args is executed during a session restore it edits the first file it is
-    " given, thereby breaking the session that the user was expecting to
-    " get... I consider this to be a bug in :mksession, but anyway :-).
-    return '" ' . a:line
-  elseif a:line =~ '^\(argglobal\|\dargu\)$'
-    " Because we disabled the :args command above we cause a potential error
-    " when :mksession adds corresponding :argglobal and/or :argument commands
-    " to the session script.
     return '" ' . a:line
   elseif a:line =~ "^\\s*silent exe 'bwipe ' \\. s:wipebuf$" || a:line =~ '^unlet! s:wipebuf$'
     " Disable Vim's special handling of the initial, empty buffer because it
