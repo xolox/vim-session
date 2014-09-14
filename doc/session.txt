@@ -20,21 +20,22 @@ Contents ~
  4. Options                                                   |session-options|
   1. The |sessionoptions| setting
   2. The |g:session_directory| option
-  3. The |g:session_default_name| option
-  4. The |g:session_default_overwrite| option
-  5. The |g:session_extension| option
-  6. The |g:session_autoload| option
-  7. The |g:session_autosave| option
-  8. The |g:session_autosave_periodic| option
-  9. The |g:session_verbose_messages| option
-  10. The |g:session_default_to_last| option
-  11. The |g:session_persist_colors| option
-  12. The |g:session_persist_globals| option
-  13. The |g:session_restart_environment| option
-  14. The |g:session_command_aliases| option
-  15. The |g:session_menu| option
-  16. The |g:session_name_suggestion_function| option
-  17. The |g:loaded_session| option
+  3. The |g:session_lock_directory| option
+  4. The |g:session_default_name| option
+  5. The |g:session_default_overwrite| option
+  6. The |g:session_extension| option
+  7. The |g:session_autoload| option
+  8. The |g:session_autosave| option
+  9. The |g:session_autosave_periodic| option
+  10. The |g:session_verbose_messages| option
+  11. The |g:session_default_to_last| option
+  12. The |g:session_persist_colors| option
+  13. The |g:session_persist_globals| option
+  14. The |g:session_restart_environment| option
+  15. The |g:session_command_aliases| option
+  16. The |g:session_menu| option
+  17. The |g:session_name_suggestion_function| option
+  18. The |g:loaded_session| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Known issues                                         |session-known-issues|
  7. Function reference                             |session-function-reference|
@@ -306,6 +307,17 @@ for you. Note that a leading '~' is expanded to your current home directory
 ('$HOME' on UNIX, '%USERPROFILE%' on Windows).
 
 -------------------------------------------------------------------------------
+The *g:session_lock_directory* option
+
+The vim-session plug-in uses lock files to prevent double loading of sessions.
+By default the lock files are stored in the same directory as the sessions. If
+you'd rather store lock files in a dedicated lock file directory you can use
+this option:
+>
+  " Store lock files in a tmpfs that doesn't persist between reboots.
+  let g:session_lock_directory = '/var/lock'
+<
+-------------------------------------------------------------------------------
 The *g:session_default_name* option
 
 The name of the default session without directory or filename extension (you'll
@@ -513,7 +525,7 @@ might take a while...)
 Function reference ~
 
 The documentation of the 37 functions below was extracted from 2 Vim scripts on
-July 30, 2014 at 22:23.
+September 14, 2014 at 13:07.
 
 -------------------------------------------------------------------------------
                                            *public-api-for-vim-session-plug-in*

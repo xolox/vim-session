@@ -1,10 +1,10 @@
 " Public API for the vim-session plug-in.
 "
 " Author: Peter Odding
-" Last Change: July 30, 2014
+" Last Change: September 14, 2014
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.6.4'
+let g:xolox#session#version = '2.7'
 
 " Public API for session persistence. {{{1
 
@@ -1018,8 +1018,18 @@ function! s:vim_instance_id()
   return id
 endfunction
 
+function! s:lock_file_path(session_path)
+  let directory = xolox#misc#option#get('session_lock_directory', '')
+  if !empty(directory)
+    let pathname = xolox#misc#path#merge(directory, xolox#misc#path#encode(a:session_path))
+  else
+    let pathname = a:session_path
+  endif
+  return pathname . '.lock'
+endfunction
+
 function! s:lock_session(session_path)
-  let lock_file = a:session_path . '.lock'
+  let lock_file = s:lock_file_path(a:session_path)
   if xolox#misc#persist#save(lock_file, s:vim_instance_id())
     if index(s:lock_files, lock_file) == -1
       call add(s:lock_files, lock_file)
@@ -1029,7 +1039,7 @@ function! s:lock_session(session_path)
 endfunction
 
 function! s:unlock_session(session_path)
-  let lock_file = a:session_path . '.lock'
+  let lock_file = s:lock_file_path(a:session_path)
   if delete(lock_file) == 0
     let idx = index(s:lock_files, lock_file)
     if idx >= 0
@@ -1041,7 +1051,7 @@ endfunction
 
 function! s:session_is_locked(session_name, command)
   let session_path = xolox#session#name_to_path(a:session_name)
-  let lock_file = session_path . '.lock'
+  let lock_file = s:lock_file_path(session_path)
   if filereadable(lock_file)
     let this_instance = s:vim_instance_id()
     let other_instance = xolox#misc#persist#load(lock_file)
