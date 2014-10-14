@@ -409,7 +409,7 @@ function! xolox#session#auto_load() " {{{2
             \ is_default_session ? 'default' : 'last used',
             \ is_default_session ? '' : printf(' (%s)', session))
       " Prepare the list of choices.
-      let choices = ['&Yes', '&No']
+      let choices = ['&Restore', '&Don’t Restore']
       if g:session_default_to_last && has_last_session
         call add(choices, '&Forget')
       endif
@@ -448,7 +448,7 @@ function! xolox#session#auto_save() " {{{2
   if !empty(name)
     let is_tab_scoped = xolox#session#is_tab_scoped()
     let msg = "Do you want to save your %s before quitting Vim?"
-    if s:prompt(printf(msg, xolox#session#get_label(name, is_tab_scoped)), ['&Yes', '&No'], 'g:session_autosave') == 1
+    if s:prompt(printf(msg, xolox#session#get_label(name, is_tab_scoped)), ['&Save', '&Don’t Save'], 'g:session_autosave') == 1
       if g:session_default_overwrite && (name == g:session_default_name)
         let bang = '!'
       else
@@ -520,7 +520,7 @@ function! s:prompt(msg, choices, option_name)
     return 0
   else
     if g:session_verbose_messages
-      let format = "%s Note that you can permanently disable this dialog by adding the following line to your %s script:\n\n\t:let %s = 'no'"
+      let format = "%s\n\nNote that you can permanently disable this dialog by adding the following line to your %s script:\n\n\t:let %s = 'no'"
       let prompt = printf(format, a:msg, xolox#misc#os#is_win() ? '~\_vimrc' : '~/.vimrc', a:option_name)
     else
       let prompt = a:msg
@@ -657,7 +657,7 @@ function! xolox#session#close_cmd(bang, silent, save_allowed, command) abort " {
     if a:save_allowed
       let msg = "Do you want to save your current %s before closing it?"
       let label = xolox#session#get_label(name, !is_all_tabs)
-      if s:prompt(printf(msg, label), ['&Yes', '&No'], 'g:session_autosave') == 1
+      if s:prompt(printf(msg, label), ['&Save', '&Don’t Save'], 'g:session_autosave') == 1
         call xolox#session#save_cmd(name, a:bang, a:command)
       endif
     else
