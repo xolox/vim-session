@@ -310,13 +310,18 @@ for you. Note that a leading '~' is expanded to your current home directory
 The *g:session_lock_directory* option
 
 The vim-session plug-in uses lock files to prevent double loading of sessions.
-By default the lock files are stored in the same directory as the sessions. If
-you'd rather store lock files in a dedicated lock file directory you can use
-this option:
->
-  " Store lock files in a tmpfs that doesn't persist between reboots.
-  let g:session_lock_directory = '/var/lock'
-<
+The default location (directory) of these lock files depends on a couple of
+factors:
+
+1. If you have explicitly set the |g:session_lock_directory| option that
+   defines the directory.
+
+2. If the directory '/var/lock' exists and is writable that is used as a
+   sane default.
+
+3. As a sane fall back for platforms where '/var/lock' is not available the
+   directory that stores the session scripts themselves is used.
+
 -------------------------------------------------------------------------------
 The *g:session_default_name* option
 
@@ -525,7 +530,7 @@ might take a while...)
 Function reference ~
 
 The documentation of the 37 functions below was extracted from 2 Vim scripts on
-September 14, 2014 at 13:07.
+February 13, 2015 at 13:25.
 
 -------------------------------------------------------------------------------
                                            *public-api-for-vim-session-plug-in*
@@ -764,7 +769,7 @@ session. If you like the script please vote for it on Vim Online [19].
                                                               *session-license*
 License ~
 
-This software is licensed under the MIT license [20]. ÂŠ 2014 Peter Odding
+This software is licensed under the MIT license [20]. ÂŠ 2015 Peter Odding
 <peter@peterodding.com> and Ingo Karkat.
 
 Thanks go out to everyone who has helped to improve the vim-session plug-in

@@ -1,10 +1,10 @@
 " Public API for the vim-session plug-in.
 "
 " Author: Peter Odding
-" Last Change: September 14, 2014
+" Last Change: February 13, 2015
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.7'
+let g:xolox#session#version = '2.8'
 
 " Public API for session persistence. {{{1
 
@@ -1020,6 +1020,22 @@ endfunction
 
 function! s:lock_file_path(session_path)
   let directory = xolox#misc#option#get('session_lock_directory', '')
+  if empty(directory)
+    " Stale lock files can be really annoying, especially after a reboot
+    " because that just shouldn't happen - it's always a bug. References:
+    "  - https://github.com/xolox/vim-session/issues/97
+    "  - https://github.com/xolox/vim-session/issues/110
+    " One simple way to give a large group of users what they want is to use a
+    " volatile directory that is specifically meant for storing lock files.
+    " I've decided to make this the default when possible. The best reference
+    " I've been able to find on the proper system wide location for lock files
+    " is the following (yes, I know, it's Linux specific, so sue me):
+    " http://www.tldp.org/LDP/Linux-Filesystem-Hierarchy/html/var.html
+    let global_lock_directory = '/var/lock'
+    if filewritable(global_lock_directory) == 2
+      let directory = global_lock_directory
+    endif
+  endif
   if !empty(directory)
     let pathname = xolox#misc#path#merge(directory, xolox#misc#path#encode(a:session_path))
   else
