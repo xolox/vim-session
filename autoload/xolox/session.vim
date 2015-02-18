@@ -1,10 +1,10 @@
 " Public API for the vim-session plug-in.
 "
 " Author: Peter Odding
-" Last Change: February 13, 2015
+" Last Change: February 18, 2015
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.8'
+let g:xolox#session#version = '2.9'
 
 " Public API for session persistence. {{{1
 
@@ -499,15 +499,17 @@ function! xolox#session#auto_unlock() " {{{2
   " [VimLeavePre] [] automatic command event.
   "
   " [VimLeavePre]: http://vimdoc.sourceforge.net/htmldoc/autocmd.html#VimLeavePre
-  let i = 0
-  while i < len(s:lock_files)
-    let lock_file = s:lock_files[i]
-    if delete(lock_file) == 0
-      call remove(s:lock_files, i)
-    else
-      let i += 1
-    endif
-  endwhile
+  if xolox#session#locking_enabled()
+    let i = 0
+    while i < len(s:lock_files)
+      let lock_file = s:lock_files[i]
+      if delete(lock_file) == 0
+        call remove(s:lock_files, i)
+      else
+        let i += 1
+      endif
+    endwhile
+  endif
 endfunction
 
 " Commands that enable users to manage multiple sessions. {{{1
@@ -1007,6 +1009,15 @@ if !exists('s:lock_files')
   let s:lock_files = []
 endif
 
+function! xolox#session#locking_enabled()
+  " Check whether session locking is enabled. Returns true (1) when locking is
+  " enabled, false (0) otherwise.
+  "
+  " By default session locking is enabled but users can opt-out by setting
+  " `g:session_lock_enabled` to false (0).
+  return xolox#misc#option#get('session_lock_enabled', 1)
+endfunction
+
 function! s:vim_instance_id()
   let id = {'pid': getpid()}
   if !empty(v:servername)
@@ -1045,6 +1056,9 @@ function! s:lock_file_path(session_path)
 endfunction
 
 function! s:lock_session(session_path)
+  if !xolox#session#locking_enabled()
+    return 1
+  endif
   let lock_file = s:lock_file_path(a:session_path)
   if xolox#misc#persist#save(lock_file, s:vim_instance_id())
     if index(s:lock_files, lock_file) == -1
@@ -1055,6 +1069,9 @@ function! s:lock_session(session_path)
 endfunction
 
 function! s:unlock_session(session_path)
+  if !xolox#session#locking_enabled()
+    return 1
+  endif
   let lock_file = s:lock_file_path(a:session_path)
   if delete(lock_file) == 0
     let idx = index(s:lock_files, lock_file)
@@ -1066,6 +1083,9 @@ function! s:unlock_session(session_path)
 endfunction
 
 function! s:session_is_locked(session_name, command)
+  if !xolox#session#locking_enabled()
+    return 0
+  endif
   let session_path = xolox#session#name_to_path(a:session_name)
   let lock_file = s:lock_file_path(session_path)
   if filereadable(lock_file)

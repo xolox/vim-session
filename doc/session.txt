@@ -21,21 +21,22 @@ Contents ~
   1. The |sessionoptions| setting
   2. The |g:session_directory| option
   3. The |g:session_lock_directory| option
-  4. The |g:session_default_name| option
-  5. The |g:session_default_overwrite| option
-  6. The |g:session_extension| option
-  7. The |g:session_autoload| option
-  8. The |g:session_autosave| option
-  9. The |g:session_autosave_periodic| option
-  10. The |g:session_verbose_messages| option
-  11. The |g:session_default_to_last| option
-  12. The |g:session_persist_colors| option
-  13. The |g:session_persist_globals| option
-  14. The |g:session_restart_environment| option
-  15. The |g:session_command_aliases| option
-  16. The |g:session_menu| option
-  17. The |g:session_name_suggestion_function| option
-  18. The |g:loaded_session| option
+  4. The |g:session_lock_enabled| option
+  5. The |g:session_default_name| option
+  6. The |g:session_default_overwrite| option
+  7. The |g:session_extension| option
+  8. The |g:session_autoload| option
+  9. The |g:session_autosave| option
+  10. The |g:session_autosave_periodic| option
+  11. The |g:session_verbose_messages| option
+  12. The |g:session_default_to_last| option
+  13. The |g:session_persist_colors| option
+  14. The |g:session_persist_globals| option
+  15. The |g:session_restart_environment| option
+  16. The |g:session_command_aliases| option
+  17. The |g:session_menu| option
+  18. The |g:session_name_suggestion_function| option
+  19. The |g:loaded_session| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Known issues                                         |session-known-issues|
  7. Function reference                             |session-function-reference|
@@ -65,6 +66,7 @@ Contents ~
    23. The |xolox#session#include_tabs()| function
    24. The |xolox#session#change_tab_options()| function
    25. The |xolox#session#restore_tab_options()| function
+   26. The |xolox#session#locking_enabled()| function
   2. Example function for session name suggestions |example-function-for-session-name-suggestions|
    1. The |xolox#session#suggestions#vcs_feature_branch()| function
  8. Contact                                                   |session-contact|
@@ -323,6 +325,17 @@ factors:
    directory that stores the session scripts themselves is used.
 
 -------------------------------------------------------------------------------
+The *g:session_lock_enabled* option
+
+Depending on your workflow locking of editing sessions can get annoying at
+times, so if you don't care about opening a session more than once and
+potentially "losing a version of your session" then you can use this option to
+completely disable session locking as follows:
+>
+  " Disable all session locking - I know what I'm doing :-).
+  let g:session_lock_enabled = 0
+<
+-------------------------------------------------------------------------------
 The *g:session_default_name* option
 
 The name of the default session without directory or filename extension (you'll
@@ -529,8 +542,8 @@ might take a while...)
                                                    *session-function-reference*
 Function reference ~
 
-The documentation of the 37 functions below was extracted from 2 Vim scripts on
-February 13, 2015 at 13:25.
+The documentation of the 38 functions below was extracted from 2 Vim scripts on
+February 18, 2015 at 22:56.
 
 -------------------------------------------------------------------------------
                                            *public-api-for-vim-session-plug-in*
@@ -742,6 +755,15 @@ The *xolox#session#restore_tab_options()* function
 
 Restore the original value of Vim's sessionoptions (see |'sessionoptions'|)
 option.
+
+-------------------------------------------------------------------------------
+The *xolox#session#locking_enabled()* function
+
+Check whether session locking is enabled. Returns true (1) when locking is
+enabled, false (0) otherwise.
+
+By default session locking is enabled but users can opt-out by setting
+|g:session_lock_enabled| to false (0).
 
 -------------------------------------------------------------------------------
                                 *example-function-for-session-name-suggestions*

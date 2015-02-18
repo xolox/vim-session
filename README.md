@@ -135,6 +135,13 @@ The vim-session plug-in uses lock files to prevent double loading of sessions. T
 2. If the directory `/var/lock` exists and is writable that is used as a sane default.
 3. As a sane fall back for platforms where `/var/lock` is not available the directory that stores the session scripts themselves is used.
 
+### The `g:session_lock_enabled` option
+
+Depending on your workflow locking of editing sessions can get annoying at times, so if you don't care about opening a session more than once and potentially "losing a version of your session" then you can use this option to completely disable session locking as follows:
+
+    " Disable all session locking - I know what I'm doing :-).
+    let g:session_lock_enabled = 0
+
 ### The `g:session_default_name` option
 
 The name of the default session without directory or filename extension (you'll never guess what the default is).
@@ -263,8 +270,8 @@ Recently this plug-in switched from reimplementing [:mksession][mksession] to ac
 
 <!-- Start of generated documentation -->
 
-The documentation of the 37 functions below was extracted from
-2 Vim scripts on February 13, 2015 at 13:25.
+The documentation of the 38 functions below was extracted from
+2 Vim scripts on February 18, 2015 at 22:56.
 
 ### Public API for the vim-session plug-in
 
@@ -470,6 +477,14 @@ scoped session. Saves a copy of the original value to be restored later.
 #### The `xolox#session#restore_tab_options()` function
 
 Restore the original value of Vim's [sessionoptions] [] option.
+
+#### The `xolox#session#locking_enabled()` function
+
+Check whether session locking is enabled. Returns true (1) when locking is
+enabled, false (0) otherwise.
+
+By default session locking is enabled but users can opt-out by setting
+`g:session_lock_enabled` to false (0).
 
 ### Example function for session name suggestions
 
