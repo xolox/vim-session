@@ -386,10 +386,11 @@ function! xolox#session#auto_load() " {{{2
     return
   endif
   " Check that the user has started Vim without editing any files.
+  let current_buffer_is_startify = exists('b:current_syntax') && b:current_syntax == 'startify'
   let current_buffer_is_empty = (&modified == 0 && getline(1, '$') == [''])
   let buffer_list_is_empty = (bufname('%') == '' && empty(filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != ' . bufnr(''))))
   let buffer_list_is_persistent = (index(xolox#misc#option#split(&viminfo), '%') >= 0)
-  if current_buffer_is_empty && (buffer_list_is_empty || buffer_list_is_persistent)
+  if (current_buffer_is_empty || current_buffer_is_startify) && (buffer_list_is_empty || buffer_list_is_persistent)
     " Check whether a session matching the user-specified server name exists.
     if v:servername !~ '^\cgvim\d*$'
       for session in xolox#session#get_names(0)
