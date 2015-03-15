@@ -543,7 +543,7 @@ might take a while...)
 Function reference ~
 
 The documentation of the 38 functions below was extracted from 2 Vim scripts on
-February 18, 2015 at 22:56.
+March 15, 2015 at 10:15.
 
 -------------------------------------------------------------------------------
                                            *public-api-for-vim-session-plug-in*
@@ -791,7 +791,7 @@ session. If you like the script please vote for it on Vim Online [19].
                                                               *session-license*
 License ~
 
-This software is licensed under the MIT license [20]. ÂŠ 2015 Peter Odding
+This software is licensed under the MIT license [20]. © 2015 Peter Odding
 <peter@peterodding.com> and Ingo Karkat.
 
 Thanks go out to everyone who has helped to improve the vim-session plug-in

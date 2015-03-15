@@ -271,7 +271,7 @@ Recently this plug-in switched from reimplementing [:mksession][mksession] to ac
 <!-- Start of generated documentation -->
 
 The documentation of the 38 functions below was extracted from
-2 Vim scripts on February 18, 2015 at 22:56.
+2 Vim scripts on March 15, 2015 at 10:15.
 
 ### Public API for the vim-session plug-in
 
