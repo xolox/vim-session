@@ -544,7 +544,7 @@ might take a while...)
 Function reference ~
 
 The documentation of the 39 functions below was extracted from 2 Vim scripts on
-March 15, 2015 at 10:22.
+March 15, 2015 at 13:37.
 
 -------------------------------------------------------------------------------
                                            *public-api-for-vim-session-plug-in*
