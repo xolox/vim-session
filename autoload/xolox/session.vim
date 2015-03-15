@@ -4,7 +4,7 @@
 " Last Change: March 15, 2015
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.10'
+let g:xolox#session#version = '2.10.1'
 
 " Public API for session persistence. {{{1
 
@@ -671,7 +671,7 @@ function! xolox#session#close_cmd(bang, silent, save_allowed, command) abort " {
   let name = xolox#session#find_current_session()
   if name != ''
     if a:save_allowed
-      let msg = "Do you want to save your current %s before closing it?"
+      let msg = "Do you want to save your %s before closing it?"
       let label = xolox#session#get_label(name, !is_all_tabs)
       if s:prompt(printf(msg, label), ["&Save", "&Don't Save"], 'g:session_autosave') == 1
         call xolox#session#save_cmd(name, a:bang, a:command)
@@ -946,7 +946,15 @@ function! xolox#session#get_label(name, is_tab_scoped) " {{{2
   " name of a session. The first argument is the name (a string) and the
   " second argument is a boolean indicating the scope of the session; 1 (true)
   " means tab scoped and 0 (false) means global scope. Returns a string.
-  return printf('%s session %s', a:is_tab_scoped ? 'tab scoped' : 'global', string(a:name))
+  if a:name == g:session_default_name
+    let description = 'default editing session'
+  else
+    let description = printf('editing session %s', string(a:name))
+  endif
+  if a:is_tab_scoped
+    let description = printf('tab scoped %s', description)
+  endif
+  return description
 endfunction
 
 function! xolox#session#options_include(value) " {{{2
