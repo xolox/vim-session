@@ -50,23 +50,24 @@ Contents ~
    7. The |xolox#session#save_state()| function
    8. The |xolox#session#save_special_windows()| function
    9. The |xolox#session#auto_load()| function
-   10. The |xolox#session#auto_save()| function
-   11. The |xolox#session#auto_save_periodic()| function
-   12. The |xolox#session#auto_unlock()| function
-   13. The |xolox#session#prompt_for_name()| function
-   14. The |xolox#session#name_to_path()| function
-   15. The |xolox#session#path_to_name()| function
-   16. The |xolox#session#get_names()| function
-   17. The |xolox#session#complete_names()| function
-   18. The |xolox#session#complete_names_with_suggestions()| function
-   19. The |xolox#session#is_tab_scoped()| function
-   20. The |xolox#session#find_current_session()| function
-   21. The |xolox#session#get_label()| function
-   22. The |xolox#session#options_include()| function
-   23. The |xolox#session#include_tabs()| function
-   24. The |xolox#session#change_tab_options()| function
-   25. The |xolox#session#restore_tab_options()| function
-   26. The |xolox#session#locking_enabled()| function
+   10. The |xolox#session#is_empty()| function
+   11. The |xolox#session#auto_save()| function
+   12. The |xolox#session#auto_save_periodic()| function
+   13. The |xolox#session#auto_unlock()| function
+   14. The |xolox#session#prompt_for_name()| function
+   15. The |xolox#session#name_to_path()| function
+   16. The |xolox#session#path_to_name()| function
+   17. The |xolox#session#get_names()| function
+   18. The |xolox#session#complete_names()| function
+   19. The |xolox#session#complete_names_with_suggestions()| function
+   20. The |xolox#session#is_tab_scoped()| function
+   21. The |xolox#session#find_current_session()| function
+   22. The |xolox#session#get_label()| function
+   23. The |xolox#session#options_include()| function
+   24. The |xolox#session#include_tabs()| function
+   25. The |xolox#session#change_tab_options()| function
+   26. The |xolox#session#restore_tab_options()| function
+   27. The |xolox#session#locking_enabled()| function
   2. Example function for session name suggestions |example-function-for-session-name-suggestions|
    1. The |xolox#session#suggestions#vcs_feature_branch()| function
  8. Contact                                                   |session-contact|
@@ -542,8 +543,8 @@ might take a while...)
                                                    *session-function-reference*
 Function reference ~
 
-The documentation of the 38 functions below was extracted from 2 Vim scripts on
-March 15, 2015 at 10:15.
+The documentation of the 39 functions below was extracted from 2 Vim scripts on
+March 15, 2015 at 10:22.
 
 -------------------------------------------------------------------------------
                                            *public-api-for-vim-session-plug-in*
@@ -626,6 +627,17 @@ The *xolox#session#auto_load()* function
 
 Automatically load the default or last used session when Vim starts. Normally
 called by the |VimEnter| automatic command event.
+
+-------------------------------------------------------------------------------
+The *xolox#session#is_empty()* function
+
+Check that the user has started Vim without editing any files. Used by
+|xolox#session#auto_load()| to determine whether automatic session loading
+should be performed. Currently checks the following conditions:
+
+1. That the current buffer is either empty (contains no lines and is not
+   modified) or showing vim-startify [19].
+2. That the buffer list either empty or persistent.
 
 -------------------------------------------------------------------------------
 The *xolox#session#auto_save()* function
@@ -785,13 +797,13 @@ Contact ~
 If you have questions, bug reports, suggestions, etc. the author can be
 contacted at peter@peterodding.com. The latest version is available at
 http://peterodding.com/code/vim/session/ and http://github.com/xolox/vim-
-session. If you like the script please vote for it on Vim Online [19].
+session. If you like the script please vote for it on Vim Online [20].
 
 ===============================================================================
                                                               *session-license*
 License ~
 
-This software is licensed under the MIT license [20]. © 2015 Peter Odding
+This software is licensed under the MIT license [21]. © 2015 Peter Odding
 <peter@peterodding.com> and Ingo Karkat.
 
 Thanks go out to everyone who has helped to improve the vim-session plug-in
@@ -919,7 +931,8 @@ References ~
 [16] http://peterodding.com/code/vim/shell/
 [17] http://peterodding.com/code/vim/session
 [18] http://peterodding.com/code/vim/shell
-[19] http://www.vim.org/scripts/script.php?script_id=3150
-[20] http://en.wikipedia.org/wiki/MIT_License
+[19] https://github.com/mhinz/vim-startify/
+[20] http://www.vim.org/scripts/script.php?script_id=3150
+[21] http://en.wikipedia.org/wiki/MIT_License
 
 vim: ft=help

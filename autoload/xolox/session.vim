@@ -4,7 +4,7 @@
 " Last Change: March 15, 2015
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.9.1'
+let g:xolox#session#version = '2.9.2'
 
 " Public API for session persistence. {{{1
 
@@ -386,11 +386,7 @@ function! xolox#session#auto_load() " {{{2
     return
   endif
   " Check that the user has started Vim without editing any files.
-  let current_buffer_is_empty = (&modified == 0 && getline(1, '$') == [''])
-  let current_buffer_is_startify = (&filetype == 'startify')
-  let buffer_list_is_empty = (bufname('%') == '' && empty(filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != ' . bufnr(''))))
-  let buffer_list_is_persistent = (index(xolox#misc#option#split(&viminfo), '%') >= 0)
-  if (current_buffer_is_empty || current_buffer_is_startify) && (buffer_list_is_empty || buffer_list_is_persistent)
+  if xolox#session#is_empty()
     " Check whether a session matching the user-specified server name exists.
     if v:servername !~ '^\cgvim\d*$'
       for session in xolox#session#get_names(0)
@@ -423,6 +419,23 @@ function! xolox#session#auto_load() " {{{2
       endif
     endif
   endif
+endfunction
+
+function! xolox#session#is_empty() " {{{2
+  " Check that the user has started Vim without editing any files. Used by
+  " `xolox#session#auto_load()` to determine whether automatic session loading
+  " should be performed. Currently checks the following conditions:
+  "
+  " 1. That the current buffer is either empty (contains no lines and is not
+  "    modified) or showing [vim-startify] [].
+  " 2. That the buffer list either empty or persistent.
+  "
+  " [vim-startify]: https://github.com/mhinz/vim-startify/
+  let current_buffer_is_empty = (&modified == 0 && getline(1, '$') == [''])
+  let current_buffer_is_startify = (&filetype == 'startify')
+  let buffer_list_is_empty = (bufname('%') == '' && empty(filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != ' . bufnr(''))))
+  let buffer_list_is_persistent = (index(xolox#misc#option#split(&viminfo), '%') >= 0)
+  return (current_buffer_is_empty || current_buffer_is_startify) && (buffer_list_is_empty || buffer_list_is_persistent)
 endfunction
 
 function! xolox#session#auto_save() " {{{2

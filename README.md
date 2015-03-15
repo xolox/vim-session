@@ -270,8 +270,8 @@ Recently this plug-in switched from reimplementing [:mksession][mksession] to ac
 
 <!-- Start of generated documentation -->
 
-The documentation of the 38 functions below was extracted from
-2 Vim scripts on March 15, 2015 at 10:15.
+The documentation of the 39 functions below was extracted from
+2 Vim scripts on March 15, 2015 at 10:22.
 
 ### Public API for the vim-session plug-in
 
@@ -355,6 +355,18 @@ Automatically load the default or last used session when Vim starts.
 Normally called by the [VimEnter] [] automatic command event.
 
 [VimEnter]: http://vimdoc.sourceforge.net/htmldoc/autocmd.html#VimEnter
+
+#### The `xolox#session#is_empty()` function
+
+Check that the user has started Vim without editing any files. Used by
+`xolox#session#auto_load()` to determine whether automatic session loading
+should be performed. Currently checks the following conditions:
+
+1. That the current buffer is either empty (contains no lines and is not
+   modified) or showing [vim-startify] [].
+2. That the buffer list either empty or persistent.
+
+[vim-startify]: https://github.com/mhinz/vim-startify/
 
 #### The `xolox#session#auto_save()` function
 
