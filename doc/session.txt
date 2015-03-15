@@ -544,7 +544,7 @@ might take a while...)
 Function reference ~
 
 The documentation of the 39 functions below was extracted from 2 Vim scripts on
-March 15, 2015 at 13:37.
+March 15, 2015 at 17:23.
 
 -------------------------------------------------------------------------------
                                            *public-api-for-vim-session-plug-in*
@@ -913,8 +913,8 @@ was editing the plug-in itself in Vim:
                                                            *session-references*
 References ~
 
-[1] http://peterodding.com/code/vim/session/autosave.png
-[2] http://peterodding.com/code/vim/session/autoopen.png
+[1] https://raw.githubusercontent.com/xolox/vim-session/master/screenshots/session-save-prompt.png
+[2] https://raw.githubusercontent.com/xolox/vim-session/master/screenshots/session-restore-prompt.png
 [3] http://peterodding.com/code/vim/session/#sample_session_script
 [4] http://peterodding.com/code/vim/downloads/session.zip
 [5] http://peterodding.com/code/vim/downloads/misc.zip

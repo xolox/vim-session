@@ -4,11 +4,11 @@ The vim-session plug-in improves upon [Vim](http://www.vim.org/)'s built-in [:mk
 
 To persist your current editing session you can execute the `:SaveSession` command. If you don't provide a name for the session 'default' is used (you can change this name with an option). You're free to use whatever characters you like in session names. When you want to restore your session simply execute `:OpenSession`. Again the name 'default' is used if you don't provide one. When a session is active, has been changed and you quit Vim you'll be prompted whether you want to save the open session before quitting Vim:
 
-![Screenshot of auto-save prompt](http://peterodding.com/code/vim/session/autosave.png)
+![Screenshot of auto-save prompt](https://raw.githubusercontent.com/xolox/vim-session/master/screenshots/session-save-prompt.png)
 
 If you want, the plug-in can also automatically save your session every few minutes (see the `g:session_autosave_periodic` option). When you start Vim without editing any files and the default session exists, you'll be prompted whether you want to restore the default session:
 
-![Screenshot of auto-open prompt](http://peterodding.com/code/vim/session/autoopen.png)
+![Screenshot of auto-open prompt](https://raw.githubusercontent.com/xolox/vim-session/master/screenshots/session-restore-prompt.png)
 
 When you start Vim with a custom [server name](http://vimdoc.sourceforge.net/htmldoc/remote.html#--servername) that matches one of the existing session names then the matching session will be automatically restored. For example I use several sessions to quickly edit my Vim plug-ins:
 
@@ -271,7 +271,7 @@ Recently this plug-in switched from reimplementing [:mksession][mksession] to ac
 <!-- Start of generated documentation -->
 
 The documentation of the 39 functions below was extracted from
-2 Vim scripts on March 15, 2015 at 13:37.
+2 Vim scripts on March 15, 2015 at 17:23.
 
 ### Public API for the vim-session plug-in
 
