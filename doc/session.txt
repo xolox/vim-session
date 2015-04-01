@@ -124,23 +124,8 @@ contains menu items for most commands defined by the plug-in.
                                                          *session-installation*
 Installation ~
 
-_Please note that the vim-session plug-in requires my vim-misc plug-in which is
-separately distributed._
-
-Unzip the most recent ZIP archives of the vim-session [4] and vim-misc [5]
-plug-ins inside your Vim profile directory (usually this is '~/.vim' on UNIX
-and '%USERPROFILE%\vimfiles' on Windows), restart Vim and execute the command
-':helptags ~/.vim/doc' (use ':helptags ~\vimfiles\doc' instead on Windows). To
-get started execute ':Note' or ':edit note:', this will start a new note that
-contains instructions on how to continue from there (and how to use the plug-in
-in general).
-
-If you prefer you can also use Pathogen [6], Vundle [7] or a similar tool to
-install & update the vim-session [8] and vim-misc [9] plug-ins using a local
-clone of the git repository.
-
-After you've installed the plug-in and restarted Vim, the following commands
-will be available to you:
+Please refer to the installation instructions [4] available on GitHub. Once
+you've installed the plug-in the commands below will be available to you.
 
 ===============================================================================
                                                              *session-commands*
@@ -196,7 +181,7 @@ The *:RestartVim* command
 
 This command saves your current editing session, restarts Vim and restores your
 editing session. This can come in handy when you're debugging Vim scripts which
-can't be easily/safely reloaded using a more lightweight approach [10]. It
+can't be easily/safely reloaded using a more lightweight approach [5]. It
 should work fine on Windows and UNIX alike but because of technical limitations
 it only works in graphical Vim.
 
@@ -518,9 +503,9 @@ Vim's |:mksession| command isn't really compatible with plug-ins that create
 buffers with generated content and because of this the vim-session plug-in
 includes specific workarounds for a couple of popular plug-ins:
 
-- BufExplorer [11], Conque Shell [12], NERD tree [13], Project [14] and
-  taglist [15] windows are supported;
-- When shell.vim [16] is installed Vim's full-screen state is persisted;
+- BufExplorer [6], Conque Shell [7], NERD tree [8], Project [9] and taglist
+  [10] windows are supported;
+- When shell.vim [11] is installed Vim's full-screen state is persisted;
 - The netrw (see |netrw-start|) plug-in supports sessions out of the box.
 
 If your favorite plug-in doesn't work with the vim-session plug-in drop me a
@@ -544,7 +529,7 @@ might take a while...)
 Function reference ~
 
 The documentation of the 39 functions below was extracted from 2 Vim scripts on
-March 15, 2015 at 17:23.
+April 1, 2015 at 22:22.
 
 -------------------------------------------------------------------------------
                                            *public-api-for-vim-session-plug-in*
@@ -596,7 +581,7 @@ session script.
 The *xolox#session#save_fullscreen()* function
 
 Save the full screen state of Vim. This function provides integration between
-my vim-session [17] and vim-shell [18] plug-ins. The first argument is expected
+my vim-session [12] and vim-shell [13] plug-ins. The first argument is expected
 to be a list, it will be extended with the lines to be added to the session
 script.
 
@@ -636,7 +621,7 @@ Check that the user has started Vim without editing any files. Used by
 should be performed. Currently checks the following conditions:
 
 1. That the current buffer is either empty (contains no lines and is not
-   modified) or showing vim-startify [19].
+   modified) or showing vim-startify [14].
 2. That the buffer list either empty or persistent.
 
 -------------------------------------------------------------------------------
@@ -797,13 +782,13 @@ Contact ~
 If you have questions, bug reports, suggestions, etc. the author can be
 contacted at peter@peterodding.com. The latest version is available at
 http://peterodding.com/code/vim/session/ and http://github.com/xolox/vim-
-session. If you like the script please vote for it on Vim Online [20].
+session. If you like the script please vote for it on Vim Online [15].
 
 ===============================================================================
                                                               *session-license*
 License ~
 
-This software is licensed under the MIT license [21]. © 2015 Peter Odding
+This software is licensed under the MIT license [16]. © 2015 Peter Odding
 <peter@peterodding.com> and Ingo Karkat.
 
 Thanks go out to everyone who has helped to improve the vim-session plug-in
@@ -916,23 +901,18 @@ References ~
 [1] https://raw.githubusercontent.com/xolox/vim-session/master/screenshots/session-save-prompt.png
 [2] https://raw.githubusercontent.com/xolox/vim-session/master/screenshots/session-restore-prompt.png
 [3] http://peterodding.com/code/vim/session/#sample_session_script
-[4] http://peterodding.com/code/vim/downloads/session.zip
-[5] http://peterodding.com/code/vim/downloads/misc.zip
-[6] http://www.vim.org/scripts/script.php?script_id=2332
-[7] https://github.com/gmarik/vundle
-[8] http://github.com/xolox/vim-session
-[9] http://github.com/xolox/vim-misc
-[10] http://peterodding.com/code/vim/reload/
-[11] http://www.vim.org/scripts/script.php?script_id=42
-[12] http://www.vim.org/scripts/script.php?script_id=2771
-[13] http://www.vim.org/scripts/script.php?script_id=1658
-[14] http://www.vim.org/scripts/script.php?script_id=69
-[15] http://www.vim.org/scripts/script.php?script_id=273
-[16] http://peterodding.com/code/vim/shell/
-[17] http://peterodding.com/code/vim/session
-[18] http://peterodding.com/code/vim/shell
-[19] https://github.com/mhinz/vim-startify/
-[20] http://www.vim.org/scripts/script.php?script_id=3150
-[21] http://en.wikipedia.org/wiki/MIT_License
+[4] https://github.com/xolox/vim-session/blob/master/INSTALL.md
+[5] http://peterodding.com/code/vim/reload/
+[6] http://www.vim.org/scripts/script.php?script_id=42
+[7] http://www.vim.org/scripts/script.php?script_id=2771
+[8] http://www.vim.org/scripts/script.php?script_id=1658
+[9] http://www.vim.org/scripts/script.php?script_id=69
+[10] http://www.vim.org/scripts/script.php?script_id=273
+[11] http://peterodding.com/code/vim/shell/
+[12] http://peterodding.com/code/vim/session
+[13] http://peterodding.com/code/vim/shell
+[14] https://github.com/mhinz/vim-startify/
+[15] http://www.vim.org/scripts/script.php?script_id=3150
+[16] http://en.wikipedia.org/wiki/MIT_License
 
 vim: ft=help
