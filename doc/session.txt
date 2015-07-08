@@ -39,8 +39,7 @@ Contents ~
   19. The |g:session_name_suggestion_function| option
   20. The |g:loaded_session| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
- 6. Known issues                                         |session-known-issues|
- 7. Function reference                             |session-function-reference|
+ 6. Function reference                             |session-function-reference|
   1. Public API for the vim-session plug-in |public-api-for-vim-session-plug-in|
    1. The |xolox#session#save_session()| function
    2. The |xolox#session#save_globals()| function
@@ -71,10 +70,10 @@ Contents ~
    27. The |xolox#session#locking_enabled()| function
   2. Example function for session name suggestions |example-function-for-session-name-suggestions|
    1. The |xolox#session#suggestions#vcs_feature_branch()| function
- 8. Contact                                                   |session-contact|
- 9. License                                                   |session-license|
- 10. Sample session script                              |sample-session-script|
- 11. References                                            |session-references|
+ 7. Contact                                                   |session-contact|
+ 8. License                                                   |session-license|
+ 9. Sample session script                               |sample-session-script|
+ 10. References                                            |session-references|
 
 ===============================================================================
                                                          *session-introduction*
@@ -518,18 +517,6 @@ includes specific workarounds for a couple of popular plug-ins:
 If your favorite plug-in doesn't work with the vim-session plug-in drop me a
 mail and I'll see what I can do. Please include a link to the plug-in in your
 e-mail so that I can install and test the plug-in.
-
-===============================================================================
-                                                         *session-known-issues*
-Known issues ~
-
-Recently this plug-in switched from reimplementing |:mksession| to actually
-using it because this was the only way to support complex split window layouts.
-Only after making this change did I realize |:mksession| doesn't support
-|quickfix| and location list (see |location-list|) windows and of course it
-turns out that bolting on support for these after the fact is going to
-complicate the plug-in significantly (in other words, I'm working on it but it
-might take a while...)
 
 ===============================================================================
                                                    *session-function-reference*
