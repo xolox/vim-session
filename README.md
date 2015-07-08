@@ -162,6 +162,10 @@ This option sets the interval in minutes for automatic, periodic saving of activ
 
 Note that when the plug-in automatically saves a session (because you enabled this feature) the plug-in will not prompt for your permission.
 
+### The `g:session_autosave_silent` option
+
+If you set this option to true (1) the messages normally emitted by automatic, periodic saving of active sessions are silenced.
+
 ### The `g:session_verbose_messages` option
 
 The session load/save prompts are quite verbose by default because they explain how to disable the prompts. If you find the additional explanation distracting you can lower the verbosity by setting this option to 0 (false) in your [vimrc script] [vimrc].

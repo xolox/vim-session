@@ -28,15 +28,16 @@ Contents ~
   8. The |g:session_autoload| option
   9. The |g:session_autosave| option
   10. The |g:session_autosave_periodic| option
-  11. The |g:session_verbose_messages| option
-  12. The |g:session_default_to_last| option
-  13. The |g:session_persist_colors| option
-  14. The |g:session_persist_globals| option
-  15. The |g:session_restart_environment| option
-  16. The |g:session_command_aliases| option
-  17. The |g:session_menu| option
-  18. The |g:session_name_suggestion_function| option
-  19. The |g:loaded_session| option
+  11. The |g:session_autosave_silent| option
+  12. The |g:session_verbose_messages| option
+  13. The |g:session_default_to_last| option
+  14. The |g:session_persist_colors| option
+  15. The |g:session_persist_globals| option
+  16. The |g:session_restart_environment| option
+  17. The |g:session_command_aliases| option
+  18. The |g:session_menu| option
+  19. The |g:session_name_suggestion_function| option
+  20. The |g:loaded_session| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Known issues                                         |session-known-issues|
  7. Function reference                             |session-function-reference|
@@ -366,6 +367,12 @@ active sessions. The default is zero which disables the feature.
 
 Note that when the plug-in automatically saves a session (because you enabled
 this feature) the plug-in will not prompt for your permission.
+
+-------------------------------------------------------------------------------
+The *g:session_autosave_silent* option
+
+If you set this option to true (1) the messages normally emitted by automatic,
+periodic saving of active sessions are silenced.
 
 -------------------------------------------------------------------------------
 The *g:session_verbose_messages* option
