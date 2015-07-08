@@ -4,7 +4,7 @@
 " Last Change: July 8, 2015
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.11'
+let g:xolox#session#version = '2.12'
 
 " Public API for session persistence. {{{1
 
@@ -451,12 +451,16 @@ function! xolox#session#auto_save() " {{{2
     " We won't save the session if auto-save is explicitly disabled.
     return
   endif
-  " Get the name of the active session (if any).
-  let name = xolox#session#find_current_session()
-  " If no session is active and the user doesn't have any sessions yet, help
-  " them get started by suggesting to create the default session.
-  if empty(name) && (empty(xolox#session#get_names(0)) || g:session_default_overwrite)
-    let name = g:session_default_name
+  " Get the name of the session for automatic saving.
+  let name = xolox#misc#option#get('session_autosave_to')
+  if empty(name)
+    " Get the name of the active session (if any).
+    let name = xolox#session#find_current_session()
+    " If no session is active and the user doesn't have any sessions yet,
+    " help them get started by suggesting to create the default session.
+    if empty(name) && (empty(xolox#session#get_names(0)) || g:session_default_overwrite)
+      let name = g:session_default_name
+    endif
   endif
   " Prompt the user to save the active/first/default session?
   if !empty(name)

@@ -27,17 +27,18 @@ Contents ~
   7. The |g:session_extension| option
   8. The |g:session_autoload| option
   9. The |g:session_autosave| option
-  10. The |g:session_autosave_periodic| option
-  11. The |g:session_autosave_silent| option
-  12. The |g:session_verbose_messages| option
-  13. The |g:session_default_to_last| option
-  14. The |g:session_persist_colors| option
-  15. The |g:session_persist_globals| option
-  16. The |g:session_restart_environment| option
-  17. The |g:session_command_aliases| option
-  18. The |g:session_menu| option
-  19. The |g:session_name_suggestion_function| option
-  20. The |g:loaded_session| option
+  10. The |g:session_autosave_to| option
+  11. The |g:session_autosave_periodic| option
+  12. The |g:session_autosave_silent| option
+  13. The |g:session_verbose_messages| option
+  14. The |g:session_default_to_last| option
+  15. The |g:session_persist_colors| option
+  16. The |g:session_persist_globals| option
+  17. The |g:session_restart_environment| option
+  18. The |g:session_command_aliases| option
+  19. The |g:session_menu| option
+  20. The |g:session_name_suggestion_function| option
+  21. The |g:loaded_session| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Function reference                             |session-function-reference|
   1. Public API for the vim-session plug-in |public-api-for-vim-session-plug-in|
@@ -359,6 +360,16 @@ sessions when you quit Vim. To completely disable automatic saving you can set
 this option to "'no'".
 
 -------------------------------------------------------------------------------
+The *g:session_autosave_to* option
+
+If |g:session_autosave| is "'yes'" and this option is a nonempty string,
+automatic session saving always saves to the session with the name given by
+|g:session_autosave_to| regardless of what the current session is or any other
+options. In particular, |g:session_default_overwrite| does not have any effect.
+By default this option isn't set so none of this applies. Refer to pull request
+81 [6] for a more detailed use case.
+
+-------------------------------------------------------------------------------
 The *g:session_autosave_periodic* option
 
 This option sets the interval in minutes for automatic, periodic saving of
@@ -509,9 +520,9 @@ Vim's |:mksession| command isn't really compatible with plug-ins that create
 buffers with generated content and because of this the vim-session plug-in
 includes specific workarounds for a couple of popular plug-ins:
 
-- BufExplorer [6], Conque Shell [7], NERD tree [8], Project [9] and taglist
-  [10] windows are supported;
-- When shell.vim [11] is installed Vim's full-screen state is persisted;
+- BufExplorer [7], Conque Shell [8], NERD tree [9], Project [10] and taglist
+  [11] windows are supported;
+- When shell.vim [12] is installed Vim's full-screen state is persisted;
 - The netrw (see |netrw-start|) plug-in supports sessions out of the box.
 
 If your favorite plug-in doesn't work with the vim-session plug-in drop me a
@@ -575,7 +586,7 @@ session script.
 The *xolox#session#save_fullscreen()* function
 
 Save the full screen state of Vim. This function provides integration between
-my vim-session [12] and vim-shell [13] plug-ins. The first argument is expected
+my vim-session [13] and vim-shell [14] plug-ins. The first argument is expected
 to be a list, it will be extended with the lines to be added to the session
 script.
 
@@ -615,7 +626,7 @@ Check that the user has started Vim without editing any files. Used by
 should be performed. Currently checks the following conditions:
 
 1. That the current buffer is either empty (contains no lines and is not
-   modified) or showing vim-startify [14].
+   modified) or showing vim-startify [15].
 2. That the buffer list either empty or persistent.
 
 -------------------------------------------------------------------------------
@@ -776,13 +787,13 @@ Contact ~
 If you have questions, bug reports, suggestions, etc. the author can be
 contacted at peter@peterodding.com. The latest version is available at
 http://peterodding.com/code/vim/session/ and http://github.com/xolox/vim-
-session. If you like the script please vote for it on Vim Online [15].
+session. If you like the script please vote for it on Vim Online [16].
 
 ===============================================================================
                                                               *session-license*
 License ~
 
-This software is licensed under the MIT license [16]. © 2015 Peter Odding
+This software is licensed under the MIT license [17]. © 2015 Peter Odding
 <peter@peterodding.com> and Ingo Karkat.
 
 Thanks go out to everyone who has helped to improve the vim-session plug-in
@@ -897,16 +908,17 @@ References ~
 [3] http://peterodding.com/code/vim/session/#sample_session_script
 [4] https://github.com/xolox/vim-session/blob/master/INSTALL.md
 [5] http://peterodding.com/code/vim/reload/
-[6] http://www.vim.org/scripts/script.php?script_id=42
-[7] http://www.vim.org/scripts/script.php?script_id=2771
-[8] http://www.vim.org/scripts/script.php?script_id=1658
-[9] http://www.vim.org/scripts/script.php?script_id=69
-[10] http://www.vim.org/scripts/script.php?script_id=273
-[11] http://peterodding.com/code/vim/shell/
-[12] http://peterodding.com/code/vim/session
-[13] http://peterodding.com/code/vim/shell
-[14] https://github.com/mhinz/vim-startify/
-[15] http://www.vim.org/scripts/script.php?script_id=3150
-[16] http://en.wikipedia.org/wiki/MIT_License
+[6] https://github.com/xolox/vim-session/pull/81
+[7] http://www.vim.org/scripts/script.php?script_id=42
+[8] http://www.vim.org/scripts/script.php?script_id=2771
+[9] http://www.vim.org/scripts/script.php?script_id=1658
+[10] http://www.vim.org/scripts/script.php?script_id=69
+[11] http://www.vim.org/scripts/script.php?script_id=273
+[12] http://peterodding.com/code/vim/shell/
+[13] http://peterodding.com/code/vim/session
+[14] http://peterodding.com/code/vim/shell
+[15] https://github.com/mhinz/vim-startify/
+[16] http://www.vim.org/scripts/script.php?script_id=3150
+[17] http://en.wikipedia.org/wiki/MIT_License
 
 vim: ft=help
