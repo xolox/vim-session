@@ -112,6 +112,11 @@ Because the vim-session plug-in uses Vim's [:mksession][mksession] command you c
     " If you don't want help windows to be restored:
     set sessionoptions-=help
 
+A lot of people don't like Vim's default behavior of saving hidden and unloaded buffers in sessions (which vim-session inherits due to the use of [:mksession][mksession]). To disable this behavior you can add the following line to your [vimrc script] [vimrc]:
+
+    " Don't save hidden and unloaded buffers in sessions.
+    set sessionoptions-=buffers
+
 Note that the vim-session plug-in automatically and unconditionally executes the following change just before saving a session:
 
     " Don't persist options and mappings because it can corrupt sessions.

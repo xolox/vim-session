@@ -280,6 +280,14 @@ how it works by setting |'sessionoptions'| in your |vimrc| script, for example:
   " If you don't want help windows to be restored:
   set sessionoptions-=help
 <
+A lot of people don't like Vim's default behavior of saving hidden and unloaded
+buffers in sessions (which vim-session inherits due to the use of
+|:mksession|). To disable this behavior you can add the following line to your
+|vimrc| script:
+>
+  " Don't save hidden and unloaded buffers in sessions.
+  set sessionoptions-=buffers
+<
 Note that the vim-session plug-in automatically and unconditionally executes
 the following change just before saving a session:
 >
