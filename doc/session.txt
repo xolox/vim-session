@@ -32,13 +32,14 @@ Contents ~
   12. The |g:session_autosave_silent| option
   13. The |g:session_verbose_messages| option
   14. The |g:session_default_to_last| option
-  15. The |g:session_persist_colors| option
-  16. The |g:session_persist_globals| option
-  17. The |g:session_restart_environment| option
-  18. The |g:session_command_aliases| option
-  19. The |g:session_menu| option
-  20. The |g:session_name_suggestion_function| option
-  21. The |g:loaded_session| option
+  15. The |g:session_persist_font| option
+  16. The |g:session_persist_colors| option
+  17. The |g:session_persist_globals| option
+  18. The |g:session_restart_environment| option
+  19. The |g:session_command_aliases| option
+  20. The |g:session_menu| option
+  21. The |g:session_name_suggestion_function| option
+  22. The |g:loaded_session| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Function reference                             |session-function-reference|
   1. Public API for the vim-session plug-in |public-api-for-vim-session-plug-in|
@@ -409,6 +410,15 @@ instead of the default session. Note that the session plug-in will still show
 you the dialog asking whether you want to restore the last used session. To get
 rid of the dialog you have to set |g:session_autoload| to "'yes'".
 
+-------------------------------------------------------------------------------
+The *g:session_persist_font* option
+
+By default the plug-in will save the GUI font with the session to be reused the
+next time that session is loaded, this can be disabled by adding the following
+line to your |vimrc| script:
+>
+  :let g:session_persist_font = 0
+<
 -------------------------------------------------------------------------------
 The *g:session_persist_colors* option
 

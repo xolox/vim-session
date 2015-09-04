@@ -1,10 +1,10 @@
 " Public API for the vim-session plug-in.
 "
 " Author: Peter Odding
-" Last Change: July 8, 2015
+" Last Change: September 4, 2015
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.12'
+let g:xolox#session#version = '2.13'
 
 " Public API for session persistence. {{{1
 
@@ -40,7 +40,9 @@ function! xolox#session#save_session(commands, filename) " {{{2
   " the session is restored in a GUI Vim, things will look funky :-).
   if has('gui') && is_all_tabs
     call add(a:commands, 'set guioptions=' . escape(&go, ' "\'))
-    call add(a:commands, 'silent! set guifont=' . escape(&gfn, ' "\'))
+    if xolox#misc#option#get('session_persist_font', 1)
+      call add(a:commands, 'silent! set guifont=' . escape(&gfn, ' "\'))
+    endif
   endif
   call xolox#session#save_globals(a:commands)
   if is_all_tabs

@@ -183,6 +183,12 @@ The session load/save prompts are quite verbose by default because they explain 
 
 By default this option is set to false (0). When you set this option to true (1) and you start Vim, the session plug-in will open your last used session instead of the default session. Note that the session plug-in will still show you the dialog asking whether you want to restore the last used session. To get rid of the dialog you have to set `g:session_autoload` to `'yes'`.
 
+### The `g:session_persist_font` option
+
+By default the plug-in will save the GUI font with the session to be reused the next time that session is loaded, this can be disabled by adding the following line to your [vimrc script] [vimrc]:
+
+    :let g:session_persist_font = 0
+
 ### The `g:session_persist_colors` option
 
 By default the plug-in will save the color scheme and the ['background' option] [bg] with the session to be reused the next time that session is loaded, this can be disabled by adding the following line to your [vimrc script] [vimrc]:
