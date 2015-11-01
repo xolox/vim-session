@@ -72,10 +72,12 @@ Contents ~
    27. The |xolox#session#locking_enabled()| function
   2. Example function for session name suggestions |example-function-for-session-name-suggestions|
    1. The |xolox#session#suggestions#vcs_feature_branch()| function
- 7. Contact                                                   |session-contact|
- 8. License                                                   |session-license|
- 9. Sample session script                               |sample-session-script|
- 10. References                                            |session-references|
+ 7. Troubleshooting                                   |session-troubleshooting|
+  1. Using multiple platforms (multi boot, Cygwin, etc.) |session-using-multiple-platforms|
+ 8. Contact                                                   |session-contact|
+ 9. License                                                   |session-license|
+ 10. Sample session script                              |sample-session-script|
+ 11. References                                            |session-references|
 
 ===============================================================================
                                                          *session-introduction*
@@ -799,19 +801,34 @@ the session that is being saved with :SaveSession. Returns a list with one
 string on success and an empty list on failure.
 
 ===============================================================================
+                                                      *session-troubleshooting*
+Troubleshooting ~
+
+-------------------------------------------------------------------------------
+                                             *session-using-multiple-platforms*
+Using multiple platforms (multi boot, Cygwin, etc.) ~
+
+Session scripts cannot be shared between platforms because they contain
+absolute pathnames that most certainly won't match between e.g. Windows and
+Linux or even Windows and Cygwin. The best you can do is keep separate session
+scripts for different platforms (and I would certainly consider Cygwin a
+separate platform altogether :-). For more information please refer to issue 85
+[16].
+
+===============================================================================
                                                               *session-contact*
 Contact ~
 
 If you have questions, bug reports, suggestions, etc. the author can be
 contacted at peter@peterodding.com. The latest version is available at
 http://peterodding.com/code/vim/session/ and http://github.com/xolox/vim-
-session. If you like the script please vote for it on Vim Online [16].
+session. If you like the script please vote for it on Vim Online [17].
 
 ===============================================================================
                                                               *session-license*
 License ~
 
-This software is licensed under the MIT license [17]. © 2015 Peter Odding
+This software is licensed under the MIT license [18]. © 2015 Peter Odding
 <peter@peterodding.com> and Ingo Karkat.
 
 Thanks go out to everyone who has helped to improve the vim-session plug-in
@@ -936,7 +953,8 @@ References ~
 [13] http://peterodding.com/code/vim/session
 [14] http://peterodding.com/code/vim/shell
 [15] https://github.com/mhinz/vim-startify/
-[16] http://www.vim.org/scripts/script.php?script_id=3150
-[17] http://en.wikipedia.org/wiki/MIT_License
+[16] https://github.com/xolox/vim-session/issues/85
+[17] http://www.vim.org/scripts/script.php?script_id=3150
+[18] http://en.wikipedia.org/wiki/MIT_License
 
 vim: ft=help

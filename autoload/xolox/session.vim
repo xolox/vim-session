@@ -1,10 +1,10 @@
 " Public API for the vim-session plug-in.
 "
 " Author: Peter Odding
-" Last Change: September 4, 2015
+" Last Change: November 1, 2015
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.13'
+let g:xolox#session#version = '2.13.1'
 
 " Public API for session persistence. {{{1
 
