@@ -24,6 +24,30 @@ function! xolox#session#save_session(commands, filename) " {{{2
   "
   " [:mksession]: http://vimdoc.sourceforge.net/htmldoc/starting.html#:mksession
   " [:source]: http://vimdoc.sourceforge.net/htmldoc/repeat.html#:source
+  
+  " START: MiniBufExplorer support
+  let s:MBETabs=[]
+  if ( exists(':MBECloseAll') && exists(':MBEClose') && exists(':MBEOpen') ) " MBE is present
+    call xolox#misc#msg#debug("session.vim %s: MiniBufExplorer is present", g:xolox#session#version)
+    if xolox#session#include_tabs() " Saving all Tabs
+      let l:currTab=tabpagenr() " Workaround for MiniBufExplorer affecting current tab by MBECloseAll
+
+      tabdo call add(s:MBETabs,bufwinnr('-MiniBufExplorer-'))
+      call xolox#misc#msg#debug("session.vim %s: MiniBufExplorer tabs: %s", g:xolox#session#version, join(s:MBETabs,", ") )
+
+      MBECloseAll
+
+      exec "tabnext " . l:currTab
+    else " Saving one tab
+      call add(s:MBETabs,bufwinnr('-MiniBufExplorer-'))
+      MBEClose
+    endif
+  else
+    call xolox#misc#msg#debug("session.vim %s: MiniBufExplorer is NOT present", g:xolox#session#version)
+  endif
+  " END: MiniBufExplorer support
+
+
   let is_all_tabs = xolox#session#include_tabs()
   call add(a:commands, '" ' . a:filename . ':')
   call add(a:commands, '" Vim session script' . (is_all_tabs ? '' : ' for a single tab page') . '.')
@@ -64,6 +88,19 @@ function! xolox#session#save_session(commands, filename) " {{{2
   endif
   call add(a:commands, 'unlet SessionLoad')
   call add(a:commands, '" vim: ft=vim ro nowrap smc=128')
+  
+  " START: MiniBufExplorer support
+  " Recovering MBE windows after MBECloseAll
+  if len(s:MBETabs)>0 " MBE configuration is present
+    if xolox#session#include_tabs() " Saving all Tabs
+      let l:currTab=tabpagenr()
+      tabdo if ( s:MBETabs[ tabpagenr()-1 ] == -1 ) | exec "MBEClose" | else | exec "MBEOpen" | endif
+      exec "tabnext " . l:currTab
+    else
+      if ( s:MBETabs[0] == -1 ) | exec "MBEClose" | else | exec "MBEOpen" | endif
+    endif
+  endif
+  " END: MiniBufExplorer support
 endfunction
 
 function! xolox#session#save_globals(commands) " {{{2
@@ -274,6 +311,30 @@ function! xolox#session#save_special_windows(session) " {{{2
   try
     if xolox#session#include_tabs()
       tabdo call s:check_special_tabpage(a:session)
+
+      " START: MiniBufExplorer support
+      if len(s:MBETabs)>0 " MBE configuration is present
+        call add(a:session, '" Tabs with MiniBufExplorer')
+        call add(a:session, 'let s:MBETabs = [' . join(s:MBETabs," ,") . ']')
+        call add(a:session, 'if len(s:MBETabs)>0 " MBE configuration is present')
+        call add(a:session, ' if ( exists(":MBECloseAll") && exists(":MBEClose") && exists(":MBEOpen") ) " MBE is present')
+
+        if xolox#session#include_tabs() " Saving all Tabs
+          call add(a:session, '   let s:currTab=tabpagenr()')
+          call add(a:session, '   tabdo if ( s:MBETabs[ tabpagenr()-1 ] == -1 ) | exec "MBEClose" | else | exec "MBEOpen" | endif')
+          call add(a:session, '   exec "tabnext " . s:currTab')
+        else
+          call add(a:session, '   if ( s:MBETabs[0] == -1 ) | exec "MBEClose" | else | exec "MBEOpen" | endif')
+        endif
+
+        call add(a:session, ' else')
+        call add(a:session, '   echom "Warning: MiniBufExplorer configuration is present in the session, but MiniBufExplorer plugin is not installed."')
+        call add(a:session, ' endif')
+        call add(a:session, 'endif')
+        call add(a:session, '')
+      endif
+      " END: MiniBufExplorer support
+
     else
       call s:check_special_tabpage(a:session)
     endif
