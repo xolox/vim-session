@@ -235,6 +235,7 @@ endfunction
 
 function! s:state_filter(line) " {{{3
   " Various changes to the output of :mksession.
+  " echom "a:line=" . a:line
   if a:line =~ '^normal!\? zo$'
     " Silence "E490: No fold found" errors.
     return 'silent! ' . a:line
@@ -244,6 +245,10 @@ function! s:state_filter(line) " {{{3
     return '" ' . a:line
   elseif a:line =~ '^file .\{-}\[BufExplorer\]$'
     " Same trick (about the E95) for BufExplorer.
+    return '" ' . a:line
+  " elseif a:line =~ '^file -MiniBufExplorer-$'
+  "   return '" ' . a:line
+  elseif a:line =~ '^file .\{-}__Tagbar__$'
     return '" ' . a:line
   elseif a:line =~ '^file .\{-}__Tag_List__$'
     " Same trick (about the E95) for TagList.
@@ -311,8 +316,14 @@ function! s:check_special_window(session)
       let command = 'NERDTreeMirror'
       let argument = ''
     endif
+  " elseif bufname == '-MiniBufExplorer-'
+  "   let command = 'MBEOpen'
+  "   let argument = ''
   elseif bufname == '[BufExplorer]'
     let command = 'BufExplorer'
+    let argument = ''
+  elseif bufname == '__Tagbar__'
+    let command = 'TagbarOpen'
     let argument = ''
   elseif bufname == '__Tag_List__'
     let command = 'Tlist'
