@@ -519,6 +519,32 @@ list with one string on success and an empty list on failure.
 
 <!-- End of generated documentation -->
 
+### Using a custom filter on save
+
+#### The `xolox#session#use_custom_filter()` function
+
+You can use this function to provide a `funcref` to filter the commands through
+before `vim-session` saves them. This allows for raw modification of the actual 
+session file contents, so use with care. In this example we persist the tab names
+previously assigned with [gcmt/taboo.vim](https://github.com/gcmt/taboo.vim):
+
+```
+function! CustomFilter(commands)
+  let currentTab = tabpagenr()
+  let tabNames = []
+  tabdo call add(tabNames, TabooTabName(tabpagenr()))
+  exec 'tabn ' . currentTab
+  let idx = match(a:commands, '^[^"]') - 1
+  for t in tabNames
+    if !empty(t)
+      call insert(a:commands, 'TabooRename ' . t, idx+1)
+    endif
+    let idx = match(a:commands, '^tabedit', idx+2)
+  endfor
+endfunction
+call xolox#session#use_custom_filter(function('CustomFilter'))
+```
+
 ## Troubleshooting
 
 ### Using multiple platforms (multi boot, Cygwin, etc.)

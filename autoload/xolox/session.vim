@@ -8,6 +8,14 @@ let g:xolox#session#version = '2.13.1'
 
 " Public API for session persistence. {{{1
 
+function! xolox#session#use_custom_filter(fn)
+  if type(a:fn) == 2
+    let s:custom_filter = a:fn
+  elseif exists('s:custom_filter')
+    unlet s:custom_filter
+  endif
+endfunction
+
 function! xolox#session#save_session(commands, filename) " {{{2
   " Save the current Vim editing session to a Vim script using the
   " [:mksession] [] command and some additional Vim magic provided by the
@@ -197,6 +205,9 @@ function! xolox#session#save_state(commands) " {{{2
     call s:cleanup_after_plugin(a:commands, 's:wipebuf')
     call add(a:commands, "  endif")
     call add(a:commands, "endif")
+    if exists('s:custom_filter') && type(s:custom_filter) == 2
+      call s:custom_filter(a:commands)
+    endif
     return 1
   finally
     let &sessionoptions = ssop_save
