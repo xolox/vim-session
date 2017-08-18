@@ -167,6 +167,11 @@ function! xolox#session#save_state(commands) " {{{2
   " script.
   let tempfile = tempname()
   let ssop_save = &sessionoptions
+
+  try
+    call mkdir(fnamemodify(tempname(), ":p:h"), "", 0700)
+  catch
+  endtry
   try
     " The default value of &sessionoptions includes "options" which causes
     " :mksession to include all Vim options and mappings in generated session
