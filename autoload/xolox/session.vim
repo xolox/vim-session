@@ -64,6 +64,10 @@ function! xolox#session#save_session(commands, filename) " {{{2
   endif
   call add(a:commands, 'unlet SessionLoad')
   call add(a:commands, '" vim: ft=vim ro nowrap smc=128')
+  call add(a:commands, 'let b:customFile=v:this_session.".custom"')
+  call add(a:commands, 'if filereadable(b:customFile)')
+  call add(a:commands, '  execute "source ".b:customFile')
+  call add(a:commands, 'endif')
 endfunction
 
 function! xolox#session#save_globals(commands) " {{{2
