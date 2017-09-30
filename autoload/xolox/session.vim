@@ -64,6 +64,10 @@ function! xolox#session#save_session(commands, filename) " {{{2
   endif
   call add(a:commands, 'unlet SessionLoad')
   call add(a:commands, '" vim: ft=vim ro nowrap smc=128')
+  call add(a:commands, 'let b:customFile=v:this_session.".custom"')
+  call add(a:commands, 'if filereadable(b:customFile)')
+  call add(a:commands, '  execute "source ".b:customFile')
+  call add(a:commands, 'endif')
 endfunction
 
 function! xolox#session#save_globals(commands) " {{{2
@@ -302,10 +306,10 @@ function! s:check_special_window(session)
   " pathname, this variable should be set to false to disable normalization.
   let do_normalize_path = 1
   let bufname = expand('%:t')
-  if exists('b:NERDTreeRoot')
+  if exists('b:NERDTree.root')
     if !has_key(s:nerdtrees, bufnr('%'))
       let command = 'NERDTree'
-      let argument = b:NERDTreeRoot.path.str()
+      let argument = b:NERDTree.root.path.str()
       let s:nerdtrees[bufnr('%')] = 1
     else
       let command = 'NERDTreeMirror'
@@ -361,8 +365,8 @@ endfunction
 
 function! s:nerdtree_persist()
   " Remember current working directory and whether NERDTree is loaded.
-  if exists('b:NERDTreeRoot')
-    return 'NERDTree ' . fnameescape(b:NERDTreeRoot.path.str()) . ' | only'
+  if exists('b:NERDTree.root')
+    return 'NERDTree ' . fnameescape(b:NERDTree.root.path.str()) . ' | only'
   else
     return 'cd ' . fnameescape(getcwd())
   endif
