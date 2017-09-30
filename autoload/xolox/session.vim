@@ -302,10 +302,10 @@ function! s:check_special_window(session)
   " pathname, this variable should be set to false to disable normalization.
   let do_normalize_path = 1
   let bufname = expand('%:t')
-  if exists('b:NERDTreeRoot')
+  if exists('b:NERDTree.root')
     if !has_key(s:nerdtrees, bufnr('%'))
       let command = 'NERDTree'
-      let argument = b:NERDTreeRoot.path.str()
+      let argument = b:NERDTree.root.path.str()
       let s:nerdtrees[bufnr('%')] = 1
     else
       let command = 'NERDTreeMirror'
@@ -361,8 +361,8 @@ endfunction
 
 function! s:nerdtree_persist()
   " Remember current working directory and whether NERDTree is loaded.
-  if exists('b:NERDTreeRoot')
-    return 'NERDTree ' . fnameescape(b:NERDTreeRoot.path.str()) . ' | only'
+  if exists('b:NERDTree.root')
+    return 'NERDTree ' . fnameescape(b:NERDTree.root.path.str()) . ' | only'
   else
     return 'cd ' . fnameescape(getcwd())
   endif
