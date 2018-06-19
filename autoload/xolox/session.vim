@@ -458,6 +458,10 @@ function! xolox#session#auto_save() " {{{2
   if empty(name)
     " Get the name of the active session (if any).
     let name = xolox#session#find_current_session()
+    " If the user doesn't want to autosave when there is no session, then stop.
+    if empty(name) && get(g:, 'session_autosave_only_with_explicit_session', 0) == 1
+      return
+    endif
     " If no session is active and the user doesn't have any sessions yet,
     " help them get started by suggesting to create the default session.
     if empty(name) && (empty(xolox#session#get_names(0)) || g:session_default_overwrite)
