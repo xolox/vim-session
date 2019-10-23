@@ -536,6 +536,29 @@ is set to an example function that suggests the name of the current git or
 Mercurial feature branch (when you're working in a version control repository).
 
 -------------------------------------------------------------------------------
+The *g:session_auto_project* option
+
+If you want sessions belong to different projects to be saved in different
+sub-directories under a root directory where all sessions are saved. You can
+enable this option like this:
+>
+  :let g:session_auto_project = 1
+<
+
+-------------------------------------------------------------------------------
+The *g:session_directory_auto_change* option
+
+When set to `1`, change `g:session_directory` accordingly when the current
+directory changes. Only take effect when `g:session_auto_project` is set to
+`1`.
+
+-------------------------------------------------------------------------------
+The *g:session_root_directory* option
+
+This option controls the location where all sessions are saved. Only take
+effect when `g:session_auto_project` is set to `1`.
+
+-------------------------------------------------------------------------------
 The *g:loaded_session* option
 
 This variable isn't really an option but if you want to avoid loading the vim-

@@ -8,7 +8,7 @@ let g:xolox#session#version = '2.14.0'
 
 " Public API for session persistence. {{{1
 
-function! s:SessionChangeRootDir()
+function! xolox#session#auto_change_session_directory()
   if get(g:, "session_directory_auto_change", 0) == 1
     let g:session_directory = fnamemodify(xolox#misc#path#merge(g:session_root_directory, 'project' . substitute(getcwd(), '/', '_', 'g')), ':p')
     if !isdirectory(g:session_directory)

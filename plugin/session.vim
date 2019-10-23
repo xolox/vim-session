@@ -89,6 +89,27 @@ if !exists('g:session_restart_environment')
   let g:session_restart_environment = ['TERM', 'VIM', 'VIMRUNTIME']
 endif
 
+" Save sessions in different directories based on current directory
+if !exists('g:session_auto_project')
+  let g:session_auto_project = 0
+endif
+
+" When you change current directory, change `g:session_directory` accordingly
+if !exists('g:session_directory_auto_change')
+  let g:session_directory_auto_change = 0
+endif
+
+" The default directory where session scripts are stored. Takes effect only
+" when `g:session_directory_auto_change == 1`
+if !exists('g:session_root_directory')
+  if get(g: 'session_directory_auto_change', 0) != 0
+    if xolox#misc#os#is_win()
+      let g:session_root_directory = '~\vimfiles\sessions'
+    else
+      let g:session_root_directory = '~/.vim/sessions'
+    endif
+endif
+
 " The default directory where session scripts are stored.
 if !exists('g:session_directory')
   if xolox#misc#os#is_win()
@@ -158,6 +179,7 @@ augroup PluginSession
   au VimEnter * nested call xolox#session#auto_load()
   au VimLeavePre * call xolox#session#auto_save()
   au VimLeavePre * call xolox#session#auto_unlock()
+  au DirChanged * nested call xolor#session#auto_change_session_directory()
 augroup END
 
 call xolox#misc#cursorhold#register({'function': 'xolox#session#auto_save_periodic', 'interval': 60})
