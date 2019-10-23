@@ -181,6 +181,17 @@ tab pages and windows are closed, discarding any changes in the files you were
 editing!
 
 -------------------------------------------------------------------------------
+The :MakeSession command
+
+This command invokes system call `mksession` to make a new session.
+
+You can provide a session name as arguments or the plug-in will ask you to
+input the new session name.
+
+If you want to overwrite a session that already exists, add a bang (!) after
+the command name.
+
+-------------------------------------------------------------------------------
 The *:RestartVim* command
 
 This command saves your current editing session, restarts Vim and restores your

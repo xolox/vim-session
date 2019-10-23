@@ -8,6 +8,15 @@ let g:xolox#session#version = '2.13.1'
 
 " Public API for session persistence. {{{1
 
+function! s:SessionChangeRootDir()
+  if get(g:, "session_directory_auto_change", 0) == 1
+    let g:session_directory = fnamemodify(xolox#misc#path#merge(g:session_root_directory, 'project' . substitute(getcwd(), '/', '_', 'g')), ':p')
+    if !isdirectory(g:session_directory)
+      call mkdir(g:session_directory, "p")
+    endif
+  endif
+endfunction
+
 function! xolox#session#make_cmd(name, bang, command)
   if empty(a:name)
     let l:session = input("New session name: ")
