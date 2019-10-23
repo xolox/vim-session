@@ -4,7 +4,7 @@
 " Last Change: November 1, 2015
 " URL: http://peterodding.com/code/vim/session/
 
-let g:xolox#session#version = '2.13.1'
+let g:xolox#session#version = '2.14.0'
 
 " Public API for session persistence. {{{1
 
