@@ -8,6 +8,18 @@ let g:xolox#session#version = '2.13.1'
 
 " Public API for session persistence. {{{1
 
+function! xolox#session#make_cmd(name, bang, command)
+  if empty(a:name)
+    let l:session = input("New session name: ")
+  else
+    let l:session = a:name
+  endif
+  if a:bang == '!' || !s:session_is_locked(l:session, a:command)
+    let l:path = xolox#session#name_to_path(l:session)
+    execute "mksession " . l:path
+  endif
+endfunction
+
 function! xolox#session#save_session(commands, filename) " {{{2
   " Save the current Vim editing session to a Vim script using the
   " [:mksession] [] command and some additional Vim magic provided by the

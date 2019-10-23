@@ -141,13 +141,14 @@ if g:session_menu
   amenu 400.30 &Sessions.&Close\ session\.\.\.<Tab>:CloseSession :CloseSession<CR>
   amenu 400.40 &Sessions.&Delete\ session\.\.\.<Tab>:DeleteSession :DeleteSession<CR>
   amenu 400.50 &Sessions.&View\ session\.\.\.<Tab>:ViewSession :ViewSession<CR>
-  amenu 400.60 &Sessions.-Sep1- :
-  amenu 400.70 &Sessions.Open\ tab\ session\.\.\.<Tab>:OpenTabSession :OpenTabSession<CR>
-  amenu 400.80 &Sessions.&Append\ tab\ session\.\.\.<Tab>:AppendTabSession :AppendTabSession<CR>
-  amenu 400.90 &Sessions.Save\ tab\ session\.\.\.<Tab>:SaveTabSession :SaveTabSession<CR>
-  amenu 400.100 &Sessions.Close\ tab\ session\.\.\.<Tab>:CloseTabSession :CloseTabSession<CR>
-  amenu 400.110 &Sessions.-Sep2- :
-  amenu 400.120 &Sessions.&Restart\ Vim\.\.\.<Tab>:RestartVim :RestartVim<CR>
+  amenu 400.60 &Sessions.&Make\ session\.\.\.<Tab>:MakeSession :MakeSession<CR>
+  amenu 400.70 &Sessions.-Sep1- :
+  amenu 400.80 &Sessions.Open\ tab\ session\.\.\.<Tab>:OpenTabSession :OpenTabSession<CR>
+  amenu 400.90 &Sessions.&Append\ tab\ session\.\.\.<Tab>:AppendTabSession :AppendTabSession<CR>
+  amenu 400.100 &Sessions.Save\ tab\ session\.\.\.<Tab>:SaveTabSession :SaveTabSession<CR>
+  amenu 400.110 &Sessions.Close\ tab\ session\.\.\.<Tab>:CloseTabSession :CloseTabSession<CR>
+  amenu 400.120 &Sessions.-Sep2- :
+  amenu 400.130 &Sessions.&Restart\ Vim\.\.\.<Tab>:RestartVim :RestartVim<CR>
 endif
 
 " Automatic commands for automatic session management. {{{1
@@ -170,6 +171,7 @@ command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names O
 command! -bar -nargs=? -complete=customlist,xolox#session#complete_names ViewSession call xolox#session#view_cmd(<q-args>)
 command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names_with_suggestions SaveSession call xolox#session#save_cmd(<q-args>, <q-bang>, 'SaveSession')
 command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names DeleteSession call xolox#session#delete_cmd(<q-args>, <q-bang>)
+command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names MakeSession call xolox#session#make_cmd(<q-args>, <q-bang>, 'MakeSession')
 command! -bar -bang CloseSession call xolox#session#close_cmd(<q-bang>, 0, 1, 'CloseSession')
 
 " Define commands that enable users to manage multiple named, light-weight
@@ -190,6 +192,7 @@ if g:session_command_aliases
   command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionOpen call xolox#session#open_cmd(<q-args>, <q-bang>, 'SessionOpen')
   command! -bar -nargs=? -complete=customlist,xolox#session#complete_names SessionView call xolox#session#view_cmd(<q-args>)
   command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionSave call xolox#session#save_cmd(<q-args>, <q-bang>, 'SessionSave')
+  command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionMake call xolox#session#make_cmd(<q-args>, <q-bang>, 'SessionMake')
   command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionDelete call xolox#session#delete_cmd(<q-args>, <q-bang>)
   command! -bar -bang SessionClose call xolox#session#close_cmd(<q-bang>, 0, 1, 'SessionClose')
   command! -bar -bang -nargs=? -complete=customlist,xolox#session#complete_names SessionTabOpen call xolox#session#open_tab_cmd(<q-args>, <q-bang>, 'SessionTabOpen')
