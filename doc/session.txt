@@ -8,11 +8,12 @@ Contents ~
  3. Commands                                                 |session-commands|
   1. The |:SaveSession| command
   2. The |:OpenSession| command
-  3. The |:RestartVim| command
-  4. The |:CloseSession| command
-  5. The |:DeleteSession| command
-  6. The |:ViewSession| command
-  7. Tab scoped sessions                                  |tab-scoped-sessions|
+  3. The |:MakeSession| command
+  4. The |:RestartVim| command
+  5. The |:CloseSession| command
+  6. The |:DeleteSession| command
+  7. The |:ViewSession| command
+  8. Tab scoped sessions                                  |tab-scoped-sessions|
    1. The |:OpenTabSession| command
    2. The |:SaveTabSession| command
    3. The |:AppendTabSession| command
@@ -39,7 +40,11 @@ Contents ~
   19. The |g:session_command_aliases| option
   20. The |g:session_menu| option
   21. The |g:session_name_suggestion_function| option
-  22. The |g:loaded_session| option
+  22. The |g:session_root_directory| option
+  23. The |g:session_directory_auto_change| option
+  24. The |g:session_auto_project| option
+  25. The |g:session_autoappend| option
+  26. The |g:loaded_session| option
  5. Compatibility with other plug-ins |session-compatibility-with-other-plug-ins|
  6. Function reference                             |session-function-reference|
   1. Public API for the vim-session plug-in |public-api-for-vim-session-plug-in|
@@ -543,7 +548,6 @@ sub-directories under a root directory where all sessions are saved. You can
 enable this option like this:
 >
   :let g:session_auto_project = 1
-<
 
 -------------------------------------------------------------------------------
 The *g:session_directory_auto_change* option
@@ -557,6 +561,12 @@ The *g:session_root_directory* option
 
 This option controls the location where all sessions are saved. Only take
 effect when `g:session_auto_project` is set to `1`.
+<
+-------------------------------------------------------------------------------
+The *g:session_autoappend* option
+
+If set to `1`, when you open vi with some filenames as arguments and also open
+a session automatically, append the arguments buffers to the opened session.
 
 -------------------------------------------------------------------------------
 The *g:loaded_session* option

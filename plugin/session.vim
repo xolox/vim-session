@@ -99,10 +99,16 @@ if !exists('g:session_directory_auto_change')
   let g:session_directory_auto_change = 0
 endif
 
+" When you open vi with some filenames as arguments and also open a session
+" automatically, append the arguments buffers to the opened session.
+if !exists('g:session_autoappend')
+  let g:session_autoappend = 0
+endif
+
 " The default directory where session scripts are stored. Takes effect only
 " when `g:session_directory_auto_change == 1`
 if !exists('g:session_root_directory')
-  if get(g: 'session_directory_auto_change', 0) != 0
+  if get(g: 'session_directory_auto_change', 0) == 1
     if xolox#misc#os#is_win()
       let g:session_root_directory = '~\vimfiles\sessions'
     else

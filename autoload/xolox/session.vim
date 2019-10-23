@@ -1,12 +1,45 @@
 " Public API for the vim-session plug-in.
 "
 " Author: Peter Odding
-" Last Change: November 1, 2015
+" Last Change: October 24, 2019
 " URL: http://peterodding.com/code/vim/session/
 
 let g:xolox#session#version = '2.14.0'
 
 " Public API for session persistence. {{{1
+func! xolor#session#auto_load_project()
+  if get(g: "session_auto_project", 0) != 1
+    return
+  if index(["gitcommit"], &filetype) != -1
+    return
+  endif
+  let l:argv = argv()
+  call xolor#session#auto_change_session_directory()
+  if len(xolox#session#get_names(0)) == 0
+    call xolor#session#make_cmd('default', '', 'MakeSession')
+  endif
+  if len(xolox#session#get_names(0)) == 1
+    let session = xolox#session#get_names(0)[0]
+    let name = confirm(
+      \ "Do you want to create a new session, use the existing session or start with no sessions?",
+      \ "1. use '". session . "'\n2. create new session\n3. cancel",
+      \ 1
+      \ )
+    if name == 2
+      call xolor#session#make_cmd('', '', 'MakeSession')
+    endif
+    if name != 1
+      return
+    endif
+  endif
+  call xolox#session#open_cmd('', '', 'OpenSession')
+  if g:session_autoappend || xolox#session#is_empty()
+    for fn in l:argv
+      execute "badd " . fn
+      execute "edit " . fn
+    endfor
+  endif
+endfunc
 
 function! xolox#session#auto_change_session_directory()
   if get(g:, "session_directory_auto_change", 0) == 1
@@ -405,6 +438,9 @@ function! xolox#session#auto_load() " {{{2
   " Normally called by the [VimEnter] [] automatic command event.
   "
   " [VimEnter]: http://vimdoc.sourceforge.net/htmldoc/autocmd.html#VimEnter
+  if g:session_auto_project == 1
+    call xolor#session#auto_load_project()
+    return
   if g:session_autoload == 'no'
     return
   endif
