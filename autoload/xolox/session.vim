@@ -590,7 +590,10 @@ function! xolox#session#open_cmd(name, bang, command) abort " {{{2
       call s:last_session_persist(name)
       call s:flush_session()
       call xolox#misc#timer#stop("session.vim %s: Opened %s %s session in %s.", g:xolox#session#version, session_type, string(name), starttime)
-      call xolox#misc#msg#info("session.vim %s: Opened %s %s session from %s.", g:xolox#session#version, session_type, string(name), fnamemodify(path, ':~'))
+      if g:session_verbose_messages
+      " this may force user to press [Enter]
+        call xolox#misc#msg#info("session.vim %s: Opened %s %s session from %s.", g:xolox#session#version, session_type, string(name), fnamemodify(path, ':~'))
+      endif
     endif
   endif
   return 1
