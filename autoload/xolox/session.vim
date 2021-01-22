@@ -152,6 +152,9 @@ function! xolox#session#save_qflist(commands) " {{{2
         endif
         unlet qf_entry.bufnr
       endif
+      if has_key(qf_entry, 'text')
+        let qf_entry.text = substitute(qf_entry.text, "\n", " ", "g")
+      endif
       call add(qf_list, qf_entry)
     endfor
     call add(a:commands, 'call setqflist(' . string(qf_list) . ')')
