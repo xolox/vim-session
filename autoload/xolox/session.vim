@@ -184,7 +184,9 @@ function! xolox#session#save_state(commands) " {{{2
     " output. We will fire the event ourselves when we're really done.
     call s:eat_trailing_line(lines, 'unlet SessionLoad')
     call s:eat_trailing_line(lines, 'doautoall SessionLoadPost')
-    call xolox#session#save_special_windows(lines)
+    if g:session_ignore_special_pages != 'yes'
+      call xolox#session#save_special_windows(lines)
+    endif
     if !xolox#session#include_tabs()
       " Customize the output of :mksession for tab scoped sessions.
       let buffers = tabpagebuflist()
