@@ -184,7 +184,9 @@ function! xolox#session#save_state(commands) " {{{2
     " output. We will fire the event ourselves when we're really done.
     call s:eat_trailing_line(lines, 'unlet SessionLoad')
     call s:eat_trailing_line(lines, 'doautoall SessionLoadPost')
-    call xolox#session#save_special_windows(lines)
+    if exists("g:session_ignore_special_pages")
+      call xolox#session#save_special_windows(lines)
+    endif
     if !xolox#session#include_tabs()
       " Customize the output of :mksession for tab scoped sessions.
       let buffers = tabpagebuflist()
@@ -235,6 +237,7 @@ endfunction
 
 function! s:state_filter(line) " {{{3
   " Various changes to the output of :mksession.
+  " echom "a:line=" . a:line
   if a:line =~ '^normal!\? zo$'
     " Silence "E490: No fold found" errors.
     return 'silent! ' . a:line
@@ -244,6 +247,10 @@ function! s:state_filter(line) " {{{3
     return '" ' . a:line
   elseif a:line =~ '^file .\{-}\[BufExplorer\]$'
     " Same trick (about the E95) for BufExplorer.
+    return '" ' . a:line
+  " elseif a:line =~ '^file -MiniBufExplorer-$'
+  "   return '" ' . a:line
+  elseif a:line =~ '^file .\{-}__Tagbar__$'
     return '" ' . a:line
   elseif a:line =~ '^file .\{-}__Tag_List__$'
     " Same trick (about the E95) for TagList.
@@ -311,8 +318,14 @@ function! s:check_special_window(session)
       let command = 'NERDTreeMirror'
       let argument = ''
     endif
+  " elseif bufname == '-MiniBufExplorer-'
+  "   let command = 'MBEOpen'
+  "   let argument = ''
   elseif bufname == '[BufExplorer]'
     let command = 'BufExplorer'
+    let argument = ''
+  elseif bufname == '__Tagbar__'
+    let command = 'TagbarOpen'
     let argument = ''
   elseif bufname == '__Tag_List__'
     let command = 'Tlist'
@@ -590,7 +603,10 @@ function! xolox#session#open_cmd(name, bang, command) abort " {{{2
       call s:last_session_persist(name)
       call s:flush_session()
       call xolox#misc#timer#stop("session.vim %s: Opened %s %s session in %s.", g:xolox#session#version, session_type, string(name), starttime)
-      call xolox#misc#msg#info("session.vim %s: Opened %s %s session from %s.", g:xolox#session#version, session_type, string(name), fnamemodify(path, ':~'))
+      if g:session_verbose_messages
+      " this may force user to press [Enter]
+        call xolox#misc#msg#info("session.vim %s: Opened %s %s session from %s.", g:xolox#session#version, session_type, string(name), fnamemodify(path, ':~'))
+      endif
     endif
   endif
   return 1
